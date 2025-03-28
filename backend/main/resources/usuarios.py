@@ -2,8 +2,8 @@ from flask_restful import Resource
 from flask import request
 
 USUARIOS = {
-    1: {'nombre': 'Admin', 'rol': 'ADMIN'},
-    2: {'nombre': 'User1', 'rol': 'USER'}
+    1: {'nombre': 'Admin', 'rol': 'ADMIN', 'estado': 'activo'},
+    2: {'nombre': 'User1', 'rol': 'USER', 'estado': 'activo'}
 }
 
 # Definir el recurso Usuarios
