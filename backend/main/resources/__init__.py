@@ -1,5 +1,3 @@
-#from .animal import Animal as AnimalResource
-#from .animal import Animales as AnimalesResource
 from .login import Login as LoginResource
 from .logout import Logout as LogoutResource
 from .notificaciones import Notificacion as NotificacionesResource
