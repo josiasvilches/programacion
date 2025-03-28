@@ -1,2 +1,12 @@
-from .animal import Animal as AnimalResource
-from .animal import Animales as AnimalesResource
+#from .animal import Animal as AnimalResource
+#from .animal import Animales as AnimalesResource
+from .login import Login as LoginResource
+from .logout import Logout as LogoutResource
+from .notificaciones import Notificacion as NotificacionesResource
+from .pedido_id import Pedido as PedidoResource
+from .pedidos import Pedidos as PedidosResource
+from .producto_id import Producto as ProductoResource
+from .productos import Productos as ProductosResource
+from .usuario_id import Usuario as UsuarioResource
+from .usuarios import Usuarios as UsuariosResource
+from .valoraciones import Valoracion as ValoracionResource
