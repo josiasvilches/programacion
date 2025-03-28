@@ -18,7 +18,7 @@ class Producto(Resource):
             producto = PRODUCTOS[int(id)]
             data = request.get_json()
             producto.update(data)
-            return 'Producto editado con éxito', 200
+            return 'Producto editado con éxito', 201
         return 'El producto que intentas editar no existe', 404
 
     def delete(self, id):
