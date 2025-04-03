@@ -16,3 +16,27 @@ class Pedidos(Resource):
         id = int(max(PEDIDOS.keys())) + 1 if PEDIDOS else 1
         PEDIDOS[id] = pedido
         return PEDIDOS[id], 201
+
+
+class Pedido(Resource):
+    def get(self, id):
+        if int(id) in PEDIDOS:
+            return PEDIDOS[int(id)]
+        else:
+            return "Pedido no encontrado", 404
+        
+    def delete(self, id):
+        if int(id) in PEDIDOS:
+            del PEDIDOS[int(id)]
+            return "Eliminado con éxito", 204
+        else:
+            return "Pedido no encontrado", 404
+        
+    def put(self, id):
+        if int(id) in PEDIDOS:
+            pedido = PEDIDOS[int(id)]
+            data = request.get_json()
+            pedido.update(data)
+            return "Modificado correctamente.", 201
+        else:
+            return "El ID que intenta encontrar es inexistente", 404

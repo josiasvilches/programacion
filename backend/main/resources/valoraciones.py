@@ -7,13 +7,13 @@ VALORACIONES = {
 
 class Valoracion(Resource):
     def get(self, id):
-        if id in VALORACIONES:
-            return VALORACIONES[id], 200
+        if int(id) in VALORACIONES:
+            return VALORACIONES[int(id)], 200
         else:
             return "Valoración no encontrada", 404
         
-    def post(self, id):
+    def post(self):
         valoracion = request.get_json()
-        id = max(VALORACIONES.keys())+1
+        id = int(max(VALORACIONES.keys()))+1
         VALORACIONES[id] = valoracion
         return "Valoración añadida con éxito", 201

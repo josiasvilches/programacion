@@ -29,4 +29,9 @@ class Logout(Resource):
         if not nombre:
             return {'mensaje': 'Nombre de usuario requerido'}, 400
 
-        return {'mensaje': f'Sesión cerrada para {nombre}'}, 200
+        # Verificar si el usuario existe
+        for usuario in USUARIOS.values():
+            if usuario['nombre'] == nombre:
+                return {'mensaje': f'Sesión cerrada para {nombre}'}, 200
+
+        return {'mensaje': 'Usuario no encontrado'}, 404
