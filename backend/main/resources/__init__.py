@@ -1,5 +1,5 @@
-from .login import Login as LoginResource
-from .logout import Logout as LogoutResource
+from .autenticacion import Login as LoginResource
+from .autenticacion import Logout as LogoutResource
 from .notificaciones import Notificacion as NotificacionesResource
 from .pedido_id import Pedido as PedidoResource
 from .pedidos import Pedidos as PedidosResource

@@ -21,7 +21,7 @@ class Producto(Resource):
             return 'Producto editado con éxito', 201
         return 'El producto que intentas editar no existe', 404
 
-    def delete(self, id):
+    def delete(self, id):               
         if int(id) in PRODUCTOS:
             del PRODUCTOS[int(id)]
             return 'Producto eliminado con éxito', 204

@@ -20,3 +20,13 @@ class Login(Resource):
                 }, 200
 
         return {'mensaje': 'Usuario no encontrado'}, 404
+    
+class Logout(Resource):
+    def post(self):
+        datos = request.get_json()
+        nombre = datos.get('nombre')
+
+        if not nombre:
+            return {'mensaje': 'Nombre de usuario requerido'}, 400
+
+        return {'mensaje': f'Sesión cerrada para {nombre}'}, 200
