@@ -35,5 +35,5 @@ class Producto(Resource):
     def delete(self, id):               
         if int(id) in PRODUCTOS:
             del PRODUCTOS[int(id)]
-            return 'Producto eliminado con éxito', 204
+            return 'Producto eliminado con éxito', 200
         return 'El producto que intentas eliminar no existe', 404

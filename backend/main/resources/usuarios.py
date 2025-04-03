@@ -36,5 +36,5 @@ class Usuario(Resource):
         if int(id) in USUARIOS:
             usuario = USUARIOS[int(id)]
             usuario['estado'] = 'suspendido'
-            return 'Usuario suspendido con éxito', 204
+            return 'Usuario suspendido con éxito', 200
         return 'El usuario que intentas suspender no existe', 404

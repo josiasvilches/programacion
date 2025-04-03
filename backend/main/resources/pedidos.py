@@ -28,7 +28,7 @@ class Pedido(Resource):
     def delete(self, id):
         if int(id) in PEDIDOS:
             del PEDIDOS[int(id)]
-            return "Eliminado con éxito", 204
+            return "Eliminado con éxito", 200
         else:
             return "Pedido no encontrado", 404
         
