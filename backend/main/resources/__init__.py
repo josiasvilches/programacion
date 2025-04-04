@@ -1,0 +1,10 @@
+from .autenticacion import Login as LoginResource
+from .autenticacion import Logout as LogoutResource
+from .notificaciones import Notificacion as NotificacionesResource
+from .pedidos import Pedido as PedidoResource
+from .pedidos import Pedidos as PedidosResource
+from .productos import Producto as ProductoResource
+from .productos import Productos as ProductosResource
+from .usuarios import Usuario as UsuarioResource
+from .usuarios import Usuarios as UsuariosResource
+from .valoraciones import Valoracion as ValoracionResource
