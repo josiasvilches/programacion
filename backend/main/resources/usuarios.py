@@ -27,7 +27,6 @@ class Usuarios(Resource):
         db.session.add(nuevo_usuario)
         db.session.commit()
         return nuevo_usuario.to_json(), 201
-        # usuario = request.get_json()
         # id = int(max(USUARIOS.keys())) + 1
         # USUARIOS[id] = usuario
         # return USUARIOS[id], 201
