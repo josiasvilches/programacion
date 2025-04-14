@@ -1,36 +1,45 @@
 from flask_restful import Resource
 from flask import request
 from .. import db
-from main.models import PedidoModel
+from main.models import PedidoModel, PedidoProducto
 
 class Pedidos(Resource):
     def get(self):
-    
         pedidos = PedidoModel.query.all()
         return [pedido.to_json() for pedido in pedidos], 200
 
     def post(self):
-        """
-        Se espera recibir un JSON con la siguiente estructura:
-          {
-            "cliente": "Nombre del cliente",
-            "producto": "Nombre del producto",
-            "cantidad": <int>
-          }
-        """
         data = request.get_json() or {}
 
-        # Validar que se reciban todos los campos requeridos
-        if not all(key in data for key in ['cliente', 'producto', 'cantidad']):
-            return {"mensaje": "Faltan datos requeridos: 'cliente', 'producto' y 'cantidad'"}, 400
+        if not all(key in data for key in ['id_cliente', 'estado_pedido', 'metodo_pago', 'productos']):
+            return {"mensaje": "Faltan campos requeridos: 'id_cliente', 'estado_pedido', 'metodo_pago', 'productos'"}, 400
+
+        productos = data['productos']
+        if not isinstance(productos, list) or not productos:
+            return {"mensaje": "El campo 'productos' debe ser una lista con al menos un producto"}, 400
 
         try:
+            total = sum(p['subtotal'] for p in productos)
+
             nuevo_pedido = PedidoModel(
-                cliente=data['cliente'],
-                producto=data['producto'],
-                cantidad=data['cantidad']
+                id_cliente=data['id_cliente'],
+                estado_pedido=data['estado_pedido'],
+                metodo_pago=data['metodo_pago'],
+                total=total
             )
             db.session.add(nuevo_pedido)
+            db.session.flush()  # Obtener el ID del pedido antes del commit
+
+            for p in productos:
+                pedido_producto = PedidoProducto(
+                    id_pedido=nuevo_pedido.pedido_id,
+                    id_producto=p['id_producto'],
+                    cantidad=p['cantidad'],
+                    precio_unitario=p['precio_unitario'],
+                    subtotal=p['subtotal']
+                )
+                db.session.add(pedido_producto)
+
             db.session.commit()
         except Exception as e:
             db.session.rollback()
@@ -41,33 +50,10 @@ class Pedidos(Resource):
 
 class Pedido(Resource):
     def get(self, id):
-       
         pedido = PedidoModel.query.get_or_404(id)
-        return pedido.to_json(), 200
-
-    def put(self, id):
-       
-        pedido = PedidoModel.query.get_or_404(id)
-        data = request.get_json() or {}
-
-        # Actualizar solamente los campos enviados en el JSON
-        if 'cliente' in data:
-            pedido.cliente = data['cliente']
-        if 'producto' in data:
-            pedido.producto = data['producto']
-        if 'cantidad' in data:
-            pedido.cantidad = data['cantidad']
-
-        try:
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            return {"mensaje": f"Error al actualizar el pedido: {str(e)}"}, 500
-
         return pedido.to_json(), 200
 
     def delete(self, id):
-    
         pedido = PedidoModel.query.get_or_404(id)
         try:
             db.session.delete(pedido)
@@ -75,4 +61,4 @@ class Pedido(Resource):
         except Exception as e:
             db.session.rollback()
             return {"mensaje": f"Error al eliminar el pedido: {str(e)}"}, 500
-        return {"mensaje": "Pedido eliminado correctamente"}, 204
+        return {"mensaje": "Pedido eliminado con éxito"}, 204

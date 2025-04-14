@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import request
-from main import db
+from .. import db
 from main.models import NotificacionModel  # Se asume que el modelo ya está definido
 
 class Notificacion(Resource):

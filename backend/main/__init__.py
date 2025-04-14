@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
-
 import os
 
 # Inicializamos restful y base de datos
@@ -38,14 +37,15 @@ def create_app():
             print("❌ Error al conectar a la base de datos:")
             print(e)
 
-    # Registrar recursos
+    
     import main.resources as resources
+
     api.add_resource(resources.ProductosResource, '/productos')
     # api.add_resource(resources.LoginResource, '/login')
     # api.add_resource(resources.LogoutResource, '/logout')
     api.add_resource(resources.NotificacionesResource, '/notificaciones')
-    # api.add_resource(resources.PedidoResource, '/pedido/<id>')
-    # api.add_resource(resources.PedidosResource, '/pedidos')
+    api.add_resource(resources.PedidoResource, '/pedido/<id>')
+    api.add_resource(resources.PedidosResource, '/pedidos')
     api.add_resource(resources.ProductoResource, '/producto/<id>')
     api.add_resource(resources.UsuarioResource, '/usuario/<id>')
     api.add_resource(resources.UsuariosResource, '/usuarios')
