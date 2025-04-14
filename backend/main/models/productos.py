@@ -1,4 +1,5 @@
 from .. import db
+from .pedidos_productos import PedidoProducto  # ⬅️ esto al final de producto.py
 
 """
 PRODUCTOS = {
@@ -7,20 +8,27 @@ PRODUCTOS = {
 }
 """
 
-
+    
 class Producto(db.Model):
-    __tablename__ = "productos"
-    id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(255), nullable=False)
-    precio = db.Column(db.Integer, nullable=False)
+    __tablename__ = 'productos'
+    producto_id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    precio = db.Column(db.Numeric(10,2), nullable=False)
     stock = db.Column(db.Integer, nullable=False)
+    descripcion = db.Column(db.Text, nullable=True)
+    imagen_url = db.Column(db.String(255), nullable=True)
 
-    # Convertir a JSON
+    # Relación con Valoracion
+    valoraciones = db.relationship('Valoracion', backref='producto', lazy=True)
+    # Relación con PedidoProducto
+    pedidos_productos = db.relationship('PedidoProducto', backref='producto', lazy=True)
+
     def to_json(self):
-        producto_json = {
-            'id': int(self.id),
+        return {
+            'producto_id': int(self.producto_id),
             'nombre': str(self.nombre),
-            'precio': int(self.precio),
-            'stock': int(self.stock)
+            'precio': str(self.precio),
+            'descripcion': str(self.descripcion),
+            'stock': int(self.stock),
+            'imagen_url': str(self.imagen_url)
         }
-        return producto_json

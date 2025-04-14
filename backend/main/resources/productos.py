@@ -1,39 +1,86 @@
+
 from flask_restful import Resource
 from flask import request
+from .. import db
 
-PRODUCTOS = {
-    1: {'nombre': 'Producto1', 'precio': 100, 'stock': 50},
-    2: {'nombre': 'Producto2', 'precio': 200, 'stock': 30}
-}
+from main.models import ProductoModel
 
-# Definir el recurso Productos
 class Productos(Resource):
     def get(self):
-        return PRODUCTOS
+        try:
+            productos = db.session.query(ProductoModel).all()
+            return [producto.to_json() for producto in productos], 200
+        except Exception as e:
+            print("❌ ERROR:", str(e))
+            return {'error': str(e)}, 500
 
     def post(self):
-        producto = request.get_json()
-        id = int(max(PRODUCTOS.keys())) + 1 if PRODUCTOS else 1
-        PRODUCTOS[id] = producto
-        return PRODUCTOS[id], 201
-    
-# Definir el recurso Producto
+        """
+        Se espera recibir un JSON con la siguiente estructura:
+          {
+            "nombre": "Nombre del producto",
+            "precio": 100.50,
+            "stock": 30
+          }
+        """
+        data = request.get_json() or {}
+
+        # Validar que se reciban todos los datos requeridos
+        if not all(key in data for key in ('nombre', 'precio', 'stock')):
+            return {"mensaje": "Faltan datos requeridos ('nombre', 'precio' y 'stock')"}, 400
+
+        try:
+            nuevo_producto = ProductoModel(
+                nombre=data['nombre'],
+                precio=data['precio'],
+                stock=data['stock']
+            )
+            db.session.add(nuevo_producto)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return {"mensaje": f"Error al crear el producto: {str(e)}"}, 500
+
+        return nuevo_producto.to_json(), 201
+
+
 class Producto(Resource):
     def get(self, id):
-        if int(id) in PRODUCTOS:
-            return PRODUCTOS[int(id)]
-        return 'El producto no existe', 404
+        try:
+            producto = ProductoModel.query.get_or_404(id)
+            return producto.to_json(), 200
+        except Exception as e:
+            print("❌ ERROR:", str(e))
+            return {'error': str(e)}, 500
 
     def put(self, id):
-        if int(id) in PRODUCTOS:
-            producto = PRODUCTOS[int(id)]
-            data = request.get_json()
-            producto.update(data)
-            return 'Producto editado con éxito', 201
-        return 'El producto que intentas editar no existe', 404
+       
+        producto = ProductoModel.query.get_or_404(id)
+        data = request.get_json() or {}
 
-    def delete(self, id):               
-        if int(id) in PRODUCTOS:
-            del PRODUCTOS[int(id)]
-            return 'Producto eliminado con éxito', 200
-        return 'El producto que intentas eliminar no existe', 404
+        if 'nombre' in data:
+            producto.nombre = data['nombre']
+        if 'precio' in data:
+            producto.precio = data['precio']
+        if 'stock' in data:
+            producto.stock = data['stock']
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return {"mensaje": f"Error al actualizar el producto: {str(e)}"}, 500
+
+        return producto.to_json(), 200
+
+    def delete(self, id):
+       
+        producto = ProductoModel.query.get_or_404(id)
+        try:
+            db.session.delete(producto)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return {"mensaje": f"Error al eliminar el producto: {str(e)}"}, 500
+
+        return {"mensaje": "Producto eliminado con éxito"}, 204

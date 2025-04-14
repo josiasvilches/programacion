@@ -1,4 +1,6 @@
 from .. import db
+from datetime import datetime
+
 
 """
 PEDIDOS = {
@@ -7,16 +9,21 @@ PEDIDOS = {
 }
 """
 
+
 class Pedido(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    cliente = db.Column(db.String(255), nullable=False)
-    producto = db.Column(db.String(255), nullable=False)
-    cantidad = db.Column(db.Integer, nullable=False)
+    __tablename__ = 'pedidos'
+    pedido_id = db.Column(db.Integer, primary_key=True)
+    fecha_pedido = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    metodo_pago = db.Column(db.String(50), nullable=False)
+    total = db.Column(db.Numeric(10,2), nullable=False)
+
+    # Relación con PedidoProducto (para acceder mediante pedido.productos_pedidos)
+    productos_pedidos = db.relationship('PedidoProducto', backref='pedido', lazy=True)
 
     def to_json(self):
-        pedido_json = {
-            'id': int(self.id),
-            'cliente': str(self.cliente),
-            'producto': str(self.producto),
-            'cantidad': int(self.cantidad)
+        return {
+            'pedido_id': int(self.pedido_id),
+            'fecha_pedido': self.fecha_pedido.isoformat() if self.fecha_pedido else None,
+            'metodo_pago': str(self.metodo_pago),
+            'total': str(self.total)
         }
