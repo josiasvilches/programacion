@@ -1,15 +1,15 @@
 from flask_restful import Resource
 from flask import request
 from .. import db
-from main.models import ProductoModel as ProductoModel  # Importamos el modelo con su nombre correcto
+from main.models import ProductoModel as ProductoModel 
 
 class Productos(Resource):
     def get(self):
         try:
-            productos = db.session.query(ProductoModel).all()  # Consultamos al modelo, no al recurso
+            productos = db.session.query(ProductoModel).all()  
             return [producto.to_json() for producto in productos], 200
         except Exception as e:
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {'error': str(e)}, 500
 
     def post(self):
@@ -35,8 +35,8 @@ class Productos(Resource):
                 precio=data['precio'],
                 stock=data['stock'],
                 id_categoria=data.get('id_categoria'),
-                descripcion=data.get('descripcion'),   # Opcionales
-                imagen_url=data.get('imagen_url')       # Opcionales
+                descripcion=data.get('descripcion'),   
+                imagen_url=data.get('imagen_url')       
             )
             db.session.add(nuevo_producto)
             db.session.commit()
@@ -44,7 +44,7 @@ class Productos(Resource):
 
         except Exception as e:
             db.session.rollback()
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {"mensaje": f"Error al crear el producto: {str(e)}"}, 500
 
 
@@ -58,7 +58,7 @@ class Producto(Resource):
             return producto.to_json(), 200
 
         except Exception as e:
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {'error': str(e)}, 500
 
     def put(self, id):
@@ -85,7 +85,7 @@ class Producto(Resource):
             return producto.to_json(), 200
         except Exception as e:
             db.session.rollback()
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {"mensaje": f"Error al actualizar el producto: {str(e)}"}, 500
 
     def delete(self, id):
@@ -98,5 +98,5 @@ class Producto(Resource):
             return {"mensaje": "Producto eliminado con éxito"}, 200
         except Exception as e:
             db.session.rollback()
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {"mensaje": f"Error al eliminar el producto: {str(e)}"}, 500

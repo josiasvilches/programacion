@@ -1,37 +1,14 @@
 {
 	"info": {
-		"_postman_id": "6b8c6c8e-569e-4233-a0a6-d27d6d9063e1",
+		"_postman_id": "0ffe5e78-b8c9-4c41-bc48-2361425e5b00",
 		"name": "rotiseria",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "43564868"
+		"_exporter_id": "43541943"
 	},
 	"item": [
 		{
 			"name": "pedidos",
 			"item": [
-				{
-					"name": "pedidos",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://127.0.0.1:5000/pedidos",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "5000",
-							"path": [
-								"pedidos"
-							]
-						},
-						"description": "solicitud general de pedidos"
-					},
-					"response": []
-				},
 				{
 					"name": "pedidos",
 					"request": {
@@ -65,25 +42,10 @@
 					"response": []
 				},
 				{
-					"name": "pedidos after post",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
+					"name": "pedidos",
 					"request": {
-						"auth": {
-							"type": "inherit"
-						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n        \"cliente\": \"Maria\",\n        \"producto\": \"Producto2\",\n        \"cantidad\": 4\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
 							"raw": "http://127.0.0.1:5000/pedidos",
 							"protocol": "http",
@@ -97,7 +59,8 @@
 							"path": [
 								"pedidos"
 							]
-						}
+						},
+						"description": "solicitud general de pedidos"
 					},
 					"response": []
 				},
@@ -107,14 +70,11 @@
 						"disableBodyPruning": true
 					},
 					"request": {
-						"auth": {
-							"type": "inherit"
-						},
 						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"cliente\": \"Maria\",\n        \"producto\": \"Producto2\",\n        \"cantidad\": 4\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -142,14 +102,11 @@
 				{
 					"name": "edit pedido",
 					"request": {
-						"auth": {
-							"type": "inherit"
-						},
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"cliente\": \"Maria\",\n        \"producto\": \"Producto2\",\n        \"cantidad\": 4\n}",
+							"raw": "{\n    \"estado_pedido\": \"completado\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -177,14 +134,11 @@
 				{
 					"name": "delete pedido",
 					"request": {
-						"auth": {
-							"type": "inherit"
-						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"cliente\": \"Maria\",\n        \"producto\": \"Producto2\",\n        \"cantidad\": 4\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -215,14 +169,11 @@
 						"disableBodyPruning": true
 					},
 					"request": {
-						"auth": {
-							"type": "inherit"
-						},
 						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"cliente\": \"Maria\",\n        \"producto\": \"Producto2\",\n        \"cantidad\": 4\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -288,14 +239,11 @@
 				{
 					"name": "pedido inexistente",
 					"request": {
-						"auth": {
-							"type": "inherit"
-						},
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"cliente\": \"Maria\",\n        \"producto\": \"Producto2\",\n        \"cantidad\": 5\n}",
+							"raw": "{\n    \"estado_pedido\": \"completado\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -323,14 +271,11 @@
 				{
 					"name": "pedido inexistente",
 					"request": {
-						"auth": {
-							"type": "inherit"
-						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"cliente\": \"Maria\",\n        \"producto\": \"Producto2\",\n        \"cantidad\": 5\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -354,57 +299,12 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "pedido especifico",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://127.0.0.1:5000/pedido/1",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "5000",
-							"path": [
-								"pedido",
-								"1"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
 		{
 			"name": "productos",
 			"item": [
-				{
-					"name": "productos",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://127.0.0.1:5000/productos",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "5000",
-							"path": [
-								"productos"
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "producto",
 					"request": {
@@ -440,7 +340,7 @@
 					"response": []
 				},
 				{
-					"name": "productos after post",
+					"name": "productos",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -456,6 +356,29 @@
 							"port": "5000",
 							"path": [
 								"productos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "producto especifico",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/producto/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"producto",
+								"1"
 							]
 						}
 					},
@@ -479,7 +402,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/producto/7",
+							"raw": "http://127.0.0.1:5000/producto/1",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -490,7 +413,7 @@
 							"port": "5000",
 							"path": [
 								"producto",
-								"7"
+								"1"
 							]
 						}
 					},
@@ -505,7 +428,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:5000/producto/7",
+							"raw": "http://127.0.0.1:5000/producto/1",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -516,7 +439,7 @@
 							"port": "5000",
 							"path": [
 								"producto",
-								"7"
+								"1"
 							]
 						}
 					},
@@ -531,7 +454,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:5000/producto/7",
+							"raw": "http://127.0.0.1:5000/producto/1",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -542,7 +465,7 @@
 							"port": "5000",
 							"path": [
 								"producto",
-								"7"
+								"1"
 							]
 						}
 					},
@@ -592,7 +515,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/producto/3",
+							"raw": "http://127.0.0.1:5000/producto/15",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -603,7 +526,7 @@
 							"port": "5000",
 							"path": [
 								"producto",
-								"3"
+								"15"
 							]
 						}
 					},
@@ -634,60 +557,12 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "producto especifico",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://127.0.0.1:5000/producto/7",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "5000",
-							"path": [
-								"producto",
-								"7"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
 		{
 			"name": "user",
 			"item": [
-				{
-					"name": "users",
-					"request": {
-						"auth": {
-							"type": "inherit"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://127.0.0.1:5000/usuarios",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "5000",
-							"path": [
-								"usuarios"
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "users",
 					"request": {
@@ -720,7 +595,7 @@
 					"response": []
 				},
 				{
-					"name": "after post",
+					"name": "users",
 					"request": {
 						"auth": {
 							"type": "inherit"
@@ -773,9 +648,6 @@
 				{
 					"name": "edit user",
 					"request": {
-						"auth": {
-							"type": "inherit"
-						},
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -788,7 +660,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/usuario/2",
+							"raw": "http://127.0.0.1:5000/usuario/1",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -799,7 +671,7 @@
 							"port": "5000",
 							"path": [
 								"usuario",
-								"2"
+								"1"
 							]
 						}
 					},
@@ -808,9 +680,6 @@
 				{
 					"name": "suspensión de user",
 					"request": {
-						"auth": {
-							"type": "inherit"
-						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -823,7 +692,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/usuario/2",
+							"raw": "http://127.0.0.1:5000/usuario/1",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -834,7 +703,7 @@
 							"port": "5000",
 							"path": [
 								"usuario",
-								"2"
+								"1"
 							]
 						}
 					},
@@ -843,13 +712,10 @@
 				{
 					"name": "usuario suspendido",
 					"request": {
-						"auth": {
-							"type": "inherit"
-						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:5000/usuario/2",
+							"raw": "http://127.0.0.1:5000/usuario/1",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -860,7 +726,7 @@
 							"port": "5000",
 							"path": [
 								"usuario",
-								"2"
+								"1"
 							]
 						}
 					},
@@ -956,6 +822,37 @@
 			"name": "valoraciones",
 			"item": [
 				{
+					"name": "agregar valoracion",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"valoracion\": 5,\n    \"id_usuario\": 1,\n    \"id_producto\": 8\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/valoraciones",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"valoraciones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "valoracion inexistente",
 					"request": {
 						"method": "GET",
@@ -999,63 +896,6 @@
 							"path": [
 								"valoraciones",
 								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "agregar valoracion",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"valoracion\": 5,\n    \"id_usuario\": 1,\n    \"id_producto\": 8\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://127.0.0.1:5000/valoraciones",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "5000",
-							"path": [
-								"valoraciones"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "after post",
-					"request": {
-						"auth": {
-							"type": "inherit"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://127.0.0.1:5000/valoraciones/2",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "5000",
-							"path": [
-								"valoraciones",
-								"2"
 							]
 						}
 					},
@@ -1123,18 +963,19 @@
 		},
 		{
 			"name": "autenticacion",
+			"item": []
+		},
+		{
+			"name": "categorias",
 			"item": [
 				{
-					"name": "login",
+					"name": "categoria",
 					"request": {
-						"auth": {
-							"type": "inherit"
-						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"nombre\": \"Admin\"\n}",
+							"raw": "{\n    \"nombre_categoria\": \"Postres\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1142,7 +983,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/login",
+							"raw": "http://127.0.0.1:5000/categorias",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1152,31 +993,19 @@
 							],
 							"port": "5000",
 							"path": [
-								"login"
+								"categorias"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "login usuario no encontrado",
+					"name": "categorias",
 					"request": {
-						"auth": {
-							"type": "inherit"
-						},
-						"method": "POST",
+						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"nombre\": \"User2\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/login",
+							"raw": "http://127.0.0.1:5000/categorias",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1186,31 +1015,19 @@
 							],
 							"port": "5000",
 							"path": [
-								"login"
+								"categorias"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "logout",
+					"name": "categoria especifica",
 					"request": {
-						"auth": {
-							"type": "inherit"
-						},
-						"method": "POST",
+						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"nombre\": \"Admin\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/logout",
+							"raw": "http://127.0.0.1:5000/categoria/1",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1220,23 +1037,21 @@
 							],
 							"port": "5000",
 							"path": [
-								"logout"
+								"categoria",
+								"1"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "logout usuario no encontrado",
+					"name": "editar categoria",
 					"request": {
-						"auth": {
-							"type": "inherit"
-						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"nombre\": \"User3\"\n}",
+							"raw": "{\n    \"nombre_categoria\": \"Bebidas alcohólicas\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1244,7 +1059,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/logout",
+							"raw": "http://127.0.0.1:5000/categoria/1",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1254,31 +1069,20 @@
 							],
 							"port": "5000",
 							"path": [
-								"logout"
+								"categoria",
+								"1"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "usuario requerido",
+					"name": "delete categoria",
 					"request": {
-						"auth": {
-							"type": "inherit"
-						},
-						"method": "POST",
+						"method": "DELETE",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"nombre\": \"\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/logout",
+							"raw": "http://127.0.0.1:5000/categoria/1",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1288,7 +1092,100 @@
 							],
 							"port": "5000",
 							"path": [
-								"logout"
+								"categoria",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "categoria deleteada",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/categoria/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"categoria",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "categoria inexistente",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/categoria/10",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"categoria",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "categoria inexistente",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/categoria/10",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"categoria",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "categoria inexistente",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/categoria/10",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"categoria",
+								"10"
 							]
 						}
 					},

@@ -2,7 +2,7 @@ from flask_restful import Resource
 from flask import request
 from .. import db
 from main.models import NotificacionModel
-from datetime import datetime  # 👈 Necesario para parsear fecha
+from datetime import datetime  
 
 class Notificacion(Resource):
 
@@ -11,7 +11,7 @@ class Notificacion(Resource):
             notificaciones = db.session.query(NotificacionModel).all()
             return [notificacion.to_json() for notificacion in notificaciones], 200
         except Exception as e:
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {'error': str(e)}, 500
 
     def post(self):
@@ -31,7 +31,7 @@ class Notificacion(Resource):
             nueva_notificacion = NotificacionModel(
                 notificacion=data['notificacion'],
                 id_usuario=data['id_usuario'],
-                fecha_hora=fecha_hora,  # 👈 Ahora es datetime.datetime
+                fecha_hora=fecha_hora,  
                 tipo=data['tipo']
             )
 
@@ -42,5 +42,5 @@ class Notificacion(Resource):
 
         except Exception as e:
             db.session.rollback()
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {'error': str(e)}, 500

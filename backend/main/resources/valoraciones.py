@@ -13,7 +13,7 @@ class Valoracion(Resource):
             return valoracion.to_json(), 200
 
         except Exception as e:
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {'error': str(e)}, 500
 
     def post(self):
@@ -31,5 +31,5 @@ class Valoracion(Resource):
 
         except Exception as e:
             db.session.rollback()
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {'error': str(e)}, 500

@@ -10,7 +10,7 @@ class Pedidos(Resource):
             pedidos = PedidoModel.query.all()
             return [pedido.to_json() for pedido in pedidos], 200
         except Exception as e:
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {'error': str(e)}, 500
 
     def post(self):
@@ -28,7 +28,7 @@ class Pedidos(Resource):
 
             nuevo_pedido = PedidoModel(
                 id_cliente=data['id_cliente'],
-                fecha_pedido=datetime.now(),  # 👈 Fecha actual
+                fecha_pedido=datetime.now(), 
                 estado_pedido=data['estado_pedido'],
                 metodo_pago=data['metodo_pago'],
                 total=total
@@ -51,10 +51,33 @@ class Pedidos(Resource):
 
         except Exception as e:
             db.session.rollback()
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {"mensaje": f"Error al crear el pedido: {str(e)}"}, 500
 
 class Pedido(Resource):
+    def put(self, id):
+        try:
+            # Buscar el pedido por ID
+            pedido = PedidoModel.query.get(id)
+            if pedido is None:
+                return {"mensaje": "Pedido no encontrado"}, 404
+
+            # Obtener los datos enviados en la solicitud
+            data = request.get_json() or {}
+
+            # Actualizar los campos si están presentes en los datos
+            if 'estado_pedido' in data:
+                pedido.estado_pedido = data['estado_pedido']
+            if 'metodo_pago' in data:
+                pedido.metodo_pago = data['metodo_pago']
+
+            # Guardar los cambios en la base de datos
+            db.session.commit()
+            return pedido.to_json(), 200
+        except Exception as e:
+            db.session.rollback()
+            print("ERROR:", str(e))
+            return {"mensaje": f"Error al actualizar el pedido: {str(e)}"}, 500
     def get(self, id):
         try:
             pedido = PedidoModel.query.get(id)
@@ -64,7 +87,7 @@ class Pedido(Resource):
             return pedido.to_json(), 200
 
         except Exception as e:
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {'error': str(e)}, 500
 
     def delete(self, id):
@@ -73,10 +96,10 @@ class Pedido(Resource):
             if pedido is None:
                 return {"mensaje": "Pedido no encontrado"}, 404
 
-            # 🔥 Primero borrar los productos asociados
+            # Primero borrar los productos asociados
             db.session.query(PedidoProductoModel).filter_by(id_pedido=pedido.pedido_id).delete()
 
-            # 🔥 Luego borrar el pedido
+            # Luego borrar el pedido
             db.session.delete(pedido)
             db.session.commit()
 
@@ -84,5 +107,5 @@ class Pedido(Resource):
 
         except Exception as e:
             db.session.rollback()
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {"mensaje": f"Error al eliminar el pedido: {str(e)}"}, 500

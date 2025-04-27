@@ -13,7 +13,7 @@ def create_app():
     app = Flask(__name__)
     load_dotenv()
 
-    # 🚀 Definir ruta base UN NIVEL ARRIBA (subir de main/ a backend/)
+    # Definir ruta base UN NIVEL ARRIBA (subir de main/ a backend/)
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
     # Definir carpeta y archivo de base de datos
@@ -24,12 +24,12 @@ def create_app():
     # Crear carpeta DB si no existe
     if not os.path.exists(db_folder):
         os.makedirs(db_folder)
-        print(f"✅ Carpeta {db_folder} creada.")
+        print(f"Carpeta {db_folder} creada.")
 
     # Crear archivo de base de datos si no existe
     if not os.path.exists(db_full_path):
         open(db_full_path, 'a').close()
-        print(f"✅ Archivo de base de datos creado en {db_full_path}")
+        print(f"Archivo de base de datos creado en {db_full_path}")
 
     # Configurar SQLAlchemy
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_full_path}'
@@ -43,13 +43,13 @@ def create_app():
             from main.models import ValoracionModel, ProductoModel, UsuarioModel, PedidoModel, PedidoProductoModel
 
             db.session.execute(text('SELECT 1'))
-            print("✅ Conexión a la base de datos exitosa.")
+            print("Conexión a la base de datos exitosa.")
 
             db.create_all()
-            print("✅ Tablas creadas/verificadas exitosamente.")
+            print("Tablas creadas/verificadas exitosamente.")
 
         except Exception as e:
-            print("❌ Error al conectar o crear tablas:")
+            print("Error al conectar o crear tablas:")
             print(e)
 
 
@@ -63,6 +63,8 @@ def create_app():
     api.add_resource(resources.ValoracionResource, '/valoraciones/<id>', '/valoraciones')
     api.add_resource(resources.PedidosResource, '/pedidos')
     api.add_resource(resources.PedidoResource, '/pedido/<id>')
+    api.add_resource(resources.CategoriasResource, '/categorias')
+    api.add_resource(resources.CategoriaResource, '/categoria/<id>')
 
 
     api.init_app(app)

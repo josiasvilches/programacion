@@ -8,3 +8,5 @@ from .productos import Productos as ProductosResource
 from .usuarios import Usuario as UsuarioResource
 from .usuarios import Usuarios as UsuariosResource
 from .valoraciones import Valoracion as ValoracionResource
+from .categorias import Categorias as CategoriasResource
+from .categorias import Categoria as CategoriaResource

@@ -11,7 +11,7 @@ class Usuarios(Resource):
             usuarios_json = [usuario.to_json() for usuario in usuarios]
             return usuarios_json, 200
         except Exception as e:
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {'error': str(e)}, 500
 
     def post(self):
@@ -26,7 +26,7 @@ class Usuarios(Resource):
             return nuevo_usuario.to_json(), 201
         except Exception as e:
             db.session.rollback()
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {'error': str(e)}, 500
 
 # Recurso para un usuario individual
@@ -39,7 +39,7 @@ class Usuario(Resource):
 
             return usuario.to_json(), 200
         except Exception as e:
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {'error': str(e)}, 500
 
     def put(self, id):
@@ -62,7 +62,7 @@ class Usuario(Resource):
 
         except Exception as e:
             db.session.rollback()
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {'error': str(e)}, 500
 
     def delete(self, id):
@@ -77,5 +77,5 @@ class Usuario(Resource):
 
         except Exception as e:
             db.session.rollback()
-            print("❌ ERROR:", str(e))
+            print("ERROR:", str(e))
             return {'error': str(e)}, 500
