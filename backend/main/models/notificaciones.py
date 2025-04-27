@@ -13,14 +13,14 @@ class Notificacion(db.Model):
     notificacion_id = db.Column(db.Integer, primary_key=True)
     notificacion = db.Column(db.Text, nullable=False)
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.usuario_id'), nullable=False)
-    fecha_hora = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    fecha_hora = db.Column(db.DateTime, nullable=False)
     tipo = db.Column(db.String(50), nullable=False)
 
     def to_json(self):
         return {
-            'notificacion_id': int(self.notificacion_id),
-            'notificacion': str(self.notificacion),
-            'id_usuario': int(self.id_usuario),
-            'fecha_hora': self.fecha_hora.isoformat() if self.fecha_hora else None,
-            'tipo': str(self.tipo)
+            'notificacion_id': self.notificacion_id,
+            'notificacion': self.notificacion,
+            'id_usuario': self.id_usuario,
+            'fecha_hora': self.fecha_hora.isoformat(),
+            'tipo': self.tipo
         }
