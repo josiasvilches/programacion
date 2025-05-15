@@ -12,7 +12,7 @@ class Producto(db.Model):
     imagen_url = db.Column(db.String(255), nullable=True)
 
     valoraciones = db.relationship('Valoracion', backref='producto', lazy=True)
-    pedidos = db.relationship('PedidoProducto', backref='producto', lazy=True)
+    pedidos = db.relationship('PedidoProducto', backref='producto', lazy=True, cascade="all, delete-orphan")
 
     def to_json(self):
         return {
