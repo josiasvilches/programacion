@@ -20,7 +20,7 @@ class Usuarios(Resource):
             return jsonify({'usuarios': usuarios_json,
                            'total': usuarios.total,
                            'pages': usuarios.pages,
-                           'page': usuarios.page}), 200
+                           'page': usuarios.page})
         except Exception as e:
             print("ERROR:", str(e))
             return {'error': str(e)}, 500

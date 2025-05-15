@@ -22,7 +22,7 @@ class Pedidos(Resource):
         return jsonify({'pedidos:': [pedido.to_json() for pedido in pedidos],
                         'total:': pedidos.total,
                         'pages': pedidos.pages,
-                        'page':page}), 200
+                        'page':page})
 
     def post(self):
         data = request.get_json() or {}

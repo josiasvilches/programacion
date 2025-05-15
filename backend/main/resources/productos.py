@@ -20,7 +20,7 @@ class Productos(Resource):
             return jsonify({'productos': [producto.to_json() for producto in productos],
                             'total': productos.total,
                             'pages': productos.pages,
-                            'page': page}), 200
+                            'page': page})
         except Exception as e:
             print("ERROR:", str(e))
             return {'error': str(e)}, 500
