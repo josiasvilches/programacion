@@ -78,4 +78,4 @@ class Pedido(Resource):
         except Exception as e:
             db.session.rollback()
             return {"mensaje": f"Error al eliminar el pedido: {str(e)}"}, 500
-        return {"mensaje": "Pedido eliminado con éxito"}, 204
+        return {"mensaje": "Pedido eliminado con éxito"}, 200

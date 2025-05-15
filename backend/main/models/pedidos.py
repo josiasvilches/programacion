@@ -10,7 +10,7 @@ class Pedido(db.Model):
     metodo_pago = db.Column(db.String(50), nullable=False)
     total = db.Column(db.Numeric(10, 2), nullable=False)
 
-    productos = db.relationship('PedidoProducto', backref='pedido', lazy=True)
+    productos = db.relationship('PedidoProducto', backref='pedido', lazy=True, cascade="all, delete-orphan")
 
     def to_json(self):
         return {
