@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from flask import request
+from flask import request, jsonify
 from main.models import UsuarioModel
 from .. import db
 
@@ -7,9 +7,20 @@ from .. import db
 class Usuarios(Resource):
     def get(self):
         try:
-            usuarios = db.session.query(UsuarioModel).all()
+            page = 1
+            per_page = 10
+
+            if request.args.get('page'):
+                page = int(request.args.get('page'))
+            if request.args.get('per_page'):
+                per_page = int(request.args.get('per_page'))
+            
+            usuarios = UsuarioModel.query.paginate(page=page, per_page=per_page, error_out=True)
             usuarios_json = [usuario.to_json() for usuario in usuarios]
-            return usuarios_json, 200
+            return jsonify({'usuarios': usuarios_json,
+                           'total': usuarios.total,
+                           'pages': usuarios.pages,
+                           'page': usuarios.page}), 200
         except Exception as e:
             print("ERROR:", str(e))
             return {'error': str(e)}, 500
