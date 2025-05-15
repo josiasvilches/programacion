@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from flask import request, jsonify
 from .. import db
+from datetime import datetime
 from main.models import PedidoModel, PedidoProductoModel
 
 class Pedidos(Resource):
@@ -38,6 +39,7 @@ class Pedidos(Resource):
 
             nuevo_pedido = PedidoModel(
                 id_cliente=data['id_cliente'],
+                fecha_pedido=datetime.now(),
                 estado_pedido=data['estado_pedido'],
                 metodo_pago=data['metodo_pago'],
                 total=total
@@ -46,7 +48,7 @@ class Pedidos(Resource):
             db.session.flush()  # Obtener el ID del pedido antes del commit
 
             for p in productos:
-                pedido_producto = PedidoProducto(
+                pedido_producto = PedidoProductoModel(
                     id_pedido=nuevo_pedido.pedido_id,
                     id_producto=p['id_producto'],
                     cantidad=p['cantidad'],
