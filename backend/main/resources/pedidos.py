@@ -1,7 +1,7 @@
 from flask_restful import Resource
 from flask import request, jsonify
 from .. import db
-from main.models import PedidoModel, PedidoProducto
+from main.models import PedidoModel, PedidoProductoModel
 
 class Pedidos(Resource):
     def get(self):
