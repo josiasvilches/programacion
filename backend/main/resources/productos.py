@@ -10,12 +10,23 @@ class Productos(Resource):
             page = 1
             per_page = 10
 
+            productos = db.session.query(ProductoModel)
+
             if request.args.get('page'):
                 page = int(request.args.get('page'))
             if request.args.get('per_page'):
                 per_page = int(request.args.get('per_page'))
 
-            productos = ProductoModel.query.paginate(page=page, per_page=per_page, error_out=True)
+            # Filtrar por nombre
+            if request.args.get('nombre'):
+                productos = productos.filter(ProductoModel.nombre.like("%"+request.args.get('nombre')+"%"))
+            # Filtrar por precio. NOTA: En postman hay que añadir dos params de precio: un límite menor y uno mayor.
+            if request.args.getlist('precios'):
+                min_precio, max_precio = request.args.getlist('precios')
+                print(min_precio, max_precio)
+                productos = productos.filter(ProductoModel.precio.between(min_precio, max_precio))
+
+            productos = productos.paginate(page=page, per_page=per_page, error_out=True)
 
             return jsonify({'productos': [producto.to_json() for producto in productos],
                             'total': productos.total,

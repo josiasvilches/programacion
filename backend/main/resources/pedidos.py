@@ -2,7 +2,7 @@ from flask_restful import Resource
 from flask import request, jsonify
 from .. import db
 from datetime import datetime
-from main.models import PedidoModel, PedidoProductoModel
+from main.models import PedidoModel, PedidoProductoModel, UsuarioModel
 
 class Pedidos(Resource):
     def get(self):
@@ -12,13 +12,30 @@ class Pedidos(Resource):
         # Cantidad de elementos por página
         per_page = 10
 
+        # Defino pedidos
+        pedidos = db.session.query(PedidoModel)
+
+        # Tomo la paginación del request si está especificada
         if request.args.get('page'):
             page = int(request.args.get('page'))
         if request.args.get('per_page'):
             per_page = int(request.args.get('per_page'))
 
+        # Filtrar por fecha del pedido
+        if request.args.get('fecha'):
+            pedidos = pedidos.filter(PedidoModel.fecha_pedido.like("%"+request.args.get('fecha')+"%"))
+        # Filtrar por estado del pedido
+        if request.args.get('estado'):
+            pedidos = pedidos.filter(PedidoModel.estado_pedido == request.args.get('estado'))
+        # Filtrar por el método de pago
+        if request.args.get('metodo_pago'):
+            pedidos = pedidos.filter(PedidoModel.metodo_pago == request.args.get('metodo_pago'))
+        # Filtrar por el cliente
+        if request.args.get('usuario'):
+            pedidos = pedidos.outerjoin(PedidoModel.cliente).filter(UsuarioModel.nombre == request.args.get('usuario'))
+
         #pedidos = PedidoModel.query.all()
-        pedidos = PedidoModel.query.paginate(page=page, per_page=per_page, error_out=True)
+        pedidos = pedidos.paginate(page=page, per_page=per_page, error_out=True)
         return jsonify({'pedidos:': [pedido.to_json() for pedido in pedidos],
                         'total:': pedidos.total,
                         'pages': pedidos.pages,

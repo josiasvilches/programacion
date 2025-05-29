@@ -8,7 +8,7 @@ class Usuario(db.Model):
     estado = db.Column(db.String(50), nullable=False)
 
     notificaciones = db.relationship('Notificacion', backref='usuario', lazy=True)
-    pedidos = db.relationship('Pedido', backref='cliente', lazy=True)
+    pedidos = db.relationship('Pedido', back_populates='cliente', lazy=True)
     valoraciones = db.relationship('Valoracion', backref='usuario', lazy=True)
 
     def to_json(self):

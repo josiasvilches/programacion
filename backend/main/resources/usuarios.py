@@ -15,7 +15,20 @@ class Usuarios(Resource):
             if request.args.get('per_page'):
                 per_page = int(request.args.get('per_page'))
             
-            usuarios = UsuarioModel.query.paginate(page=page, per_page=per_page, error_out=True)
+            usuarios = db.session.query(UsuarioModel)
+
+            # Filtrar por nombre
+            
+            if request.args.get('nombre'):
+                usuarios = usuarios.filter(UsuarioModel.nombre == request.args.get('nombre'))
+            # Filtrar por rol
+            if request.args.get('rol'):
+                usuarios = usuarios.filter(UsuarioModel.rol == request.args.get('rol'))
+            # Filtrar por estado
+            if request.args.get('estado'):
+                usuarios = usuarios.filter(UsuarioModel.estado == request.args.get('estado'))
+
+            usuarios = usuarios.paginate(page=page, per_page=per_page, error_out=True)
             usuarios_json = [usuario.to_json() for usuario in usuarios]
             return jsonify({'usuarios': usuarios_json,
                            'total': usuarios.total,

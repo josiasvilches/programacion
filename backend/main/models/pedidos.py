@@ -11,6 +11,8 @@ class Pedido(db.Model):
     total = db.Column(db.Numeric(10, 2), nullable=False)
 
     productos = db.relationship('PedidoProducto', backref='pedido', lazy=True, cascade="all, delete-orphan")
+    cliente = db.relationship('Usuario', back_populates='pedidos')
+
     
     def to_json(self):
         return {
