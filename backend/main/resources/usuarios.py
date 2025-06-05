@@ -2,6 +2,8 @@ from flask_restful import Resource
 from flask import request, jsonify
 from main.models import UsuarioModel
 from .. import db
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from main.auth.decorators import role_required
 
 # Recurso para lista de usuarios
 class Usuarios(Resource):
@@ -55,16 +57,22 @@ class Usuarios(Resource):
 
 # Recurso para un usuario individual
 class Usuario(Resource):
+
+    @jwt_required(optional=True)
     def get(self, id):
         try:
             usuario = UsuarioModel.query.get(id)
             if usuario is None:
                 return {'mensaje': 'Usuario no encontrado'}, 404
-
-            return usuario.to_json(), 200
+            current_identity = get_jwt_identity()
+            if current_identity == usuario.id:
+                return usuario.to_json_complete(), 200  # Devuelve todo si es su propio perfil
+            else:
+                return usuario.to_json_short(), 200  # Devuelve datos limitados si es otro
         except Exception as e:
             print("ERROR:", str(e))
             return {'error': str(e)}, 500
+
 
     def put(self, id):
         try:
@@ -89,6 +97,7 @@ class Usuario(Resource):
             print("ERROR:", str(e))
             return {'error': str(e)}, 500
 
+    @role_required(roles = ['ADMIN', 'cliente'])
     def delete(self, id):
         try:
             usuario = UsuarioModel.query.get(id)

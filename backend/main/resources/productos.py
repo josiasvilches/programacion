@@ -1,7 +1,9 @@
 from flask_restful import Resource
 from flask import request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from main.auth.decorators import role_required
 from .. import db
-from main.models import ProductoModel as ProductoModel 
+from main.models import ProductoModel as ProductoModel, UsuarioModel as UsuarioModel
 
 class Productos(Resource):
     def get(self):
@@ -28,14 +30,27 @@ class Productos(Resource):
 
             productos = productos.paginate(page=page, per_page=per_page, error_out=True)
 
-            return jsonify({'productos': [producto.to_json() for producto in productos],
+            current_identity = get_jwt_identity()
+            if current_identity:
+                usuario = db.session.query(UsuarioModel).get(current_identity)
+                if usuario.rol == 'ADMIN':
+                    productos_json = [producto.to_json_complete() for producto in productos.items]
+                elif usuario.rol == 'USER':
+                    productos_json = [producto.to_json() for producto in productos.items]
+                else:
+                    productos_json = [producto.to_json_short() for producto in productos.items]
+            else:
+                productos_json = [producto.to_json_short() for producto in productos.items]
+
+            return jsonify({'productos': productos_json,
                             'total': productos.total,
                             'pages': productos.pages,
                             'page': page})
         except Exception as e:
             print("ERROR:", str(e))
             return {'error': str(e)}, 500
-
+    
+    @role_required(roles=['ADMIN'])
     def post(self):
         """
         Se espera recibir un JSON con la siguiente estructura:
@@ -73,26 +88,37 @@ class Productos(Resource):
 
 
 class Producto(Resource):
+    
+    @jwt_required(optional=True)
     def get(self, id):
         try:
             producto = ProductoModel.query.get(id)
             if producto is None:
                 return {"mensaje": "Producto no encontrado"}, 404
 
-            return producto.to_json(), 200
-
+            current_identity = get_jwt_identity()
+            if current_identity:
+                usuario = db.session.query(UsuarioModel).get(current_identity)
+                if usuario.rol == 'ADMIN':
+                    return producto.to_json_complete(), 200
+                elif usuario.rol == 'cliente':
+                    return producto.to_json(), 200
+                else:
+                    return producto.to_json_short(), 200
+            else:
+                return producto.to_json_short(), 200
         except Exception as e:
             print("ERROR:", str(e))
             return {'error': str(e)}, 500
 
+    @role_required(roles=['ADMIN'])
     def put(self, id):
-
         try:
             producto = ProductoModel.query.get(id)
             if producto is None:
                 return {"mensaje": "Producto no encontrado"}, 404
-            data = request.get_json() or {}
 
+            data = request.get_json() or {}
             if 'nombre' in data:
                 producto.nombre = data['nombre']
             if 'precio' in data:
@@ -106,12 +132,13 @@ class Producto(Resource):
             if 'imagen_url' in data:
                 producto.imagen_url = data['imagen_url']
             db.session.commit()
-            return producto.to_json(), 200
+            return producto.to_json_complete(), 200
         except Exception as e:
             db.session.rollback()
             print("ERROR:", str(e))
             return {"mensaje": f"Error al actualizar el producto: {str(e)}"}, 500
 
+    @role_required(roles=['ADMIN'])
     def delete(self, id):
         try:
             producto = ProductoModel.query.get(id)

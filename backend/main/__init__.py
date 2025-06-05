@@ -1,13 +1,16 @@
+import os
 from flask import Flask
 from dotenv import load_dotenv
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
-import os
+from flask_migrate import Migrate
+from flask_jwt_extended import JWTManager
+from sqlalchemy.sql import text  # Importar text para consultas SQL literales
 
 # Inicializamos restful y base de datos
 api = Api()
 db = SQLAlchemy()
+jwt = JWTManager()
 
 def create_app():
     app = Flask(__name__)
@@ -18,7 +21,7 @@ def create_app():
 
     # Definir carpeta y archivo de base de datos
     db_folder = os.path.join(base_dir, 'DB')
-    db_name = os.getenv('DATABASE_NAME', 'database.sqlite')
+    db_name = os.getenv('DATABASE_NAME', 'grupof.db')
     db_full_path = os.path.join(db_folder, db_name)
 
     # Crear carpeta DB si no existe
@@ -36,13 +39,14 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
+    migrate = Migrate(app, db)  # Mover la inicialización de Migrate aquí
 
     # Crear las tablas
     with app.app_context():
         try:
             from main.models import ValoracionModel, ProductoModel, UsuarioModel, PedidoModel, PedidoProductoModel
 
-            db.session.execute(text('SELECT 1'))
+            db.session.execute(text('SELECT 1'))  # Usar text() para la consulta SQL
             print("Conexión a la base de datos exitosa.")
 
             db.create_all()
@@ -51,7 +55,6 @@ def create_app():
         except Exception as e:
             print("Error al conectar o crear tablas:")
             print(e)
-
 
     import main.resources as resources
 
@@ -66,8 +69,11 @@ def create_app():
     api.add_resource(resources.CategoriasResource, '/categorias')
     api.add_resource(resources.CategoriaResource, '/categoria/<id>')
 
-
     api.init_app(app)
+    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES'))
+    jwt.init_app(app)
+
+    from main.auth import routes
+    app.register_blueprint(routes.auth)
     return app
-    # api.add_resource(resources.LoginResource, '/login')
-    # api.add_resource(resources.LogoutResource, '/logout')
