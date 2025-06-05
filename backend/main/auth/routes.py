@@ -51,7 +51,7 @@ def login():
             return {'mensaje': 'Credenciales inválidas'}, 401
 
         # Crear token de acceso
-        access_token = create_access_token(identity={'usuario_id': usuario.usuario_id, 'rol': usuario.rol})
+        access_token = create_access_token(identity=usuario)
         data = {
             'mensaje': f'Bienvenido {usuario.nombre}',
             'access_token': access_token,
