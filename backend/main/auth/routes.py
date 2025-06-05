@@ -52,6 +52,7 @@ def login():
 
         # Crear token de acceso
         access_token = create_access_token(identity=usuario)
+
         data = {
             'mensaje': f'Bienvenido {usuario.nombre}',
             'access_token': access_token,

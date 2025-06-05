@@ -13,7 +13,7 @@ def role_required(roles):
             if claims.get('rol') in roles:
                 return fn(*args, **kwargs)
             else:
-                return jsonify({'mensaje': 'Acceso denegado: rol no autorizado'}), 403
+                return ({'mensaje': 'Acceso denegado: rol no autorizado'}), 403
         return wrapper
     return decorator
 
@@ -21,10 +21,7 @@ def role_required(roles):
 @jwt.user_identity_loader
 def user_identity_lookup(usuario):
     # Devuelve un diccionario con más información del usuario
-    return {
-        'usuario_id': usuario.usuario_id,
-        'rol': usuario.rol
-    }
+    return str(usuario.usuario_id)
 
 # define qué atributos se guardarán en el token JWT
 @jwt.additional_claims_loader

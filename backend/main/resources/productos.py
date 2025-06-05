@@ -63,19 +63,23 @@ class Productos(Resource):
             "imagen_url": "https://url.com/imagen.jpg"
           }
         """
-        data = request.get_json() or {}
-        print(data)
-        if not all(key in data for key in ('nombre', 'precio', 'stock')):
-            return {"mensaje": "Faltan datos requeridos ('nombre', 'precio', 'stock', 'id_categoria')"}, 400
-
         try:
+            current_identity = get_jwt_identity()
+            if not isinstance(current_identity, str):
+                return {"mensaje": "Identidad del token no válida"}, 400
+
+            data = request.get_json() or {}
+            print(data)
+            if not all(key in data for key in ('nombre', 'precio', 'stock')):
+                return {"mensaje": "Faltan datos requeridos ('nombre', 'precio', 'stock', 'id_categoria')"}, 400
+
             nuevo_producto = ProductoModel(
                 nombre=data['nombre'],
                 precio=data['precio'],
                 stock=data['stock'],
                 id_categoria=data.get('id_categoria'),
-                descripcion=data.get('descripcion'),   
-                imagen_url=data.get('imagen_url')       
+                descripcion=data.get('descripcion'),
+                imagen_url=data.get('imagen_url')
             )
             db.session.add(nuevo_producto)
             db.session.commit()
