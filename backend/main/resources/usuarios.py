@@ -97,13 +97,22 @@ class Usuario(Resource):
             print("ERROR:", str(e))
             return {'error': str(e)}, 500
 
-    @role_required(roles = ['ADMIN', 'cliente'])
+    @role_required(roles=['ADMIN', 'cliente'])
     def delete(self, id):
         try:
             usuario = UsuarioModel.query.get(id)
             if usuario is None:
                 return {'mensaje': 'Usuario no encontrado'}, 404
 
+            # Obtener el rol y la identidad del usuario actual
+            rol = get_jwt_identity().get('rol')  # Obtener el rol del token JWT
+            current_identity = get_jwt_identity()  # Obtener la identidad del usuario actual
+
+            # Verificar si el usuario tiene permisos para eliminar
+            if rol != 'ADMIN' and usuario.usuario_id != current_identity:
+                return {'mensaje': 'No tiene permisos para eliminar este usuario'}, 403
+
+            # Cambiar el estado del usuario a suspendido
             usuario.estado = 'suspendido'
             db.session.commit()
             return {'mensaje': 'Usuario suspendido con éxito'}, 200
