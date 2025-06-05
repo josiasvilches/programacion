@@ -1,6 +1,7 @@
 from flask import request, jsonify, Blueprint
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from main.models import UsuarioModel
+from main.mail.functions import sendMail
 from .. import db
 
 auth = Blueprint('auth', __name__, url_prefix='/auth')
@@ -24,15 +25,17 @@ def register():
         if usuario_existente:
             return {'mensaje': 'El email ya pertenece a un usuario'}, 409
 
-        # Crear nuevo usuario
-        nuevo_usuario = UsuarioModel(nombre=nombre, email=email, plain_password=password, numero=numero, rol=rol)
-        db.session.add(nuevo_usuario)
-        db.session.commit()
+        else:
+            # Crear nuevo usuario
+            nuevo_usuario = UsuarioModel(nombre=nombre, email=email, plain_password=password, numero=numero, rol=rol)
+            db.session.add(nuevo_usuario)
+            db.session.commit()
+            send = sendMail([nuevo_usuario.email], "¡Bienvenid@ a Grupo F' Rotiseria!", "register", nuevo_usuario=nuevo_usuario)
 
-        return {'mensaje': f'Usuario {nombre} registrado exitosamente'}, 201
     except Exception as e:
         print("ERROR:", str(e))
         return {'error': str(e)}, 500
+    return {'mensaje': f'Usuario {nombre} registrado exitosamente'}, 201
 
 # Método de login
 @auth.route('/login', methods=['POST'])

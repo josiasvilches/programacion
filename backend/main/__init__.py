@@ -6,11 +6,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from sqlalchemy.sql import text  # Importar text para consultas SQL literales
+from flask_mail import Mail
 
 # Inicializamos restful y base de datos
 api = Api()
 db = SQLAlchemy()
 jwt = JWTManager()
+mailsender = Mail()
 
 def create_app():
     app = Flask(__name__)
@@ -70,10 +72,25 @@ def create_app():
     api.add_resource(resources.CategoriaResource, '/categoria/<id>')
 
     api.init_app(app)
+
+    # Configuración de JWT
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES'))
     jwt.init_app(app)
 
+    # Configuración de blueprint
     from main.auth import routes
     app.register_blueprint(routes.auth)
+
+    # configuración de correo
+    app.config['MAIL_HOSTNAME'] = os.getenv('MAIL_HOSTNAME')
+    app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+    app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT'))
+    app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS')
+    app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+    app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+    app.config['MAIL_DEFAULT_SENDER'] = os.getenv('FLASKY_MAIL_SENDER')
+
+    mailsender.init_app(app)
+
     return app

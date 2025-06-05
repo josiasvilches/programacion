@@ -4,3 +4,4 @@ Flask-RESTful==0.3.10
 Flask-SQLAlchemy==3.1.1
 flask_migrate==4.0.0
 flask-jwt-extended
+flask_mail
