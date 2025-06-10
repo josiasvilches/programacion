@@ -1,5 +1,5 @@
 from flask import request, jsonify, Blueprint
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token, get_jwt, verify_jwt_in_request
 from main.models import UsuarioModel
 from main.mail.functions import sendMail
 from .. import db
@@ -55,16 +55,29 @@ def login():
 
         # Crear token de acceso
         access_token = create_access_token(identity=usuario)
+        refresh_token = create_refresh_token(identity=usuario)
 
         data = {
             'mensaje': f'Bienvenido {usuario.nombre}',
             'access_token': access_token,
+            'refresh_token': refresh_token,
             'rol': usuario.rol
         }
         return data, 200
     except Exception as e:
         print("ERROR:", str(e))
         return {'error': str(e)}, 500
+    
+@auth.route('/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+def refresh():
+    usuario_id = get_jwt_identity()
+    usuario = UsuarioModel.query.get(usuario_id)
+    if not usuario:
+        return {"msg": "Usuario no encontrado"}, 404
+
+    new_access  = create_access_token(identity=usuario, fresh=False)
+    return {'access_token': new_access}, 200
 
 # Método de logout
 @auth.route('/logout', methods=['POST'])
@@ -99,3 +112,4 @@ def protected():
     except Exception as e:
         print("ERROR:", str(e))
         return {'error': str(e)}, 500
+
