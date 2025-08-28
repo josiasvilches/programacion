@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Menú | Rotisería Cacho</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8f9fa;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 0.25rem rgba(239, 68, 68, 0.1);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border: none;
+        }
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="bg-white shadow-sm sticky-top">
+        <div class="container-xl px-4 py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <button onclick="goBack()" class="d-flex align-items-center gap-2 text-secondary text-decoration-none btn btn-link px-0" title="Volver al panel principal">
+                        <i class="bi bi-arrow-left"></i>
+                        <span class="fw-medium">Volver</span>
+                    </button>
+                    <div class="vr"></div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-danger rounded-3 d-flex align-items-center justify-content-center text-white fw-bold" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                            RC
+                        </div>
+                        <div>
+                            <h1 class="h5 fw-bold text-dark mb-0">Gestión de Menú</h1>
+                            <p class="mb-0 text-muted" style="font-size: 0.85rem;">Panel de Administración</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-end">
+                        <p class="small fw-medium text-dark mb-0">Admin</p>
+                    </div>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background-color: #e5e7eb;">
+                         <i class="bi bi-person-fill text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container-xl px-4 py-5">
+        <div class="bg-white rounded-3 shadow-sm border p-4 mb-5">
+            <div class="row g-3 justify-content-between align-items-center">
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+                        <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Buscar producto por nombre...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select id="categoryFilter" class="form-select">
+                        <option value="">Todas las categorías</option>
+                    </select>
+                </div>
+                <div class="col-md-auto d-flex gap-2">
+                    <button onclick="openProductModal()" class="gradient-bg text-white btn px-4 py-2 fw-medium d-flex align-items-center gap-2">
+                        <i class="bi bi-plus-lg"></i>
+                        <span>Nuevo Producto</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="productsGrid" class="row g-4">
+            </div>
+    </div>
+    <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4">
+                <form id="productForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title h5 fw-bold" id="productModalTitle"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="productId">
+                        <div class="mb-3">
+                            <label for="productName" class="form-label small fw-medium">Nombre</label>
+                            <input type="text" id="productName" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productDescription" class="form-label small fw-medium">Descripción</label>
+                            <textarea id="productDescription" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col">
+                                <label for="productPrice" class="form-label small fw-medium">Precio</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" id="productPrice" class="form-control" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <label for="productCategory" class="form-label small fw-medium">Categoría</label>
+                                <select id="productCategory" class="form-select" required></select>
+                            </div>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="productStock" checked>
+                            <label class="form-check-label" for="productStock">Disponible en stock</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger gradient-bg">Guardar Producto</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="categoryModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content rounded-4">
+                <form id="categoryForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title h5 fw-bold">Nueva Categoría</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label for="categoryName" class="form-label small fw-medium">Nombre</label>
+                        <input type="text" id="categoryName" class="form-control" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger gradient-bg">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let categories = {
+            1: { id: 1, name: "Platos Principales" },
+            2: { id: 2, name: "Guarniciones" },
+            3: { id: 3, name: "Postres" },
+            4: { id: 4, name: "Bebidas" }
+        };
+        let products = [
+            { id: 1, name: "Pollo al Spiedo", description: "Pollo entero, dorado a la perfección...", price: 3500, categoryId: 1, stock: true },
+            { id: 2, name: "Milanesas", description: "Crocantes por fuera, tiernas por dentro...", price: 2800, categoryId: 1, stock: true },
+            { id: 3, name: "Empanadas", description: "Masa casera horneada diariamente...", price: 450, categoryId: 1, stock: false },
+            { id: 4, name: "Papas Fritas", description: "Porción grande de papas fritas caseras.", price: 1200, categoryId: 2, stock: true },
+            { id: 5, name: "Ensalada Mixta", description: "Lechuga, tomate y cebolla.", price: 900, categoryId: 2, stock: true },
+            { id: 6, name: "Flan Casero", description: "Flan casero con dulce de leche o crema.", price: 800, categoryId: 3, stock: true },
+            { id: 7, name: "Gaseosa 1.5L", description: "Línea Coca-Cola.", price: 700, categoryId: 4, stock: true },
+        ];
+        let productModal, categoryModal;
+        function getCategoryName(categoryId) {
+            return categories[categoryId] ? categories[categoryId].name : 'Sin categoría';
+        }
+        function getProductEmoji(productName) {
+            const name = productName.toLowerCase();
+            if (name.includes('pollo')) return '🍗';
+            if (name.includes('milanesa')) return '🥩';
+            if (name.includes('empanada')) return '🥟';
+            if (name.includes('papas')) return '🍟';
+            if (name.includes('ensalada')) return '🥗';
+            if (name.includes('flan')) return '🍮';
+            if (name.includes('gaseosa')) return '🥤';
+            return '🍽️';
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            productModal = new bootstrap.Modal(document.getElementById('productModal'));
+            categoryModal = new bootstrap.Modal(document.getElementById('categoryModal'));
+            document.getElementById('searchInput').addEventListener('input', renderProducts);
+            document.getElementById('categoryFilter').addEventListener('change', renderProducts);
+            document.getElementById('productForm').addEventListener('submit', handleProductFormSubmit);
+            document.getElementById('categoryForm').addEventListener('submit', handleCategoryFormSubmit);
+            populateCategoryFilters();
+            renderProducts();
+            updateStats();
+        });
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            const categoryValue = document.getElementById('categoryFilter').value;
+            const filteredProducts = products.filter(p => {
+                const nameMatch = p.name.toLowerCase().includes(searchValue);
+                const categoryMatch = categoryValue ? p.categoryId == categoryValue : true;
+                return nameMatch && categoryMatch;
+            });
+            grid.innerHTML = ''; 
+            if (filteredProducts.length === 0) {
+                grid.innerHTML = `<div class="col-12"><div class="text-center p-5 bg-light rounded-3"><i class="bi bi-search fs-1"></i><h4 class="mt-3">No se encontraron productos</h4><p class="text-muted">Intenta cambiar los filtros.</p></div></div>`;
+                return;
+            }
+            filteredProducts.forEach(product => {
+                const cardHtml = `
+                    <div class="col-md-6 col-lg-4 fade-in">
+                        <div class="card h-100 product-card shadow-sm">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex align-items-start mb-3">
+                                    <div class="bg-light rounded-3 d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px; min-width: 50px;">
+                                        <span class="fs-4">${getProductEmoji(product.name)}</span>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h5 class="card-title h6 fw-bold text-dark mb-1">${product.name}</h5>
+                                        <p class="card-text small text-muted">${product.description}</p>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" ${product.stock ? 'checked' : ''} onchange="toggleStock(${product.id})">
+                                    </div>
+                                </div>
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <span class="badge" style="background-color: #fee2e2; color: #b91c1c;">${getCategoryName(product.categoryId)}</span>
+                                        </div>
+                                        <p class="h5 fw-bold text-dark mb-0">$${product.price.toFixed(2)}</p>
+                                    </div>
+                                    <div class="d-grid gap-2 d-sm-flex">
+                                        <button onclick="editProduct(${product.id})" class="btn btn-sm btn-outline-secondary w-100">Editar</button>
+                                        <button onclick="deleteProduct(${product.id})" class="btn btn-sm btn-outline-danger w-100">Eliminar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += cardHtml;
+            });
+        }
+        function populateCategoryFilters() {
+            const productCategorySelect = document.getElementById('productCategory');
+            const categoryFilterSelect = document.getElementById('categoryFilter');
+            productCategorySelect.innerHTML = '';
+            categoryFilterSelect.innerHTML = '<option value="">Todas las categorías</option>';
+            for (const id in categories) {
+                const option = `<option value="${id}">${categories[id].name}</option>`;
+                productCategorySelect.innerHTML += option;
+                categoryFilterSelect.innerHTML += option;
+            }
+        }
+        function openProductModal(id = null) {
+            const form = document.getElementById('productForm');
+            form.reset();
+            const title = document.getElementById('productModalTitle');
+            if (id) {
+                const product = products.find(p => p.id === id);
+                title.textContent = 'Editar Producto';
+                document.getElementById('productId').value = product.id;
+                document.getElementById('productName').value = product.name;
+                document.getElementById('productDescription').value = product.description;
+                document.getElementById('productPrice').value = product.price;
+                document.getElementById('productCategory').value = product.categoryId;
+                document.getElementById('productStock').checked = product.stock;
+            } else {
+                title.textContent = 'Nuevo Producto';
+                document.getElementById('productId').value = '';
+            }
+            productModal.show();
+        }
+        function handleProductFormSubmit(event) {
+            event.preventDefault();
+            const formData = {
+                id: document.getElementById('productId').value,
+                name: document.getElementById('productName').value,
+                description: document.getElementById('productDescription').value,
+                price: parseFloat(document.getElementById('productPrice').value),
+                categoryId: parseInt(document.getElementById('productCategory').value),
+                stock: document.getElementById('productStock').checked
+            };
+            if (formData.id) {
+                const index = products.findIndex(p => p.id == formData.id);
+                products[index] = { ...products[index], ...formData };
+            } else {
+                formData.id = (products.length > 0 ? Math.max(...products.map(p => p.id)) : 0) + 1;
+                products.push(formData);
+            }
+            renderProducts();
+            updateStats();
+            productModal.hide();
+        }
+        function openCategoryModal() {
+            document.getElementById('categoryForm').reset();
+            categoryModal.show();
+        }
+        function handleCategoryFormSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('categoryName').value;
+            if (name) {
+                const newId = (Object.keys(categories).length > 0 ? Math.max(...Object.keys(categories).map(Number)) : 0) + 1;
+                categories[newId] = { id: newId, name };
+                populateCategoryFilters();
+                updateStats();
+                categoryModal.hide();
+            }
+        }
+        function editProduct(id) {
+            openProductModal(id);
+        }
+        function deleteProduct(id) {
+            if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+                products = products.filter(p => p.id !== id);
+                renderProducts();
+                updateStats();
+            }
+        }
+        function toggleStock(id) {
+            const product = products.find(p => p.id === id);
+            if(product) {
+                product.stock = !product.stock;
+            }
+            updateStats();
+        }
+        function goBack() {
+            alert('Navegando de vuelta al panel principal...');
+        }
+    </script>
+</body>
+</html>
