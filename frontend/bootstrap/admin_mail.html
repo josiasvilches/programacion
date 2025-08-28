@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promociones por Email - Panel de Administración | Rotisería Cacho</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8f9fa;
+        }
+        .smooth-transition {
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 0.25rem rgba(239, 68, 68, 0.1);
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border: none;
+        }
+        .promo-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid #ef4444;
+        }
+        .promo-card:hover {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        .email-preview {
+            background: #f9fafb;
+            border: 2px dashed #d1d5db;
+            min-height: 300px;
+        }
+        .template-card {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .template-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .template-card.selected {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+        .form-check-input:checked {
+            background-color: #ef4444;
+            border-color: #ef4444;
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        .status-sent {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        .status-draft {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        }
+        .status-scheduled {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        .status-sending {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="bg-white shadow-sm sticky-top">
+        <div class="container-xl px-4 py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <button onclick="goBack()" class="d-flex align-items-center gap-2 text-secondary text-decoration-none btn btn-link px-0" title="Volver al panel principal">
+                        <i class="bi bi-arrow-left"></i>
+                        <span class="fw-medium">Volver</span>
+                    </button>
+                    <div class="vr"></div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-danger rounded-3 d-flex align-items-center justify-content-center text-white fw-bold" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                            RC
+                        </div>
+                        <div>
+                            <h1 class="h5 fw-bold text-dark mb-0">Promociones por Email</h1>
+                            <p class="mb-0 text-muted" style="font-size: 0.85rem;">Marketing y Comunicaciones</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-end">
+                        <p class="small fw-medium text-dark mb-0">Admin</p>
+                    </div>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background-color: #e5e7eb;">
+                         <i class="bi bi-person-fill text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container-xl px-4 py-5">
+        <div class="bg-white rounded-3 shadow-sm border p-4 mb-5">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
+                <div>
+                    <h2 class="h5 fw-bold text-dark">Campañas de Email</h2>
+                    <p class="text-muted mb-0">Crea y envía promociones a tus clientes</p>
+                </div>
+                <div class="d-flex align-items-center gap-2 mt-3 mt-sm-0">
+                    <button onclick="viewTemplates()" class="btn btn-light d-flex align-items-center gap-2">
+                        <i class="bi bi-layout-wtf"></i>
+                        <span>Plantillas</span>
+                    </button>
+                    <button onclick="openNewCampaignModal()" class="gradient-bg text-white btn px-4 py-2 fw-medium hover-lift smooth-transition d-flex align-items-center gap-2">
+                        <i class="bi bi-plus-lg"></i>
+                        <span>Nueva Campaña</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="vstack gap-3" id="campaignsList">
+            </div>
+    </div>
+    <div class="modal fade" id="campaignModal" tabindex="-1" aria-labelledby="campaignModalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-fullscreen-lg-down modal-xl">
+        <div class="modal-content rounded-4">
+          <div class="modal-header border-bottom">
+            <h5 class="modal-title h5 fw-bold text-dark" id="campaignModalTitle">Nueva Campaña de Email</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <form id="campaignForm">
+                        <div class="vstack gap-3">
+                            <div>
+                                <label for="campaignName" class="form-label small fw-medium">Nombre de la Campaña</label>
+                                <input type="text" id="campaignName" class="form-control" placeholder="Ej: Promoción Fin de Semana" required>
+                            </div>
+                            <div>
+                                <label for="campaignSubject" class="form-label small fw-medium">Asunto del Email</label>
+                                <input type="text" id="campaignSubject" class="form-control" placeholder="¡Oferta especial solo para ti!" required>
+                            </div>
+                            <div>
+                                <label class="form-label small fw-medium">Plantilla</label>
+                                <div class="row g-2" id="templateSelector">
+                                    <div class="col">
+                                        <div class="template-card border rounded-3 p-3 text-center" onclick="selectTemplate('promo')" data-template="promo">
+                                            <div class="mx-auto mb-2 rounded-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: #fee2e2;">
+                                                <i class="bi bi-tag-fill fs-4" style="color: #dc2626;"></i>
+                                            </div>
+                                            <p class="small fw-medium mb-0">Promoción</p>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="template-card border rounded-3 p-3 text-center" onclick="selectTemplate('news')" data-template="news">
+                                            <div class="mx-auto mb-2 rounded-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: #dbeafe;">
+                                                <i class="bi bi-newspaper fs-4" style="color: #2563eb;"></i>
+                                            </div>
+                                            <p class="small fw-medium mb-0">Noticias</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="campaignContent" class="form-label small fw-medium">Contenido Principal</label>
+                                <textarea id="campaignContent" rows="5" class="form-control" placeholder="Escribe aquí el contenido de tu promoción..."></textarea>
+                            </div>
+                            <div>
+                                <label for="campaignCTA" class="form-label small fw-medium">Llamada a la Acción</label>
+                                <input type="text" id="campaignCTA" class="form-control" placeholder="¡Pedir Ahora!">
+                            </div>
+                            <div>
+                                <label class="form-label small fw-medium">Programar Envío</label>
+                                <div class="row g-2">
+                                    <div class="col"><input type="date" id="campaignDate" class="form-control"></div>
+                                    <div class="col"><input type="time" id="campaignTime" class="form-control"></div>
+                                </div>
+                                <p class="form-text mt-1">Dejar vacío para envío inmediato</p>
+                            </div>
+                            <div class="border-top pt-3">
+                                <h4 class="h6 fw-bold text-dark mb-3">Destinatarios</h4>
+                                <div class="form-check p-3 bg-light rounded-3">
+                                    <input class="form-check-input" type="checkbox" id="selectAll" onchange="toggleAllUsers()">
+                                    <label class="form-check-label d-flex justify-content-between w-100" for="selectAll">
+                                        <span class="fw-medium text-dark">Seleccionar Todos</span>
+                                        <span class="small text-muted" id="selectedCount">0 seleccionados</span>
+                                    </label>
+                                </div>
+                                <div class="mt-2 vstack gap-2" style="max-height: 150px; overflow-y: auto;" id="usersList">
+                                    </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-6">
+                    <div class="position-sticky" style="top: 20px;">
+                        <h4 class="h6 fw-bold text-dark mb-3">Vista Previa</h4>
+                        <div class="email-preview rounded-3 p-4" id="emailPreview">
+                            <div class="text-center text-muted">
+                                <i class="bi bi-envelope-open fs-1"></i>
+                                <p class="mt-2">La vista previa aparecerá aquí</p>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <button type="button" onclick="saveDraft()" class="btn btn-light">Guardar Borrador</button>
+                            <button type="button" onclick="sendCampaign()" class="gradient-bg btn text-white hover-lift">Enviar Campaña</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="templatesModal" tabindex="-1" aria-labelledby="templatesModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-4">
+          <div class="modal-header">
+            <h5 class="modal-title h5 fw-bold" id="templatesModalLabel">Plantillas de Email</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="template-card card h-100">
+                        <div class="card-header text-white" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                            <h3 class="h6 mb-0">🍗 Promoción Especial</h3>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="h6">Plantilla Promocional</h4>
+                            <p class="small text-muted">Perfecta para ofertas y descuentos.</p>
+                        </div>
+                        <div class="card-footer bg-white border-0">
+                           <button onclick="useTemplate('promo')" class="btn btn-danger w-100">Usar Plantilla</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="template-card card h-100">
+                        <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+                            <h3 class="h6 mb-0">📰 Novedades</h3>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="h6">Plantilla de Noticias</h4>
+                            <p class="small text-muted">Ideal para anuncios y novedades.</p>
+                        </div>
+                         <div class="card-footer bg-white border-0">
+                           <button onclick="useTemplate('news')" class="btn btn-primary w-100">Usar Plantilla</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="template-card card h-100">
+                        <div class="card-header text-white" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                             <h3 class="h6 mb-0">🎉 Evento</h3>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="h6">Plantilla de Eventos</h4>
+                            <p class="small text-muted">Para celebraciones y eventos.</p>
+                        </div>
+                         <div class="card-footer bg-white border-0">
+                           <button onclick="useTemplate('event')" class="btn btn-success w-100">Usar Plantilla</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let campaigns = [
+            { id: 1, name: "Promoción Fin de Semana", subject: "¡50% OFF en todos los platos!", status: "sent", recipients: 45, openRate: 72, clickRate: 38, sentDate: "2024-01-20", template: "promo" },
+            { id: 2, name: "Nuevos Platos de Temporada", subject: "Descubre nuestros nuevos sabores", status: "scheduled", recipients: 38, scheduledDate: "2024-01-25", template: "news" },
+            { id: 3, name: "Oferta Especial Miércoles", subject: "Miércoles de descuentos especiales", status: "draft", recipients: 0, template: "promo" }
+        ];
+        let users = [
+            { id: 1, name: "María González", email: "maria@email.com", status: "active", role: "user" },
+            { id: 2, name: "Carlos Rodríguez", email: "carlos@email.com", status: "active", role: "user" },
+            { id: 3, name: "Ana Martínez", email: "ana@email.com", status: "active", role: "user" },
+            { id: 4, name: "Luis Torres", email: "luis@email.com", status: "active", role: "user" },
+            { id: 5, name: "Laura Sánchez", email: "laura@email.com", status: "active", role: "user" },
+            { id: 6, name: "Diego Fernández", email: "diego@email.com", status: "active", role: "user" },
+            { id: 7, name: "Carmen López", email: "carmen@email.com", status: "active", role: "user" },
+            { id: 8, name: "Roberto Silva", email: "roberto@email.com", status: "active", role: "user" },
+            { id: 9, name: "Patricia Ruiz", email: "patricia@email.com", status: "active", role: "user" },
+            { id: 10, name: "Fernando Castro", email: "fernando@email.com", status: "active", role: "user" },
+            { id: 11, name: "Mónica Herrera", email: "monica@email.com", status: "active", role: "user" },
+            { id: 12, name: "Alejandro Morales", email: "alejandro@email.com", status: "active", role: "user" }
+        ];
+        let selectedUsers = [];
+        let selectedTemplate = 'promo';
+        let campaignModal, templatesModal;
+        document.addEventListener('DOMContentLoaded', function() {
+            campaignModal = new bootstrap.Modal(document.getElementById('campaignModal'));
+            templatesModal = new bootstrap.Modal(document.getElementById('templatesModal'));
+            renderCampaigns();
+            updateStats();
+            loadUsers();
+            setupFormListeners();
+        });
+        function renderCampaigns() {
+            const container = document.getElementById('campaignsList');
+            if (!container) return;
+            container.innerHTML = campaigns.map(campaign => `
+                <div class="promo-card bg-white rounded-3 shadow-sm p-4 fade-in">
+                    <div class="d-flex align-items-start justify-content-between mb-3">
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <h3 class="h6 fw-bold text-dark mb-0">${campaign.name}</h3>
+                                <span class="status-${campaign.status} text-white small px-2 py-1 rounded-pill fw-medium">
+                                    ${getStatusName(campaign.status)}
+                                </span>
+                            </div>
+                            <p class="text-muted mb-2">${campaign.subject}</p>
+                            <div class="d-flex align-items-center gap-3 small text-muted">
+                                <span><i class="bi bi-people-fill"></i> ${campaign.recipients} destinatarios</span>
+                                ${campaign.status === 'sent' ? `
+                                    <span><i class="bi bi-bar-chart-fill"></i> ${campaign.openRate}% apertura</span>
+                                    <span><i class="bi bi-cursor-fill"></i> ${campaign.clickRate}% clics</span>
+                                    <span><i class="bi bi-calendar-check"></i> ${formatDate(campaign.sentDate)}</span>
+                                ` : campaign.status === 'scheduled' ? `
+                                    <span><i class="bi bi-clock-history"></i> ${formatDate(campaign.scheduledDate)}</span>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-1">
+                            ${campaign.status === 'draft' ? `
+                                <button onclick="editCampaign(${campaign.id})" class="btn btn-sm btn-warning">Editar</button>
+                                <button onclick="deleteCampaign(${campaign.id})" class="btn btn-sm btn-danger">Eliminar</button>
+                            ` : campaign.status === 'scheduled' ? `
+                                <button onclick="cancelScheduled(${campaign.id})" class="btn btn-sm btn-secondary">Cancelar</button>
+                            ` : `
+                                <button onclick="duplicateCampaign(${campaign.id})" class="btn btn-sm btn-primary">Duplicar</button>
+                            `}
+                        </div>
+                    </div>
+                    ${campaign.status === 'sent' && campaign.openRate ? `
+                    <div class="mt-2">
+                        <div class="d-flex justify-content-between small text-muted mb-1">
+                            <span>Tasa de Apertura</span>
+                            <span>${campaign.openRate}%</span>
+                        </div>
+                        <div class="progress" style="height: 0.5rem;">
+                            <div class="progress-bar" role="progressbar" style="width: ${campaign.openRate}%; background-color: #3b82f6;"></div>
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+        function updateStats() {
+            const activeUsers = users.filter(u => u.status === 'active' && u.role === 'user').length;
+            const sentCampaigns = campaigns.filter(c => c.status === 'sent');
+            const totalSent = sentCampaigns.reduce((sum, c) => sum + c.recipients, 0);
+            document.getElementById('totalSent').textContent = totalSent;
+            const avgOpenRate = sentCampaigns.length > 0 ? Math.round(sentCampaigns.reduce((sum, c) => sum + (c.openRate || 0), 0) / sentCampaigns.length) : 0;
+            document.getElementById('openRate').textContent = `${avgOpenRate}%`;
+            const avgClickRate = sentCampaigns.length > 0 ? Math.round(sentCampaigns.reduce((sum, c) => sum + (c.clickRate || 0), 0) / sentCampaigns.length) : 0;
+            document.getElementById('clickRate').textContent = `${avgClickRate}%`;
+            const scheduledCount = campaigns.filter(c => c.status === 'scheduled').length;
+            document.getElementById('scheduledCount').textContent = scheduledCount;
+        }
+        function loadUsers() {
+            const container = document.getElementById('usersList');
+            const activeUsers = users.filter(u => u.status === 'active' && u.role === 'user');
+            container.innerHTML = activeUsers.map(user => `
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="${user.id}" id="user-${user.id}" onchange="updateSelectedUsers()">
+                    <label class="form-check-label d-flex align-items-center gap-2" for="user-${user.id}">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width: 32px; height: 32px; background-color: #3b82f6; font-size: 0.8rem;">
+                            ${user.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                        </div>
+                        <div>
+                            <p class="fw-medium text-dark mb-0">${user.name}</p>
+                            <p class="small text-muted mb-0">${user.email}</p>
+                        </div>
+                    </label>
+                </div>
+            `).join('');
+        }
+        function setupFormListeners() {
+            ['campaignName', 'campaignSubject', 'campaignContent', 'campaignCTA'].forEach(id => {
+                document.getElementById(id).addEventListener('input', updatePreview);
+            });
+        }
+        function updatePreview() {
+            const subject = document.getElementById('campaignSubject').value || 'Asunto del email';
+            const content = document.getElementById('campaignContent').value || 'Contenido de tu promoción...';
+            const cta = document.getElementById('campaignCTA').value || 'Botón de Acción';
+            const preview = document.getElementById('emailPreview');
+            let bgColor = selectedTemplate === 'promo' ? 'danger' : 'primary';
+            let icon = selectedTemplate === 'promo' ? '🍗' : '📰';
+            preview.innerHTML = `
+                <div class="card overflow-hidden">
+                    <div class="card-header bg-${bgColor} bg-gradient text-white text-center">
+                        <h1 class="h5 fw-bold mb-1">${icon} Rotisería Cacho</h1>
+                        <h2 class="h6">${subject}</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-dark small mb-4" style="line-height: 1.6;">
+                            ${content.replace(/\n/g, '<br>')}
+                        </div>
+                        <div class="text-center">
+                            <button class="btn btn-${bgColor} btn-lg fw-bold">${cta}</button>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light text-center small text-muted">
+                        <p class="mb-0">Rotisería Cacho - Los mejores sabores</p>
+                    </div>
+                </div>`;
+        }
+        function selectTemplate(template) {
+            selectedTemplate = template;
+            document.querySelectorAll('.template-card').forEach(card => card.classList.remove('selected'));
+            document.querySelector(`[data-template="${template}"]`).classList.add('selected');
+            updatePreview();
+        }
+        function toggleAllUsers() {
+            const selectAll = document.getElementById('selectAll').checked;
+            document.querySelectorAll('#usersList .form-check-input').forEach(checkbox => checkbox.checked = selectAll);
+            updateSelectedUsers();
+        }
+        function updateSelectedUsers() {
+            const checkboxes = document.querySelectorAll('#usersList .form-check-input:checked');
+            selectedUsers = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            document.getElementById('selectedCount').textContent = `${selectedUsers.length} seleccionados`;
+            const totalUsers = users.filter(u => u.status === 'active' && u.role === 'user').length;
+            const selectAllCheckbox = document.getElementById('selectAll');
+            selectAllCheckbox.checked = selectedUsers.length === totalUsers;
+            selectAllCheckbox.indeterminate = selectedUsers.length > 0 && selectedUsers.length < totalUsers;
+        }
+        function sendCampaign() {
+            const name = document.getElementById('campaignName').value;
+            const subject = document.getElementById('campaignSubject').value;
+            const content = document.getElementById('campaignContent').value;
+            const date = document.getElementById('campaignDate').value;
+            const time = document.getElementById('campaignTime').value;
+            if (!name || !subject || !content || selectedUsers.length === 0) {
+                alert('Por favor completa todos los campos obligatorios y selecciona al menos un destinatario.');
+                return;
+            }
+            const newCampaign = { id: campaigns.length + 1, name, subject, status: date && time ? 'scheduled' : 'sent', recipients: selectedUsers.length, template: selectedTemplate, sentDate: date && time ? null : new Date().toISOString().split('T')[0], scheduledDate: date && time ? date : null, openRate: date && time ? null : Math.floor(Math.random() * 30) + 60, clickRate: date && time ? null : Math.floor(Math.random() * 20) + 25 };
+            campaigns.unshift(newCampaign);
+            renderCampaigns();
+            updateStats();
+            campaignModal.hide();
+            if (date && time) {
+                alert(`¡Campaña programada exitosamente para el ${formatDate(date)} a las ${time}!`);
+            } else {
+                alert(`¡Campaña enviada exitosamente a ${selectedUsers.length} usuarios!`);
+            }
+        }
+        function saveDraft() {
+            const name = document.getElementById('campaignName').value || 'Borrador sin título';
+            const subject = document.getElementById('campaignSubject').value || 'Sin asunto';
+            const newCampaign = { id: campaigns.length + 1, name, subject, status: 'draft', recipients: selectedUsers.length, template: selectedTemplate };
+            campaigns.unshift(newCampaign);
+            renderCampaigns();
+            updateStats();
+            campaignModal.hide();
+            alert('¡Borrador guardado exitosamente!');
+        }
+        function duplicateCampaign(id) {
+            const campaign = campaigns.find(c => c.id === id);
+            if (!campaign) return;
+            const newCampaign = { ...campaign, id: campaigns.length + 1, name: `${campaign.name} (Copia)`, status: 'draft', recipients: 0, sentDate: null, scheduledDate: null, openRate: null, clickRate: null };
+            campaigns.unshift(newCampaign);
+            renderCampaigns();
+            updateStats();
+            alert('¡Campaña duplicada exitosamente!');
+        }
+        function deleteCampaign(id) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta campaña?')) {
+                campaigns = campaigns.filter(c => c.id !== id);
+                renderCampaigns();
+                updateStats();
+                alert('Campaña eliminada exitosamente.');
+            }
+        }
+        function cancelScheduled(id) {
+            if (confirm('¿Estás seguro de que quieres cancelar esta campaña programada?')) {
+                const campaign = campaigns.find(c => c.id === id);
+                if (campaign) {
+                    campaign.status = 'draft';
+                    campaign.scheduledDate = null;
+                }
+                renderCampaigns();
+                updateStats();
+                alert('Campaña cancelada y guardada como borrador.');
+            }
+        }
+        function openNewCampaignModal() {
+            document.getElementById('campaignModalTitle').textContent = 'Nueva Campaña de Email';
+            document.getElementById('campaignForm').reset();
+            selectedUsers = [];
+            selectedTemplate = 'promo';
+            selectTemplate('promo');
+            document.querySelectorAll('#usersList .form-check-input').forEach(cb => cb.checked = false);
+            updateSelectedUsers();
+            updatePreview();
+            campaignModal.show();
+        }
+        function viewTemplates() {
+            templatesModal.show();
+        }
+        function useTemplate(template) {
+            selectedTemplate = template;
+            templatesModal.hide();
+            openNewCampaignModal();
+            if (template === 'promo') {
+                document.getElementById('campaignSubject').value = '¡Oferta especial solo para ti!';
+                document.getElementById('campaignContent').value = '¡Hola!\n\nTenemos una promoción increíble que no te puedes perder. Disfruta de descuentos especiales en todos nuestros platos favoritos.\n\n¡No dejes pasar esta oportunidad única!';
+                document.getElementById('campaignCTA').value = '¡Ver Ofertas!';
+            } else if (template === 'news') {
+                document.getElementById('campaignSubject').value = 'Novedades en Rotisería Cacho';
+                document.getElementById('campaignContent').value = '¡Hola!\n\nQueremos contarte todas las novedades que tenemos preparadas para ti. Nuevos platos, horarios especiales y mucho más.\n\n¡Mantente al día con nosotros!';
+                document.getElementById('campaignCTA').value = 'Leer Más';
+            }
+            selectTemplate(template);
+        }
+        function getStatusName(status) {
+            const names = { 'sent': 'Enviado', 'draft': 'Borrador', 'scheduled': 'Programado', 'sending': 'Enviando' };
+            return names[status] || status;
+        }
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            return new Date(dateString).toLocaleDateString('es-AR', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+        function goBack() {
+            alert('Navegando de vuelta al panel principal...');
+        }
+    </script>
+</body>
+</html>
