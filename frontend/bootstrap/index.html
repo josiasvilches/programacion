@@ -1,217 +1,419 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rotisería Cacho - Comida Casera</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Inter', sans-serif; background-color: #f9fafb; }
-    .smooth-transition { transition: all 0.3s ease; }
-    .hover-lift:hover { transform: translateY(-5px); }
-    .bg-gray-50 { background-color: #f9fafb; }
-    .bg-gray-100 { background-color: #f3f4f6; }
-    .bg-gray-200 { background-color: #e5e7eb; }
-    .bg-gray-300 { background-color: #d1d5db; }
-    .bg-gray-500 { background-color: #6b7280; }
-    .bg-gray-600 { background-color: #4b5563; }
-    .bg-gray-700 { background-color: #374151; }
-    .bg-gray-800 { background-color: #1f2937; }
-    .bg-gray-900 { background-color: #111827; }
-    .text-gray-300 { color: #d1d5db; }
-    .text-gray-400 { color: #9ca3af; }
-    .text-gray-500 { color: #6b7280; }
-    .text-gray-600 { color: #4b5563; }
-    .text-gray-700 { color: #374151; }
-    .text-gray-800 { color: #1f2937; }
-    .text-yellow-500 { color: #f59e0b; }
-    .bg-yellow-50 { background-color: #fefce8; }
-    .bg-red-50 { background-color: #fef2f2; }
-    .bg-red-500 { background-color: #ef4444; }
-    .bg-red-600 { background-color: #dc2626; }
-    .bg-green-50 { background-color: #ecfdf5; }
-    .bg-green-500 { background-color: #10b981; }
-    .bg-blue-50 { background-color: #eff6ff; }
-    .bg-blue-500 { background-color: #3b82f6; }
-    .bg-blue-600 { background-color: #2563eb; }
-    .bg-purple-500 { background-color: #8b5cf6; }
-    .bg-pink-600 { background-color: #db2777; }
-    .bg-orange-50 { background-color: #fff7ed; }
-    .bg-orange-500 { background-color: #f97316; }
-    .carousel-dot { width:12px; height:12px; border-radius:50%; border:none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotisería Cacho - Comida Casera</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8f9fa;
+        }
+        .smooth-transition {
+            transition: all 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-5px);
+        }
+        /* Estilos para hacer visibles las flechas del carrusel */
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: rgba(220, 53, 69, 0.7); /* Color rojo con transparencia */
+            border-radius: 50%;
+            padding: 1.2rem;
+            background-size: 50%;
+        }
+        .carousel-control-prev, .carousel-control-next {
+            width: 5%; /* Ajusta el ancho para que no ocupen tanto espacio */
+        }
+    </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-md bg-white shadow-sm sticky-top">
-    <div class="container">
-      <a class="d-flex align-items-center text-decoration-none" href="#">
-        <div class="d-flex align-items-center justify-content-center bg-red-500 text-white fw-bold rounded p-2 me-2" style="width:40px; height:40px;">
-          RC
-        </div>
-        <span class="fw-bold text-dark">Rotisería Cacho</span>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navMenu">
-        <button class="btn bg-red-500 text-white px-4 smooth-transition">Pedir Ahora</button>
-      </div>
-    </div>
-  </nav>
-  <section class="bg-white py-5">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-lg-6">
-          <h2 class="display-4 fw-bold text-gray-800 mb-4">Comida casera de toda la vida</h2>
-          <p class="fs-5 text-gray-600 mb-4">Desde 1985 preparamos los mejores platos con el sabor auténtico que recordás de la mesa familiar.</p>
-          <div class="d-flex flex-column flex-sm-row gap-3 mb-4">
-            <button class="btn bg-red-500 text-white px-4 py-2 smooth-transition">Ver Menú</button>
-            <button class="btn border text-gray-700 px-4 py-2 smooth-transition">Llamar: (123) 456-7890</button>
-          </div>
-        </div>
-        <div class="col-lg-6 text-center">
-          <div class="rounded-circle bg-red-50 d-flex align-items-center justify-content-center mx-auto" style="width:320px; height:320px;">
-            <span style="font-size:6rem;">🍗</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section id="menu" class="py-5 bg-gray-50">
-    <div class="container text-center">
-      <h2 class="fw-bold display-6 text-gray-800 mb-3">Nuestros Platos</h2>
-      <p class="fs-5 text-gray-600 mb-5">Los favoritos de siempre</p>
-      <div id="menuCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-          <div class="carousel-item active">
-            <div class="card shadow-sm mx-auto" style="max-width:300px;">
-              <div class="card-body text-center">
-                <div class="rounded-circle bg-red-50 d-flex align-items-center justify-content-center mx-auto mb-3" style="width:80px; height:80px;">🍗</div>
-                <h5 class="fw-bold text-gray-800">Pollo al Spiedo</h5>
-                <p class="text-gray-600">Dorado a la perfección con nuestro adobo secreto</p>
-                <div class="fw-bold text-red-500 fs-4">$3.500 <span class="text-gray-500 fs-6">pollo entero</span></div>
-                <button class="btn bg-red-500 text-white w-100 mt-3">Agregar al Carrito</button>
-              </div>
+    <nav class="navbar navbar-expand-md bg-white shadow-sm sticky-top">
+        <div class="container-xl">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+                <div class="bg-danger rounded-3 d-flex align-items-center justify-content-center text-white fw-bold" style="width: 40px; height: 40px;">
+                    RC
+                </div>
+                <h1 class="h5 fw-bold text-dark mb-0">Rotisería Cacho</h1>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                </ul>
+                <div class="d-flex align-items-center gap-3 mt-3 mt-md-0">
+                    <button class="btn btn-danger">
+                        Pedir Ahora
+                    </button>
+                </div>
             </div>
-          </div>
-          <div class="carousel-item">
-            <div class="card shadow-sm mx-auto" style="max-width:300px;">
-              <div class="card-body text-center">
-                <div class="rounded-circle bg-orange-50 d-flex align-items-center justify-content-center mx-auto mb-3" style="width:80px; height:80px;">🥩</div>
-                <h5 class="fw-bold text-gray-800">Milanesas</h5>
-                <p class="text-gray-600">Crocantes por fuera, tiernas por dentro</p>
-                <div class="fw-bold text-red-500 fs-4">$2.800 <span class="text-gray-500 fs-6">con guarnición</span></div>
-                <button class="btn bg-red-500 text-white w-100 mt-3">Agregar al Carrito</button>
-              </div>
+        </div>
+    </nav>
+    <section id="inicio" class="bg-white py-5">
+        <div class="container-xl py-5">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <h2 class="display-4 fw-bold text-dark mb-4">
+                        Comida casera de toda la vida
+                    </h2>
+                    <p class="lead text-secondary mb-4">
+                        Desde 1985 preparamos los mejores platos con el sabor auténtico que recordás de la mesa familiar.
+                    </p>
+                    
+                    <div class="d-flex flex-column flex-sm-row gap-3 mb-4">
+                        <button class="btn btn-danger btn-lg px-4" onclick="redirectToMenu()">
+                            Ver Menú
+                        </button>
+                        <button class="btn btn-outline-secondary btn-lg px-4">
+                            Llamar: (123) 456-7890
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="bg-danger-subtle rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 320px; height: 320px;">
+                        <span style="font-size: 8rem;">🍗</span>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="carousel-item">
-            <div class="card shadow-sm mx-auto" style="max-width:300px;">
-              <div class="card-body text-center">
-                <div class="rounded-circle bg-yellow-50 d-flex align-items-center justify-content-center mx-auto mb-3" style="width:80px; height:80px;">🥟</div>
-                <h5 class="fw-bold text-gray-800">Empanadas</h5>
-                <p class="text-gray-600">Masa casera horneada diariamente</p>
-                <div class="fw-bold text-red-500 fs-4">$450 <span class="text-gray-500 fs-6">cada una</span></div>
-                <button class="btn bg-red-500 text-white w-100 mt-3">Agregar al Carrito</button>
-              </div>
+        </div>
+    </section>
+    <section id="menu" class="py-5 bg-light">
+        <div class="container-xl py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold text-dark mb-3">Nuestros Platos</h2>
+                <p class="lead text-secondary">Los favoritos de siempre</p>
             </div>
-          </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#menuCarousel" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#menuCarousel" data-bs-slide="next">
-          <span class="carousel-control-next-icon"></span>
-        </button>
-      </div>
-    </div>
-  </section>
-  <section class="py-5 bg-white">
-    <div class="container">
-      <div class="row g-5">
-        <div class="col-lg-6">
-          <h3 class="fw-bold text-gray-800 mb-3">Horarios de Atención</h3>
-          <ul class="list-group mb-4">
-            <li class="list-group-item d-flex justify-content-between"><span>Lunes a Viernes</span><span>11:00 - 23:00</span></li>
-            <li class="list-group-item d-flex justify-content-between"><span>Sábados</span><span>11:00 - 24:00</span></li>
-            <li class="list-group-item d-flex justify-content-between"><span>Domingos</span><span>12:00 - 23:00</span></li>
-          </ul>
-        </div>
-        <div class="col-lg-6">
-          <h3 class="fw-bold text-gray-800 mb-3">Contacto</h3>
-          <p>📞 (123) 456-7890</p>
-          <p>📍 Av. Corrientes 1234, CABA</p>
-          <p>💬 WhatsApp: +54 9 11 1234-5678</p>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section class="py-5 bg-gray-50">
-    <div class="container text-center">
-      <h2 class="fw-bold display-6 text-gray-800 mb-5">Lo que dicen nuestros clientes</h2>
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="card p-4 shadow-sm">
-            <div class="text-yellow-500 mb-3">★★★★★</div>
-            <p class="text-gray-600">"El mejor pollo del barrio. Hace años que vengo y siempre la misma calidad."</p>
-            <div class="d-flex align-items-center mt-3">
-              <div class="rounded-circle bg-blue-500 text-white fw-bold d-flex align-items-center justify-content-center me-2" style="width:40px; height:40px;">M</div>
-              <div><div class="fw-semibold text-gray-800">María</div><small class="text-gray-500">Cliente habitual</small></div>
+            <div id="productCarousel" class="carousel slide">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="col-md-6 col-lg-4 mx-auto">
+                            <div class="card border-0 shadow-sm p-4 hover-lift smooth-transition">
+                                <div class="card-body text-center">
+                                    <div class="bg-danger-subtle rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                        <span class="h1 mb-0">🍗</span>
+                                    </div>
+                                    <h3 class="h5 fw-bold text-dark mb-2">Pollo al Spiedo</h3>
+                                    <p class="text-secondary mb-3">Dorado a la perfección con nuestro adobo secreto</p>
+                                    <p class="h3 fw-bold text-danger mb-3">$3.500 <span class="text-secondary small">/ pollo entero</span></p>
+                                    <button class="btn btn-danger w-100">Agregar al Carrito</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                         <div class="col-md-6 col-lg-4 mx-auto">
+                            <div class="card border-0 shadow-sm p-4 hover-lift smooth-transition">
+                                <div class="card-body text-center">
+                                    <div class="bg-warning-subtle rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                        <span class="h1 mb-0">🥩</span>
+                                    </div>
+                                    <h3 class="h5 fw-bold text-dark mb-2">Milanesas</h3>
+                                    <p class="text-secondary mb-3">Crocantes por fuera, tiernas por dentro</p>
+                                    <p class="h3 fw-bold text-danger mb-3">$2.800 <span class="text-secondary small">/ con guarnición</span></p>
+                                    <button class="btn btn-danger w-100">Agregar al Carrito</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="col-md-6 col-lg-4 mx-auto">
+                            <div class="card border-0 shadow-sm p-4 hover-lift smooth-transition">
+                                <div class="card-body text-center">
+                                    <div class="bg-warning-subtle rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                        <span class="h1 mb-0">🥟</span>
+                                    </div>
+                                    <h3 class="h5 fw-bold text-dark mb-2">Empanadas</h3>
+                                    <p class="text-secondary mb-3">Masa casera horneada diariamente</p>
+                                    <p class="h3 fw-bold text-danger mb-3">$450 <span class="text-secondary small">/ cada una</span></p>
+                                    <button class="btn btn-danger w-100">Agregar al Carrito</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+                <div class="carousel-indicators" style="position: relative; margin-top: 1rem;">
+                    <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+                    <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1"></button>
+                    <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2"></button>
+                </div>
             </div>
-          </div>
         </div>
-        <div class="col-md-4">
-          <div class="card p-4 shadow-sm">
-            <div class="text-yellow-500 mb-3">★★★★★</div>
-            <p class="text-gray-600">"Las empanadas son increíbles y el delivery siempre llega rápido."</p>
-            <div class="d-flex align-items-center mt-3">
-              <div class="rounded-circle bg-green-500 text-white fw-bold d-flex align-items-center justify-content-center me-2" style="width:40px; height:40px;">C</div>
-              <div><div class="fw-semibold text-gray-800">Carlos</div><small class="text-gray-500">Cliente habitual</small></div>
+    </section>
+    <section class="py-5 bg-white">
+        <div class="container-xl py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold text-dark mb-3">Productos Recomendados</h2>
+                <p class="lead text-secondary">Otros platos que te van a encantar</p>
             </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card p-4 shadow-sm">
-            <div class="text-yellow-500 mb-3">★★★★★</div>
-            <p class="text-gray-600">"Tradición familiar que se nota en cada plato. Muy recomendable."</p>
-            <div class="d-flex align-items-center mt-3">
-              <div class="rounded-circle bg-purple-500 text-white fw-bold d-flex align-items-center justify-content-center me-2" style="width:40px; height:40px;">A</div>
-              <div><div class="fw-semibold text-gray-800">Ana</div><small class="text-gray-500">Cliente habitual</small></div>
+            <div id="recommendedCarousel" class="carousel slide">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="row">
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="card border-0 bg-light p-3 h-100 hover-lift smooth-transition">
+                                    <div class="card-body text-center">
+                                        <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                            <span class="h2 mb-0">🍖</span>
+                                        </div>
+                                        <h4 class="h6 fw-bold text-dark mb-2">Asado de Tira</h4>
+                                        <p class="small text-secondary mb-3">Jugoso y tierno, a la parrilla</p>
+                                        <p class="h4 fw-bold text-danger mb-3">$4.200 <span class="small text-secondary">/ kg</span></p>
+                                        <button class="btn btn-danger btn-sm w-100">Agregar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="card border-0 bg-light p-3 h-100 hover-lift smooth-transition">
+                                    <div class="card-body text-center">
+                                        <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                            <span class="h2 mb-0">🥮</span>
+                                        </div>
+                                        <h4 class="h6 fw-bold text-dark mb-2">Empanadas Dulces</h4>
+                                        <p class="small text-secondary mb-3">Membrillo, batata y dulce de leche</p>
+                                        <p class="h4 fw-bold text-danger mb-3">$380 <span class="small text-secondary">/ c.u.</span></p>
+                                        <button class="btn btn-danger btn-sm w-100">Agregar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="card border-0 bg-light p-3 h-100 hover-lift smooth-transition">
+                                    <div class="card-body text-center">
+                                        <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                            <span class="h2 mb-0">🍕</span>
+                                        </div>
+                                        <h4 class="h6 fw-bold text-dark mb-2">Matambre a la Pizza</h4>
+                                        <p class="small text-secondary mb-3">Con salsa, jamón, queso y aceitunas</p>
+                                        <p class="h4 fw-bold text-danger mb-3">$3.200 <span class="small text-secondary">/ porción</span></p>
+                                        <button class="btn btn-danger btn-sm w-100">Agregar</button>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="card border-0 bg-light p-3 h-100 hover-lift smooth-transition">
+                                    <div class="card-body text-center">
+                                        <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                            <span class="h2 mb-0">🥧</span>
+                                        </div>
+                                        <h4 class="h6 fw-bold text-dark mb-2">Tartas Caseras</h4>
+                                        <p class="small text-secondary mb-3">Jamón y queso, verdura, atún</p>
+                                        <p class="h4 fw-bold text-danger mb-3">$2.400 <span class="small text-secondary">/ porción</span></p>
+                                        <button class="btn btn-danger btn-sm w-100">Agregar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="row">
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="card border-0 bg-light p-3 h-100 hover-lift smooth-transition">
+                                    <div class="card-body text-center">
+                                        <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                            <span class="h2 mb-0">🍗</span>
+                                        </div>
+                                        <h4 class="h6 fw-bold text-dark mb-2">Pollo Grillé</h4>
+                                        <p class="small text-secondary mb-3">A la plancha con hierbas aromáticas</p>
+                                        <p class="h4 fw-bold text-danger mb-3">$2.900 <span class="small text-secondary">/ porción</span></p>
+                                        <button class="btn btn-danger btn-sm w-100">Agregar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="card border-0 bg-light p-3 h-100 hover-lift smooth-transition">
+                                    <div class="card-body text-center">
+                                        <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                            <span class="h2 mb-0">🍟</span>
+                                        </div>
+                                        <h4 class="h6 fw-bold text-dark mb-2">Papas Fritas Caseras</h4>
+                                        <p class="small text-secondary mb-3">Cortadas y fritas al momento</p>
+                                        <p class="h4 fw-bold text-danger mb-3">$1.200 <span class="small text-secondary">/ porción</span></p>
+                                        <button class="btn btn-danger btn-sm w-100">Agregar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#recommendedCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#recommendedCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </button>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </section>
-  <footer class="bg-gray-800 text-white py-5" id="contacto">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-4 mb-4">
-          <div class="d-flex align-items-center mb-3">
-            <div class="d-flex align-items-center justify-content-center bg-red-500 text-white fw-bold rounded me-2" style="width:40px; height:40px;">RC</div>
-            <h5 class="fw-bold">Rotisería Cacho</h5>
-          </div>
-          <p class="text-gray-300">Más de 35 años llevando el auténtico sabor argentino a tu mesa.</p>
+    </section>
+    <section class="py-5 bg-white">
+        <div class="container-xl py-5">
+            <div class="row g-5">
+                <div class="col-lg-6">
+                    <h3 class="h4 fw-bold text-dark mb-4">Horarios de Atención</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">Lunes a Viernes <span>11:00 - 23:00</span></li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">Sábados <span>11:00 - 24:00</span></li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">Domingos <span>12:00 - 23:00</span></li>
+                    </ul>
+                </div>
+                <div class="col-lg-6">
+                     <h3 class="h4 fw-bold text-dark mb-4">Contacto</h3>
+                     <div class="vstack gap-3">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="bg-danger-subtle rounded-3 d-flex align-items-center justify-content-center text-danger" style="width: 48px; height: 48px;"><i class="bi bi-telephone-fill fs-5"></i></div>
+                            <div>
+                                <h4 class="h6 fw-semibold text-dark mb-0">Teléfono</h4>
+                                <p class="text-secondary small">(123) 456-7890</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="bg-danger-subtle rounded-3 d-flex align-items-center justify-content-center text-danger" style="width: 48px; height: 48px;"><i class="bi bi-geo-alt-fill fs-5"></i></div>
+                            <div>
+                                <h4 class="h6 fw-semibold text-dark mb-0">Dirección</h4>
+                                <p class="text-secondary small">Av. Corrientes 1234, CABA</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="bg-danger-subtle rounded-3 d-flex align-items-center justify-content-center text-danger" style="width: 48px; height: 48px;"><i class="bi bi-whatsapp fs-5"></i></div>
+                            <div>
+                                <h4 class="h6 fw-semibold text-dark mb-0">WhatsApp</h4>
+                                <p class="text-secondary small">+54 9 11 1234-5678</p>
+                            </div>
+                        </div>
+                     </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-4 mb-4">
-          <h6 class="fw-bold">Contacto</h6>
-          <p class="text-gray-300 mb-1">📞 (123) 456-7890</p>
-          <p class="text-gray-300 mb-1">📍 Av. Corrientes 1234, CABA</p>
-          <p class="text-gray-300">✉️ info@rotiseriacacho.com</p>
+    </section>
+    <section class="py-5 bg-light">
+        <div class="container-xl py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold text-dark mb-3">Lo que dicen nuestros clientes</h2>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm p-3">
+                        <div class="card-body">
+                            <div class="text-warning mb-3">★★★★★</div>
+                            <p class="text-secondary mb-4">"El mejor pollo del barrio. Hace años que vengo y siempre la misma calidad."</p>
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold me-3" style="width: 40px; height: 40px;">M</div>
+                                <div>
+                                    <h5 class="h6 fw-semibold text-dark mb-0">María</h5>
+                                    <p class="small text-secondary mb-0">Cliente habitual</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm p-3">
+                        <div class="card-body">
+                            <div class="text-warning mb-3">★★★★★</div>
+                            <p class="text-secondary mb-4">"Las empanadas son increíbles y el delivery siempre llega rápido."</p>
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center fw-bold me-3" style="width: 40px; height: 40px;">C</div>
+                                <div>
+                                    <h5 class="h6 fw-semibold text-dark mb-0">Carlos</h5>
+                                    <p class="small text-secondary mb-0">Cliente habitual</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm p-3">
+                        <div class="card-body">
+                            <div class="text-warning mb-3">★★★★★</div>
+                            <p class="text-secondary mb-4">"Tradición familiar que se nota en cada plato. Muy recomendable."</p>
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold me-3" style="width: 40px; height: 40px; background-color: #9333ea;">A</div>
+                                <div>
+                                    <h5 class="h6 fw-semibold text-dark mb-0">Ana</h5>
+                                    <p class="small text-secondary mb-0">Cliente habitual</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-4 mb-4">
-          <h6 class="fw-bold">Horarios</h6>
-          <p class="text-gray-300 mb-1">Lun - Vie: 11:00 - 23:00</p>
-          <p class="text-gray-300 mb-1">Sábados: 11:00 - 24:00</p>
-          <p class="text-gray-300">Domingos: 12:00 - 23:00</p>
+    </section>
+    <footer id="contacto" class="bg-dark text-white py-5">
+        <div class="container-xl">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="bg-danger rounded-3 d-flex align-items-center justify-content-center text-white fw-bold" style="width: 40px; height: 40px;">RC</div>
+                        <h3 class="h5 fw-bold mb-0">Rotisería Cacho</h3>
+                    </div>
+                    <p class="text-white-50">Más de 35 años llevando el auténtico sabor argentino a tu mesa.</p>
+                </div>
+                <div class="col-md-4">
+                    <h4 class="h6 fw-bold mb-3">Contacto</h4>
+                    <ul class="list-unstyled text-white-50 small">
+                        <li><i class="bi bi-telephone-fill"></i> (123) 456-7890</li>
+                        <li><i class="bi bi-geo-alt-fill"></i> Av. Corrientes 1234, CABA</li>
+                        <li><i class="bi bi-envelope-fill"></i> info@rotiseriacacho.com</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h4 class="h6 fw-bold mb-3">Horarios</h4>
+                    <ul class="list-unstyled text-white-50 small">
+                        <li>Lun - Vie: 11:00 - 23:00</li>
+                        <li>Sábados: 11:00 - 24:00</li>
+                        <li>Domingos: 12:00 - 23:00</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-secondary mt-4 mb-3">
+            <div class="text-center text-white-50 small">
+                <p>&copy; 2024 Rotisería Cacho. Todos los derechos reservados.</p>
+            </div>
         </div>
-      </div>
-      <div class="border-top border-gray-700 pt-3 text-center text-gray-400 small">
-        © 2024 Rotisería Cacho. Todos los derechos reservados.
-      </div>
-    </div>
-  </footer>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const mainCarouselElement = document.getElementById('productCarousel');
+        if (mainCarouselElement) {
+            const mainCarousel = new bootstrap.Carousel(mainCarouselElement, {
+                interval: 5000,
+                ride: 'carousel'
+            });
+        }
+        function redirectToMenu() {
+            alert('Redirigiendo al menu...');
+        }
+        document.querySelectorAll('button').forEach(button => {
+            if (button.textContent.includes('Agregar')) {
+                button.addEventListener('click', function() {
+                    const cardBody = this.closest('.card-body');
+                    if (cardBody) {
+                        const titleElement = cardBody.querySelector('h3, h4');
+                        if (titleElement) {
+                            const productName = titleElement.textContent;
+                            alert(`${productName} agregado al carrito!`);
+                        }
+                    }
+                });
+            }
+            if (button.textContent.includes('Pedir Ahora')) {
+                button.addEventListener('click', function() {
+                    alert('Redirigiendo al sistema de pedidos...');
+                });
+            }
+        });
+    </script>
 </body>
 </html>
