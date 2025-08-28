@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rotisería Cacho - Comida Casera</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f9fafb; }
+    .smooth-transition { transition: all 0.3s ease; }
+    .hover-lift:hover { transform: translateY(-5px); }
+    .bg-gray-50 { background-color: #f9fafb; }
+    .bg-gray-100 { background-color: #f3f4f6; }
+    .bg-gray-200 { background-color: #e5e7eb; }
+    .bg-gray-300 { background-color: #d1d5db; }
+    .bg-gray-500 { background-color: #6b7280; }
+    .bg-gray-600 { background-color: #4b5563; }
+    .bg-gray-700 { background-color: #374151; }
+    .bg-gray-800 { background-color: #1f2937; }
+    .bg-gray-900 { background-color: #111827; }
+    .text-gray-300 { color: #d1d5db; }
+    .text-gray-400 { color: #9ca3af; }
+    .text-gray-500 { color: #6b7280; }
+    .text-gray-600 { color: #4b5563; }
+    .text-gray-700 { color: #374151; }
+    .text-gray-800 { color: #1f2937; }
+    .text-yellow-500 { color: #f59e0b; }
+    .bg-yellow-50 { background-color: #fefce8; }
+    .bg-red-50 { background-color: #fef2f2; }
+    .bg-red-500 { background-color: #ef4444; }
+    .bg-red-600 { background-color: #dc2626; }
+    .bg-green-50 { background-color: #ecfdf5; }
+    .bg-green-500 { background-color: #10b981; }
+    .bg-blue-50 { background-color: #eff6ff; }
+    .bg-blue-500 { background-color: #3b82f6; }
+    .bg-blue-600 { background-color: #2563eb; }
+    .bg-purple-500 { background-color: #8b5cf6; }
+    .bg-pink-600 { background-color: #db2777; }
+    .bg-orange-50 { background-color: #fff7ed; }
+    .bg-orange-500 { background-color: #f97316; }
+    .carousel-dot { width:12px; height:12px; border-radius:50%; border:none; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-md bg-white shadow-sm sticky-top">
+    <div class="container">
+      <a class="d-flex align-items-center text-decoration-none" href="#">
+        <div class="d-flex align-items-center justify-content-center bg-red-500 text-white fw-bold rounded p-2 me-2" style="width:40px; height:40px;">
+          RC
+        </div>
+        <span class="fw-bold text-dark">Rotisería Cacho</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+        <button class="btn bg-red-500 text-white px-4 smooth-transition">Pedir Ahora</button>
+      </div>
+    </div>
+  </nav>
+  <section class="bg-white py-5">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6">
+          <h2 class="display-4 fw-bold text-gray-800 mb-4">Comida casera de toda la vida</h2>
+          <p class="fs-5 text-gray-600 mb-4">Desde 1985 preparamos los mejores platos con el sabor auténtico que recordás de la mesa familiar.</p>
+          <div class="d-flex flex-column flex-sm-row gap-3 mb-4">
+            <button class="btn bg-red-500 text-white px-4 py-2 smooth-transition">Ver Menú</button>
+            <button class="btn border text-gray-700 px-4 py-2 smooth-transition">Llamar: (123) 456-7890</button>
+          </div>
+        </div>
+        <div class="col-lg-6 text-center">
+          <div class="rounded-circle bg-red-50 d-flex align-items-center justify-content-center mx-auto" style="width:320px; height:320px;">
+            <span style="font-size:6rem;">🍗</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="menu" class="py-5 bg-gray-50">
+    <div class="container text-center">
+      <h2 class="fw-bold display-6 text-gray-800 mb-3">Nuestros Platos</h2>
+      <p class="fs-5 text-gray-600 mb-5">Los favoritos de siempre</p>
+      <div id="menuCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="card shadow-sm mx-auto" style="max-width:300px;">
+              <div class="card-body text-center">
+                <div class="rounded-circle bg-red-50 d-flex align-items-center justify-content-center mx-auto mb-3" style="width:80px; height:80px;">🍗</div>
+                <h5 class="fw-bold text-gray-800">Pollo al Spiedo</h5>
+                <p class="text-gray-600">Dorado a la perfección con nuestro adobo secreto</p>
+                <div class="fw-bold text-red-500 fs-4">$3.500 <span class="text-gray-500 fs-6">pollo entero</span></div>
+                <button class="btn bg-red-500 text-white w-100 mt-3">Agregar al Carrito</button>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="card shadow-sm mx-auto" style="max-width:300px;">
+              <div class="card-body text-center">
+                <div class="rounded-circle bg-orange-50 d-flex align-items-center justify-content-center mx-auto mb-3" style="width:80px; height:80px;">🥩</div>
+                <h5 class="fw-bold text-gray-800">Milanesas</h5>
+                <p class="text-gray-600">Crocantes por fuera, tiernas por dentro</p>
+                <div class="fw-bold text-red-500 fs-4">$2.800 <span class="text-gray-500 fs-6">con guarnición</span></div>
+                <button class="btn bg-red-500 text-white w-100 mt-3">Agregar al Carrito</button>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="card shadow-sm mx-auto" style="max-width:300px;">
+              <div class="card-body text-center">
+                <div class="rounded-circle bg-yellow-50 d-flex align-items-center justify-content-center mx-auto mb-3" style="width:80px; height:80px;">🥟</div>
+                <h5 class="fw-bold text-gray-800">Empanadas</h5>
+                <p class="text-gray-600">Masa casera horneada diariamente</p>
+                <div class="fw-bold text-red-500 fs-4">$450 <span class="text-gray-500 fs-6">cada una</span></div>
+                <button class="btn bg-red-500 text-white w-100 mt-3">Agregar al Carrito</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#menuCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#menuCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+        </button>
+      </div>
+    </div>
+  </section>
+  <section class="py-5 bg-white">
+    <div class="container">
+      <div class="row g-5">
+        <div class="col-lg-6">
+          <h3 class="fw-bold text-gray-800 mb-3">Horarios de Atención</h3>
+          <ul class="list-group mb-4">
+            <li class="list-group-item d-flex justify-content-between"><span>Lunes a Viernes</span><span>11:00 - 23:00</span></li>
+            <li class="list-group-item d-flex justify-content-between"><span>Sábados</span><span>11:00 - 24:00</span></li>
+            <li class="list-group-item d-flex justify-content-between"><span>Domingos</span><span>12:00 - 23:00</span></li>
+          </ul>
+        </div>
+        <div class="col-lg-6">
+          <h3 class="fw-bold text-gray-800 mb-3">Contacto</h3>
+          <p>📞 (123) 456-7890</p>
+          <p>📍 Av. Corrientes 1234, CABA</p>
+          <p>💬 WhatsApp: +54 9 11 1234-5678</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="py-5 bg-gray-50">
+    <div class="container text-center">
+      <h2 class="fw-bold display-6 text-gray-800 mb-5">Lo que dicen nuestros clientes</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card p-4 shadow-sm">
+            <div class="text-yellow-500 mb-3">★★★★★</div>
+            <p class="text-gray-600">"El mejor pollo del barrio. Hace años que vengo y siempre la misma calidad."</p>
+            <div class="d-flex align-items-center mt-3">
+              <div class="rounded-circle bg-blue-500 text-white fw-bold d-flex align-items-center justify-content-center me-2" style="width:40px; height:40px;">M</div>
+              <div><div class="fw-semibold text-gray-800">María</div><small class="text-gray-500">Cliente habitual</small></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card p-4 shadow-sm">
+            <div class="text-yellow-500 mb-3">★★★★★</div>
+            <p class="text-gray-600">"Las empanadas son increíbles y el delivery siempre llega rápido."</p>
+            <div class="d-flex align-items-center mt-3">
+              <div class="rounded-circle bg-green-500 text-white fw-bold d-flex align-items-center justify-content-center me-2" style="width:40px; height:40px;">C</div>
+              <div><div class="fw-semibold text-gray-800">Carlos</div><small class="text-gray-500">Cliente habitual</small></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card p-4 shadow-sm">
+            <div class="text-yellow-500 mb-3">★★★★★</div>
+            <p class="text-gray-600">"Tradición familiar que se nota en cada plato. Muy recomendable."</p>
+            <div class="d-flex align-items-center mt-3">
+              <div class="rounded-circle bg-purple-500 text-white fw-bold d-flex align-items-center justify-content-center me-2" style="width:40px; height:40px;">A</div>
+              <div><div class="fw-semibold text-gray-800">Ana</div><small class="text-gray-500">Cliente habitual</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer class="bg-gray-800 text-white py-5" id="contacto">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="d-flex align-items-center mb-3">
+            <div class="d-flex align-items-center justify-content-center bg-red-500 text-white fw-bold rounded me-2" style="width:40px; height:40px;">RC</div>
+            <h5 class="fw-bold">Rotisería Cacho</h5>
+          </div>
+          <p class="text-gray-300">Más de 35 años llevando el auténtico sabor argentino a tu mesa.</p>
+        </div>
+        <div class="col-md-4 mb-4">
+          <h6 class="fw-bold">Contacto</h6>
+          <p class="text-gray-300 mb-1">📞 (123) 456-7890</p>
+          <p class="text-gray-300 mb-1">📍 Av. Corrientes 1234, CABA</p>
+          <p class="text-gray-300">✉️ info@rotiseriacacho.com</p>
+        </div>
+        <div class="col-md-4 mb-4">
+          <h6 class="fw-bold">Horarios</h6>
+          <p class="text-gray-300 mb-1">Lun - Vie: 11:00 - 23:00</p>
+          <p class="text-gray-300 mb-1">Sábados: 11:00 - 24:00</p>
+          <p class="text-gray-300">Domingos: 12:00 - 23:00</p>
+        </div>
+      </div>
+      <div class="border-top border-gray-700 pt-3 text-center text-gray-400 small">
+        © 2024 Rotisería Cacho. Todos los derechos reservados.
+      </div>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
