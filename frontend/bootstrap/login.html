@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Rotisería Cacho</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #fee2e2 0%, #fef2f2 50%, #fff 100%);
+            min-height: 100vh;
+        }
+        .form-control:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+        .login-card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+    </style>
+</head>
+<body class="d-flex align-items-center justify-content-center p-4">
+    <div class="position-absolute top-0 start-0 p-4">
+    </div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6 col-xl-5">
+                <div class="card border-light shadow-lg rounded-4 login-card">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <div class="mx-auto mb-3 bg-danger rounded-3 d-flex align-items-center justify-content-center text-white fw-bold" style="width: 48px; height: 48px;">
+                                RC
+                            </div>
+                            <h1 class="h3 fw-bold text-dark">Bienvenido de Nuevo</h1>
+                            <p class="text-muted">Inicia sesión para administrar la rotisería.</p>
+                        </div>
+                        <form id="loginForm" novalidate>
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-medium">Email</label>
+                                <input type="email" id="email" class="form-control" placeholder="admin@rotiseria.com" required>
+                                <div id="emailError" class="invalid-feedback">
+                                    Por favor, ingresa un email válido.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label fw-medium">Contraseña</label>
+                                <input type="password" id="password" class="form-control" required>
+                                 <div id="passwordError" class="invalid-feedback">
+                                    Por favor, ingresa tu contraseña.
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">
+                                        Recordarme
+                                    </label>
+                                </div>
+                                <a href="#" class="small text-danger text-decoration-none">¿Olvidaste tu contraseña?</a>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-danger btn-lg fw-medium" style="background-color: #dc2626;">
+                                    Iniciar Sesión
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const form = this;
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            let isValid = true;
+            if (!emailInput.value || !emailInput.value.includes('@')) {
+                emailInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                emailInput.classList.remove('is-invalid');
+            }
+            if (!passwordInput.value) {
+                passwordInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                passwordInput.classList.remove('is-invalid');
+            }
+            if (isValid) {
+                alert('¡Inicio de sesión exitoso!');
+            }
+        });
+        document.getElementById('email').addEventListener('input', function() {
+            if (this.classList.contains('is-invalid')) {
+                this.classList.remove('is-invalid');
+            }
+        });
+        document.getElementById('password').addEventListener('input', function() {
+            if (this.classList.contains('is-invalid')) {
+                this.classList.remove('is-invalid');
+            }
+        });
+    </script>
+</body>
+</html>
