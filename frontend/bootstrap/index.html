@@ -393,24 +393,16 @@
             });
         }
         function redirectToMenu() {
-            alert('Redirigiendo al menu...');
+            window.location.href = 'login.html';
         }
         document.querySelectorAll('button').forEach(button => {
-            if (button.textContent.includes('Agregar')) {
-                button.addEventListener('click', function() {
-                    const cardBody = this.closest('.card-body');
-                    if (cardBody) {
-                        const titleElement = cardBody.querySelector('h3, h4');
-                        if (titleElement) {
-                            const productName = titleElement.textContent;
-                            alert(`${productName} agregado al carrito!`);
-                        }
-                    }
-                });
-            }
-            if (button.textContent.includes('Pedir Ahora')) {
-                button.addEventListener('click', function() {
-                    alert('Redirigiendo al sistema de pedidos...');
+            if (
+                button.textContent.includes('Agregar') ||
+                button.textContent.includes('Pedir Ahora') ||
+                button.textContent.includes('Ver Menú')
+            ) {
+                button.addEventListener('click', function(e) {
+                    window.location.href = 'login.html';
                 });
             }
         });
