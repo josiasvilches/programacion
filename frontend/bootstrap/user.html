@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mi Perfil - Rotisería Cacho</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f8f9fa;
+      }
+
+      /* Estilos personalizados */
+      .smooth-transition {
+        transition: all 0.3s ease;
+      }
+
+      .input-focus:focus {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 0.25rem rgba(239, 68, 68, 0.25);
+      }
+
+      .hover-lift:hover {
+        transform: translateY(-2px);
+      }
+
+      .gradient-bg {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      }
+
+      /* Clases de utilidad adicionales */
+      .form-control-lg {
+        padding: 1rem 1rem;
+        font-size: 1rem;
+      }
+
+      .rounded-4 {
+        border-radius: 1rem !important;
+      }
+
+      #password-strength .progress {
+        height: 0.5rem;
+      }
+      .user-dropdown .dropdown-menu {
+        margin-top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+      <div class="container-xl">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+          <div
+            class="bg-danger rounded-2 d-flex align-items-center justify-content-center me-2"
+            style="width: 40px; height: 40px"
+          >
+            <span class="text-white fw-bold fs-5">RC</span>
+          </div>
+          <h1 class="h5 mb-0 fw-bold">Rotisería Cacho</h1>
+        </a>
+        <div class="dropdown user-dropdown">
+          <a
+            href="#"
+            class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle"
+            id="dropdownUser"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <div
+              class="bg-danger rounded-circle d-flex align-items-center justify-content-center me-2"
+              style="width: 36px; height: 36px"
+            >
+              <span class="text-white fw-bold small">JD</span>
+            </div>
+            <span class="fw-semibold d-none d-sm-block">Juan Díaz</span>
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="dropdownUser">
+            <li>
+              <a class="dropdown-item" href="#" onclick="menuPopup('carrito')"
+                >Carrito</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="#" onclick="menuPopup('pedidos')"
+                >Pedidos</a
+              >
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a class="dropdown-item" href="#" onclick="menuPopup('cerrar')"
+                >Cerrar sesión</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container-md py-5" style="max-width: 896px">
+      <div class="card rounded-4 shadow-sm overflow-hidden mb-5">
+        <div class="gradient-bg px-4 py-5 text-center">
+          <div class="position-relative d-inline-block">
+            <div
+              class="d-flex align-items-center justify-content-center text-white fw-bold"
+              style="
+                width: 8rem;
+                height: 8rem;
+                background-color: rgba(255, 255, 255, 0.2);
+                border-radius: 50%;
+                font-size: 2.25rem;
+                backdrop-filter: blur(4px);
+                border: 4px solid rgba(255, 255, 255, 0.3);
+              "
+            >
+              JD
+            </div>
+          </div>
+          <h2 class="h1 fw-bold text-white mt-4 mb-2">Juan Díaz</h2>
+          <p style="color: #fecaca">Bienvenido a tu perfil personal</p>
+        </div>
+
+        <div class="card-body p-4" style="background-color: #f8f9fa">
+          <div class="row g-4">
+            <div class="col-md-6 d-flex align-items-center">
+              <div
+                class="d-flex align-items-center justify-content-center rounded-circle me-3"
+                style="
+                  width: 3rem;
+                  height: 3rem;
+                  background-color: #cfe2ff;
+                "
+              >
+                <i class="bi bi-person-fill fs-5" style="color: #0d6efd"></i>
+              </div>
+              <div>
+                <p class="small text-secondary mb-1">Rol de usuario</p>
+                <span
+                  class="badge rounded-pill fw-medium"
+                  style="background-color: #cfe2ff; color: #052c65"
+                  >Cliente</span
+                >
+              </div>
+            </div>
+
+            <div class="col-md-6 d-flex align-items-center">
+              <div
+                class="d-flex align-items-center justify-content-center rounded-circle me-3"
+                style="
+                  width: 3rem;
+                  height: 3rem;
+                  background-color: #d1e7dd;
+                "
+              >
+                <i
+                  class="bi bi-check-circle-fill fs-5"
+                  style="color: #155724"
+                ></i>
+              </div>
+              <div>
+                <p class="small text-secondary mb-1">Estado de cuenta</p>
+                <span
+                  class="badge rounded-pill fw-medium"
+                  style="background-color: #d1e7dd; color: #0f5132"
+                  >Activa</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card rounded-4 shadow-sm p-4 p-md-5">
+        <div
+          class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-5"
+        >
+          <div>
+            <h3 class="h2 fw-bold text-dark">Información Personal</h3>
+            <p class="text-secondary mt-1">
+              Administrá tus datos personales y configuración de cuenta
+            </p>
+          </div>
+          <button
+            onclick="toggleEdit()"
+            id="edit-btn"
+            class="btn btn-danger btn-lg mt-3 mt-md-0 px-4 py-2 smooth-transition fw-medium"
+          >
+            Editar Perfil
+          </button>
+        </div>
+
+        <form id="profile-form" class="needs-validation" novalidate>
+          <div class="row g-4 mb-4">
+            <div class="col-md-6">
+              <label for="fullName" class="form-label fw-semibold"
+                >Nombre completo</label
+              >
+              <div class="input-group">
+                <input
+                  type="text"
+                  id="fullName"
+                  value="Juan Díaz"
+                  class="form-control form-control-lg bg-light input-focus smooth-transition"
+                  disabled
+                />
+                <span class="input-group-text bg-light"
+                  ><i class="bi bi-person"></i
+                ></span>
+              </div>
+              <div class="form-text">
+                Este nombre aparecerá en tus pedidos y comunicaciones
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="email" class="form-label fw-semibold"
+                >Correo electrónico</label
+              >
+              <div class="input-group">
+                <input
+                  type="email"
+                  id="email"
+                  value="juan.diaz@email.com"
+                  class="form-control form-control-lg bg-light input-focus smooth-transition"
+                  disabled
+                />
+                <span class="input-group-text bg-light"
+                  ><i class="bi bi-envelope"></i
+                ></span>
+              </div>
+              <div class="form-text">
+                Usamos tu email para confirmaciones y notificaciones importantes
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="phone" class="form-label fw-semibold"
+                >Teléfono</label
+              >
+              <div class="input-group">
+                <input
+                  type="tel"
+                  id="phone"
+                  value="+54 9 11 1234-5678"
+                  class="form-control form-control-lg bg-light input-focus smooth-transition"
+                  disabled
+                  placeholder="Ingresá tu número de teléfono"
+                />
+                <span class="input-group-text bg-light"
+                  ><i class="bi bi-telephone"></i
+                ></span>
+              </div>
+              <div class="form-text">
+                Usamos tu teléfono para contactarte si es necesario
+              </div>
+            </div>
+          </div>
+
+          <hr class="my-5" />
+          <h4 class="h4 fw-semibold text-dark mb-4 pb-3">Seguridad de la cuenta</h4>
+
+          <div class="row g-4">
+            <div id="current-password-field" class="col-md-6 d-none">
+              <label for="currentPassword" class="form-label fw-semibold"
+                >Contraseña actual</label
+              >
+              <div class="input-group">
+                <input
+                  type="password"
+                  id="currentPassword"
+                  class="form-control form-control-lg input-focus smooth-transition"
+                  placeholder="Ingresá tu contraseña actual"
+                />
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  onclick="togglePasswordVisibility('currentPassword')"
+                >
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <div id="new-password-field" class="col-md-6 d-none">
+              <label for="newPassword" class="form-label fw-semibold"
+                >Nueva contraseña</label
+              >
+              <div class="input-group">
+                <input
+                  type="password"
+                  id="newPassword"
+                  class="form-control form-control-lg input-focus smooth-transition"
+                  placeholder="Ingresá tu nueva contraseña"
+                />
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  onclick="togglePasswordVisibility('newPassword')"
+                >
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+              <div id="password-strength" class="mt-2 d-none">
+                <div class="progress">
+                  <div
+                    class="progress-bar"
+                    role="progressbar"
+                    style="width: 0%"
+                  ></div>
+                  <div
+                    class="progress-bar"
+                    role="progressbar"
+                    style="width: 0%"
+                  ></div>
+                  <div
+                    class="progress-bar"
+                    role="progressbar"
+                    style="width: 0%"
+                  ></div>
+                  <div
+                    class="progress-bar"
+                    role="progressbar"
+                    style="width: 0%"
+                  ></div>
+                </div>
+                <p class="form-text mt-1">
+                  La contraseña debe tener al menos 8 caracteres
+                </p>
+              </div>
+            </div>
+
+            <div id="confirm-password-field" class="col-md-6 d-none">
+              <label for="confirmPassword" class="form-label fw-semibold"
+                >Confirmar nueva contraseña</label
+              >
+              <div class="input-group">
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  class="form-control form-control-lg input-focus smooth-transition"
+                  placeholder="Confirmá tu nueva contraseña"
+                />
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  onclick="togglePasswordVisibility('confirmPassword')"
+                >
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div
+            id="password-info"
+            class="d-flex align-items-center p-3 rounded"
+            style="background-color: #f8f9fa"
+          >
+            <div
+              class="d-flex align-items-center justify-content-center rounded-circle me-3"
+              style="width: 3rem; height: 3rem; background-color: #e2e3e5"
+            >
+              <i class="bi bi-lock-fill fs-5 text-secondary"></i>
+            </div>
+            <div>
+              <p class="fw-medium text-dark mb-0">Contraseña</p>
+            </div>
+          </div>
+
+          <div id="form-actions" class="d-none border-top pt-4 mt-5">
+            <div class="d-flex flex-column flex-sm-row gap-3">
+              <button
+                type="button"
+                onclick="saveProfile()"
+                class="btn btn-success btn-lg px-4 py-2 fw-medium d-flex align-items-center justify-content-center"
+              >
+                <i class="bi bi-check-lg me-2"></i>
+                Guardar Cambios
+              </button>
+              <button
+                type="button"
+                onclick="cancelEdit()"
+                class="btn btn-secondary btn-lg px-4 py-2 fw-medium"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div
+        class="alert alert-primary d-flex align-items-start mt-5"
+        role="alert"
+      >
+        <i class="bi bi-info-circle-fill me-3 fs-4"></i>
+        <div>
+          <h4 class="alert-heading h6 fw-semibold">
+            Información de seguridad
+          </h4>
+          <p class="mb-0 small">
+            Tu información personal está protegida con encriptación de nivel
+            bancario. Recomendamos usar una contraseña fuerte y única para tu
+            cuenta. Si tenés alguna duda sobre la seguridad de tu cuenta, no
+            dudes en contactarnos.
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      let isEditing = false;
+      let originalData = {};
+
+      function menuPopup(action) {
+        let msg = "";
+        switch (action) {
+          case "carrito":
+            msg = "Navegando al carrito de compras.";
+            break;
+          case "pedidos":
+            msg = "Mostrando tus pedidos realizados.";
+            break;
+          case "perfil":
+            msg = "Accediendo a tu perfil de usuario.";
+            break;
+          case "cerrar":
+            msg = "Cerrando sesión...";
+            break;
+          default:
+            msg = "Acción desconocida.";
+        }
+        alert(msg);
+      }
+
+      // Store original form data
+      function storeOriginalData() {
+        originalData = {
+          fullName: document.getElementById("fullName").value,
+          email: document.getElementById("email").value,
+          phone: document.getElementById("phone").value,
+        };
+      }
+
+      // Toggle edit mode
+      function toggleEdit() {
+        const editBtn = document.getElementById("edit-btn");
+        const formActions = document.getElementById("form-actions");
+        const fullNameInput = document.getElementById("fullName");
+        const emailInput = document.getElementById("email");
+        const phoneInput = document.getElementById("phone");
+        const passwordInfo = document.getElementById("password-info");
+        const passwordFields = [
+          document.getElementById("current-password-field"),
+          document.getElementById("new-password-field"),
+          document.getElementById("confirm-password-field"),
+        ];
+
+        if (!isEditing) {
+          // Enter edit mode
+          storeOriginalData();
+          isEditing = true;
+
+          // Update button
+          editBtn.textContent = "Cancelar Edición";
+          editBtn.classList.remove("btn-danger");
+          editBtn.classList.add("btn-secondary");
+
+          // Enable form fields
+          [fullNameInput, emailInput, phoneInput].forEach((input) => {
+            input.disabled = false;
+            input.classList.remove("bg-light");
+          });
+
+          // Show password fields and actions
+          passwordInfo.classList.add("d-none");
+          passwordFields.forEach((field) => field.classList.remove("d-none"));
+          formActions.classList.remove("d-none");
+
+          // Show password strength indicator
+          document
+            .getElementById("password-strength")
+            .classList.remove("d-none");
+
+          // Add input listeners for validation
+          addValidationListeners();
+        } else {
+          // Cancel edit mode
+          cancelEdit();
+        }
+      }
+
+      // Cancel editing
+      function cancelEdit() {
+        isEditing = false;
+
+        const editBtn = document.getElementById("edit-btn");
+        const formActions = document.getElementById("form-actions");
+        const fullNameInput = document.getElementById("fullName");
+        const emailInput = document.getElementById("email");
+        const phoneInput = document.getElementById("phone");
+        const passwordInfo = document.getElementById("password-info");
+        const passwordFields = [
+          document.getElementById("current-password-field"),
+          document.getElementById("new-password-field"),
+          document.getElementById("confirm-password-field"),
+        ];
+
+        // Restore button
+        editBtn.textContent = "Editar Perfil";
+        editBtn.classList.add("btn-danger");
+        editBtn.classList.remove("btn-secondary");
+
+        // Disable form fields and restore original values
+        [fullNameInput, emailInput, phoneInput].forEach((input) => {
+          input.disabled = true;
+          input.classList.add("bg-light");
+          input.classList.remove("is-invalid");
+        });
+
+        // Restore original values
+        fullNameInput.value = originalData.fullName;
+        emailInput.value = originalData.email;
+        phoneInput.value = originalData.phone;
+
+        // Hide password fields and actions
+        passwordInfo.classList.remove("d-none");
+        passwordFields.forEach((field) => field.classList.add("d-none"));
+        formActions.classList.add("d-none");
+
+        // Clear password fields
+        document.getElementById("currentPassword").value = "";
+        document.getElementById("newPassword").value = "";
+        document.getElementById("confirmPassword").value = "";
+        document.getElementById("confirmPassword").classList.remove("is-invalid");
+
+        // Hide password strength
+        document.getElementById("password-strength").classList.add("d-none");
+      }
+
+      // Save profile changes
+      function saveProfile() {
+        const fullName = document.getElementById("fullName").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const currentPassword =
+          document.getElementById("currentPassword").value;
+        const newPassword = document.getElementById("newPassword").value;
+        const confirmPassword =
+          document.getElementById("confirmPassword").value;
+
+        // Validation
+        if (!fullName) {
+          alert("El nombre no puede estar vacío");
+          return;
+        }
+
+        if (!email || !isValidEmail(email)) {
+          alert("Por favor ingresá un email válido");
+          return;
+        }
+
+        if (!phone) {
+          alert("El teléfono no puede estar vacío");
+          return;
+        }
+
+        // Password validation (only if changing password)
+        if (newPassword || confirmPassword) {
+          if (!currentPassword) {
+            alert("Debés ingresar tu contraseña actual para cambiarla");
+            return;
+          }
+
+          if (newPassword !== confirmPassword) {
+            alert("Las contraseñas no coinciden");
+            return;
+          }
+
+          if (newPassword.length < 8) {
+            alert("La nueva contraseña debe tener al menos 8 caracteres");
+            return;
+          }
+        }
+
+        // Simulate API call
+        setTimeout(() => {
+          alert("Perfil actualizado correctamente!");
+
+          // Update header name if changed
+          document.querySelector(".gradient-bg h2").textContent = fullName;
+
+          // Exit edit mode
+          cancelEdit();
+        }, 500);
+      }
+
+      // Email validation
+      function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      }
+
+      // Toggle password visibility
+      function togglePasswordVisibility(fieldId) {
+        const field = document.getElementById(fieldId);
+        const icon = field.nextElementSibling.querySelector("i");
+        const type =
+          field.getAttribute("type") === "password" ? "text" : "password";
+        field.setAttribute("type", type);
+        icon.classList.toggle("bi-eye");
+        icon.classList.toggle("bi-eye-slash");
+      }
+
+      // Add validation listeners
+      function addValidationListeners() {
+        const emailInput = document.getElementById("email");
+        const newPasswordInput = document.getElementById("newPassword");
+        const confirmPasswordInput =
+          document.getElementById("confirmPassword");
+
+        // Email validation
+        emailInput.addEventListener("input", function () {
+          if (this.value && !isValidEmail(this.value)) {
+            this.classList.add("is-invalid");
+          } else {
+            this.classList.remove("is-invalid");
+          }
+        });
+
+        // Password strength indicator
+        newPasswordInput.addEventListener("input", function () {
+          updatePasswordStrength(this.value);
+        });
+
+        // Confirm password validation
+        confirmPasswordInput.addEventListener("input", function () {
+          const newPassword = newPasswordInput.value;
+          if (this.value && this.value !== newPassword) {
+            this.classList.add("is-invalid");
+          } else {
+            this.classList.remove("is-invalid");
+          }
+        });
+      }
+
+      // Update password strength indicator
+      function updatePasswordStrength(password) {
+        const strengthBars = document.querySelectorAll(
+          "#password-strength .progress-bar"
+        );
+        const strengthText = document.querySelector("#password-strength p");
+
+        let strength = 0;
+        if (password.length >= 8) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+        if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+        const totalBars = strengthBars.length;
+
+        strengthBars.forEach((bar, index) => {
+          if (index < strength) {
+            bar.style.width = `${100 / totalBars}%`;
+            bar.classList.remove("bg-danger", "bg-warning", "bg-success");
+            if (strength === 1) bar.classList.add("bg-danger");
+            else if (strength === 2) bar.classList.add("bg-danger");
+            else if (strength === 3) bar.classList.add("bg-warning");
+            else bar.classList.add("bg-success");
+          } else {
+            bar.style.width = "0%";
+          }
+        });
+
+        const texts = [
+          "Muy débil - Agregá más caracteres",
+          "Débil - Agregá mayúsculas y números",
+          "Buena - Considerá agregar símbolos",
+          "Excelente - Contraseña muy segura",
+        ];
+
+        if (password.length > 0) {
+          strengthText.textContent = texts[strength - 1] || texts[0];
+        } else {
+          strengthText.textContent =
+            "La contraseña debe tener al menos 8 caracteres";
+        }
+      }
+
+      // Navigation functions
+      function goBack() {
+        if (isEditing) {
+          if (
+            confirm(
+              "Tenés cambios sin guardar. ¿Estás seguro que querés salir?"
+            )
+          ) {
+            alert("Volviendo al menú principal...");
+          }
+        } else {
+          alert("Volviendo al menú principal...");
+        }
+      }
+
+      function logout() {
+        if (isEditing) {
+          if (
+            confirm(
+              "Tenés cambios sin guardar. ¿Estás seguro que querés cerrar sesión?"
+            )
+          ) {
+            alert("Cerrando sesión...");
+          }
+        } else {
+          if (confirm("¿Estás seguro que querés cerrar sesión?")) {
+            alert("Cerrando sesión...");
+          }
+        }
+      }
+
+      function changeProfilePicture() {
+        alert(
+          "Funcionalidad para cambiar foto de perfil. En una app real, esto abriría un selector de archivos."
+        );
+      }
+
+      // Initialize page
+      document.addEventListener("DOMContentLoaded", function () {
+        storeOriginalData();
+      });
+    </script>
+  </body>
+</html>
