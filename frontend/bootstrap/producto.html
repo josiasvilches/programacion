@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pollo al Spiedo Entero - Rotisería Cacho (Bootstrap)</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        .smooth-transition { transition: all 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-2px); }
+        
+        .product-image-bg {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 50%, #fecaca 100%);
+        }
+        
+        .quantity-btn { transition: all 0.2s ease; }
+        .quantity-btn:hover { transform: scale(1.1); }
+        .quantity-btn:active { transform: scale(0.95); }
+        
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse-animation { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .modal.fade .modal-dialog {
+            transform: scale(0.3);
+            opacity: 0;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        .modal.fade.show .modal-dialog {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        .shake { animation: shake 0.5s ease-in-out; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-light bg-white shadow-sm sticky-top">
+        <div class="container-xl">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <div class="d-flex align-items-center gap-3">
+                    <button onclick="goBack()" class="btn btn-link text-secondary text-decoration-none d-flex align-items-center gap-2" title="Volver a menú">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        <span class="fw-medium">Volver</span>
+                    </button>
+                    <div class="vr"></div>
+                    <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+                        <div class="bg-danger rounded-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                            <span class="text-white fw-bold small">RC</span>
+                        </div>
+                        <h1 class="h6 mb-0 fw-bold">Rotisería Cacho</h1>
+                    </a>
+                </div>
+                
+                <div class="d-flex align-items-center gap-3">
+                    <button onclick="viewCart()" class="btn btn-link text-secondary position-relative" title="Ver carrito de compras">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5-6M20 13v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6m16 0V9a2 2 0 00-2-2H6a2 2 0 00-2 2v4.01"></path></svg>
+                        <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+                    </button>
+                    <button onclick="logout()" class="btn btn-link text-secondary" title="Cerrar sesión">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-xl py-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="#" onclick="goBack()" class="text-decoration-none text-dark">Menú</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page" id="product-breadcrumb">Pollo al Spiedo Entero</li>
+            </ol>
+        </nav>
+    </div>
+
+    <main class="container-xl pb-5">
+        <div class="row g-5 mb-5">
+            <div class="col-lg-6 fade-in">
+                <div class="product-image-bg rounded-4 p-5 d-flex align-items-center justify-content-center mb-4">
+                    <span id="product-image" style="font-size: 8rem;">🍗</span>
+                </div>
+                <div class="d-flex justify-content-center gap-3 mb-4">
+                    <button class="btn btn-danger-subtle rounded-3 d-flex align-items-center justify-content-center fs-4" style="width: 64px; height: 64px;">🍗</button>
+                    <button class="btn btn-light rounded-3 d-flex align-items-center justify-content-center fs-4" style="width: 64px; height: 64px;">📸</button>
+                    <button class="btn btn-light rounded-3 d-flex align-items-center justify-content-center fs-4" style="width: 64px; height: 64px;">🔥</button>
+                </div>
+                <div class="text-center bg-light text-secondary fw-medium rounded-3 p-3 w-75 mx-auto">
+                    Stock: <span class="fw-bold text-dark">12 disponibles</span>
+                </div>
+            </div>
+
+            <div class="col-lg-6 fade-in">
+                <div class="mb-4">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span id="product-category" class="badge text-bg-danger-subtle text-danger-emphasis rounded-pill">Pollos</span>
+                        <span id="product-popular" class="badge text-bg-warning-subtle text-warning-emphasis rounded-pill">Popular</span>
+                        <span id="product-availability" class="badge text-bg-success-subtle text-success-emphasis rounded-pill">Disponible</span>
+                    </div>
+                    <h1 id="product-name" class="h2 fw-bold text-dark mb-3">Pollo al Spiedo Entero</h1>
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="text-warning">⭐⭐⭐⭐⭐</div>
+                        <div class="text-secondary small">(4.8) • 127 reseñas</div>
+                    </div>
+                    <div class="display-5 fw-bold text-danger mb-4">$<span id="product-price">3500</span></div>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="h5 fw-semibold text-dark mb-3">Descripción</h3>
+                    <p id="product-description" class="text-secondary mb-4">
+                        Nuestro famoso pollo al spiedo entero, dorado a la perfección y condimentado con nuestra mezcla secreta de especias. Cocido lentamente para garantizar una carne jugosa por dentro y una piel dorada y crocante por fuera. Perfecto para compartir en familia.
+                    </p>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="h5 fw-semibold text-dark mb-3">Cantidad</h3>
+                    <div class="d-flex align-items-center gap-4 mb-2">
+                        <div class="input-group" style="max-width: 150px;">
+                            <button onclick="decreaseQuantity()" class="btn btn-outline-secondary quantity-btn" type="button">-</button>
+                            <input type="number" id="quantity-input" value="1" min="1" max="10" class="form-control text-center fw-semibold fs-5" aria-label="Quantity">
+                            <button onclick="increaseQuantity()" class="btn btn-outline-secondary quantity-btn" type="button">+</button>
+                        </div>
+                        <div>
+                            <span class="text-secondary">Total: </span>
+                            <span id="total-price" class="fs-4 fw-bold text-danger">$3.500</span>
+                        </div>
+                    </div>
+                    <p class="form-text">Máximo 10 unidades por pedido</p>
+                </div>
+                
+                <div class="d-grid gap-3 mb-4">
+                    <button onclick="addToCart()" id="add-to-cart-btn" class="btn btn-danger btn-lg d-flex align-items-center justify-content-center gap-2">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5-6M20 13v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6m16 0V9a2 2 0 00-2-2H6a2 2 0 00-2 2v4.01"></path></svg>
+                        <span>Agregar al carrito</span>
+                    </button>
+                    <button onclick="buyNow()" class="btn btn-dark btn-lg">Comprar ahora</button>
+                </div>
+                
+                <div class="text-center border rounded-3 p-3 mb-4">
+                    <a href="#" onclick="leaveReview()" class="text-decoration-none fw-medium">Haz click aquí para dejar una reseña del producto</a>
+                </div>
+
+                <div class="alert alert-primary d-flex align-items-start gap-3 mt-4">
+                    <svg class="mt-1" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div>
+                        <h4 class="alert-heading h6">Información importante</h4>
+                        <ul class="mb-0 small ps-3">
+                            <li>Tiempo de preparación: 45-60 minutos</li>
+                            <li>Se entrega caliente y listo para servir</li>
+                            <li>Incluye salsas complementarias</li>
+                            <li>Producto fresco, no congelado</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fade-in">
+            <h2 class="h3 fw-bold text-dark mb-4">Menú relacionados</h2>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 shadow-sm rounded-4 overflow-hidden hover-lift smooth-transition">
+                        <div class="bg-danger-subtle d-flex align-items-center justify-content-center" style="height: 160px;"><span class="fs-1">🍗</span></div>
+                        <div class="card-body">
+                            <h3 class="h6 card-title fw-semibold">Medio Pollo al Spiedo</h3>
+                            <p class="card-text h5 fw-bold text-danger mb-3">$1.800</p>
+                            <button onclick="viewProduct(2)" class="btn btn-danger w-100">Ver producto</button>
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 shadow-sm rounded-4 overflow-hidden hover-lift smooth-transition">
+                        <div class="bg-danger-subtle d-flex align-items-center justify-content-center" style="height: 160px;"><span class="fs-1">🍟</span></div>
+                        <div class="card-body">
+                            <h3 class="h6 card-title fw-semibold">Papas Fritas Caseras</h3>
+                            <p class="card-text h5 fw-bold text-danger mb-3">$1.200</p>
+                            <button onclick="viewProduct(13)" class="btn btn-danger w-100">Ver producto</button>
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 shadow-sm rounded-4 overflow-hidden hover-lift smooth-transition">
+                        <div class="bg-danger-subtle d-flex align-items-center justify-content-center" style="height: 160px;"><span class="fs-1">🥗</span></div>
+                        <div class="card-body">
+                            <h3 class="h6 card-title fw-semibold">Ensalada Mixta</h3>
+                            <p class="card-text h5 fw-bold text-danger mb-3">$1.500</p>
+                            <button onclick="viewProduct(15)" class="btn btn-danger w-100">Ver producto</button>
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 shadow-sm rounded-4 overflow-hidden hover-lift smooth-transition">
+                        <div class="bg-danger-subtle d-flex align-items-center justify-content-center" style="height: 160px;"><span class="fs-1">🥤</span></div>
+                        <div class="card-body">
+                            <h3 class="h6 card-title fw-semibold">Coca Cola 1.5L</h3>
+                            <p class="card-text h5 fw-bold text-danger mb-3">$800</p>
+                            <button onclick="viewProduct(19)" class="btn btn-danger w-100">Ver producto</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4">
+                <div class="modal-body p-4 text-center">
+                    <div class="mx-auto mb-3 d-flex align-items-center justify-content-center bg-success-subtle rounded-circle" style="width: 64px; height: 64px;">
+                        <svg class="text-success" width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <h5 class="modal-title h4" id="successModalLabel">¡Agregado al carrito!</h5>
+                    <p id="success-message" class="text-secondary my-3">Se agregó correctamente al carrito.</p>
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Seguir comprando</button>
+                        <button type="button" onclick="viewCart()" class="btn btn-danger">Ver carrito</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        const products = {
+            1: { id: 1, name: "Pollo al Spiedo Entero", category: "Pollos", price: 3500, available: true, popular: true, image: "🍗", description: "Nuestro famoso pollo al spiedo entero..." },
+            2: { id: 2, name: "Medio Pollo al Spiedo", category: "Pollos", price: 1800, available: true, popular: true, image: "🍗", description: "Media porción de nuestro famoso pollo al spiedo..." },
+            13: { id: 13, name: "Papas Fritas Caseras", category: "Guarniciones", price: 1200, available: true, popular: true, image: "🍟", description: "Papas cortadas y fritas al momento..." },
+            15: { id: 15, name: "Ensalada Mixta", category: "Guarniciones", price: 1500, available: true, popular: true, image: "🥗", description: "Ensalada fresca con lechuga, tomate, cebolla..." },
+            19: { id: 19, name: "Coca Cola 1.5L", category: "Bebidas", price: 800, available: true, popular: true, image: "🥤", description: "Gaseosa Coca Cola en botella de 1.5 litros..." }
+        };
+
+        let currentProduct = products[1];
+        let quantity = 1;
+        let cart = [];
+        let successModal;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id') || '1';
+            if (products[productId]) {
+                currentProduct = products[productId];
+                loadProduct();
+            }
+            setupEventListeners();
+            updateCartCount();
+        });
+
+        function setupEventListeners() {
+            const quantityInput = document.getElementById('quantity-input');
+            quantityInput.addEventListener('input', handleQuantityInput);
+            quantityInput.addEventListener('blur', validateQuantity);
+        }
+
+        function loadProduct() {
+            document.title = `${currentProduct.name} - Rotisería Cacho (Bootstrap)`;
+            document.getElementById('product-name').textContent = currentProduct.name;
+            document.getElementById('product-breadcrumb').textContent = currentProduct.name;
+            document.getElementById('product-image').textContent = currentProduct.image;
+            document.getElementById('product-price').textContent = currentProduct.price.toLocaleString();
+            document.getElementById('product-description').textContent = currentProduct.description;
+            document.getElementById('product-category').textContent = currentProduct.category;
+            
+            const availabilityElement = document.getElementById('product-availability');
+            availabilityElement.textContent = currentProduct.available ? 'Disponible' : 'Agotado';
+            availabilityElement.className = `badge rounded-pill ${currentProduct.available ? 'text-bg-success-subtle text-success-emphasis' : 'text-bg-danger-subtle text-danger-emphasis'}`;
+            
+            document.getElementById('product-popular').style.display = currentProduct.popular ? '' : 'none';
+
+            const addToCartBtn = document.getElementById('add-to-cart-btn');
+            addToCartBtn.disabled = !currentProduct.available;
+            if(!currentProduct.available) {
+                addToCartBtn.classList.remove('btn-danger');
+                addToCartBtn.classList.add('btn-secondary');
+                addToCartBtn.innerHTML = '<span>Producto no disponible</span>';
+            } else {
+                 addToCartBtn.classList.add('btn-danger');
+                 addToCartBtn.classList.remove('btn-secondary');
+                 addToCartBtn.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5-6M20 13v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6m16 0V9a2 2 0 00-2-2H6a2 2 0 00-2 2v4.01"></path></svg><span>Agregar al carrito</span>';
+            }
+            updateTotalPrice();
+        }
+
+        function handleQuantityInput(event) {
+            const value = parseInt(event.target.value);
+            if (!isNaN(value) && value >= 1 && value <= 10) {
+                quantity = value;
+                updateTotalPrice();
+            }
+        }
+        function validateQuantity() {
+            const input = document.getElementById('quantity-input');
+            let value = parseInt(input.value);
+            if (isNaN(value) || value < 1) value = 1;
+            if (value > 10) value = 10;
+            if (parseInt(input.value) !== value) {
+                input.classList.add('shake');
+                setTimeout(() => input.classList.remove('shake'), 500);
+            }
+            quantity = value;
+            input.value = value;
+            updateTotalPrice();
+        }
+        function increaseQuantity() {
+            if (quantity < 10) {
+                quantity++;
+                document.getElementById('quantity-input').value = quantity;
+                updateTotalPrice();
+            } else {
+                const input = document.getElementById('quantity-input');
+                input.classList.add('shake');
+                setTimeout(() => input.classList.remove('shake'), 500);
+            }
+        }
+        function decreaseQuantity() {
+            if (quantity > 1) {
+                quantity--;
+                document.getElementById('quantity-input').value = quantity;
+                updateTotalPrice();
+            } else {
+                 const input = document.getElementById('quantity-input');
+                 input.classList.add('shake');
+                 setTimeout(() => input.classList.remove('shake'), 500);
+            }
+        }
+        function updateTotalPrice() {
+            const total = currentProduct.price * quantity;
+            document.getElementById('total-price').textContent = `$${total.toLocaleString()}`;
+        }
+        function addToCart() {
+            if (!currentProduct.available) return;
+            const existingItem = cart.find(item => item.id === currentProduct.id);
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({ ...currentProduct, quantity: quantity });
+            }
+            updateCartCount();
+            showSuccessModal();
+        }
+        function updateCartCount() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartCountElement = document.getElementById('cart-count');
+            cartCountElement.textContent = totalItems;
+            if (totalItems > 0) {
+                cartCountElement.classList.remove('d-none');
+                cartCountElement.classList.add('pulse-animation');
+                setTimeout(() => cartCountElement.classList.remove('pulse-animation'), 1000);
+            } else {
+                cartCountElement.classList.add('d-none');
+            }
+        }
+        function showSuccessModal() {
+            const total = currentProduct.price * quantity;
+            document.getElementById('success-message').textContent = `${quantity} x ${currentProduct.name} - Total: $${total.toLocaleString()}`;
+            successModal.show();
+        }
+        function buyNow() {
+            if (!currentProduct.available) return;
+            addToCart();
+            setTimeout(() => {
+                successModal.hide();
+                viewCart();
+            }, 500);
+        }
+        function viewProduct(productId) {
+            if (products[productId]) {
+                currentProduct = products[productId];
+                quantity = 1;
+                document.getElementById('quantity-input').value = 1;
+                loadProduct();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+        function leaveReview(){
+            alert('Abriendo formulario para dejar una reseña...');
+        }
+        function goBack() { alert('Volviendo a la página de menú...'); }
+        function goToHome() { alert('Navegando al inicio...'); }
+        function viewCart() {
+            successModal.hide();
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            let cartDetails = 'Carrito de compras:\n\n';
+            cart.forEach(item => {
+                cartDetails += `• ${item.name} x${item.quantity} - $${(item.price * item.quantity).toLocaleString()}\n`;
+            });
+            cartDetails += `\nTotal: ${totalItems} Menú - $${totalPrice.toLocaleString()}`;
+            alert(cartDetails);
+        }
+        function logout() {
+            if (confirm('¿Estás seguro que querés cerrar sesión?')) {
+                alert('Cerrando sesión...');
+            }
+        }
+    </script>
+</body>
+</html>
