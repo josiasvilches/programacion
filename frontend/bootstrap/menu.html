@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comidas - Rotisería Cacho (Bootstrap)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .smooth-transition { transition: all 0.3s ease; }
+        .form-control:focus, .form-select:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 0.25rem rgba(239, 68, 68, 0.25);
+        }
+        .hover-lift:hover { transform: translateY(-4px); }
+        .gradient-bg { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        .product-card { transition: all 0.3s ease; border: 0; }
+        .product-card:hover { box-shadow: 0 1rem 1.5rem rgba(0, 0, 0, 0.15) !important; }
+        .filter-btn.filter-active { background-color: #ef4444; color: white; border-color: #ef4444; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .product-image-bg {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 50%, #fecaca 100%);
+            height: 12rem;
+        }
+        .unavailable { opacity: 0.6; position: relative; }
+        .unavailable::after {
+            content: 'AGOTADO';
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            background: rgba(239, 68, 68, 0.9);
+            color: white; padding: 8px 16px; border-radius: 8px;
+            font-weight: bold; font-size: 14px; z-index: 10;
+        }
+        .popular-badge { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); }
+        .new-badge { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .user-dropdown .dropdown-toggle:focus {
+            box-shadow: none;
+        }
+        .user-dropdown .dropdown-menu {
+            margin-top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container-xl">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <div class="bg-danger rounded-2 d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
+                    <span class="text-white fw-bold fs-5">RC</span>
+                </div>
+                <h1 class="h5 mb-0 fw-bold">Rotisería Cacho</h1>
+            </a>
+            <div class="dropdown user-dropdown">
+                <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px;">
+                        <span class="text-white fw-bold small">JD</span>
+                    </div>
+                    <span class="fw-semibold d-none d-sm-block">Juan Díaz</span>
+                    </a>
+                <ul class="dropdown-menu" aria-labelledby="dropdownUser">
+                    <li><a class="dropdown-item" href="#" onclick="menuPopup('carrito')">Carrito</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="menuPopup('pedidos')">Pedidos</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="menuPopup('perfil')">Perfil</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" onclick="menuPopup('cerrar')">Cerrar sesión</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="gradient-bg text-white py-5">
+        <div class="container-xl text-center">
+            <h2 class="display-4 fw-bold mb-3">Nuestro Menú</h2>
+            <p class="lead text-danger-subtle mb-4">Platos principales preparados con amor y los mejores ingredientes</p>
+            <div class="d-flex justify-content-center">
+                <div class="p-3 rounded-3" style="background-color: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px);">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="text-center">
+                            <div id="total-products" class="fs-4 fw-bold">0</div>
+                            <div class="small text-danger-subtle">Productos</div>
+                        </div>
+                        <div class="vr bg-white opacity-50"></div>
+                        <div class="text-center">
+                            <div id="available-products" class="fs-4 fw-bold">0</div>
+                            <div class="small text-danger-subtle">Disponibles</div>
+                        </div>
+                        <div class="vr bg-white opacity-50"></div>
+                        <div class="text-center">
+                            <div class="fs-4 fw-bold">🔥</div>
+                            <div class="small text-danger-subtle">Especialidades</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-xl py-5">
+        <div class="card shadow-sm mb-5" style="border-radius: 1rem;">
+            <div class="card-body p-4">
+                <div class="d-flex flex-column gap-4">
+                    <div class="position-relative">
+                        <input type="text" id="search-input" placeholder="Buscar comidas por nombre..." class="form-control form-control-lg ps-5">
+                        <span class="position-absolute top-50 start-0 translate-middle-y ps-3 text-secondary">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </span>
+                        <button onclick="clearSearch()" id="clear-search" class="btn position-absolute top-50 end-0 translate-middle-y text-secondary d-none">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div>
+                        <h3 class="small fw-semibold text-body-secondary mb-2">Categorías</h3>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button onclick="filterByCategory('all')" id="filter-all" class="btn filter-btn filter-active">
+                                Todas (<span id="count-all">0</span>)
+                            </button>
+                            <button onclick="filterByCategory('pollos')" id="filter-pollos" class="btn btn-light filter-btn">
+                                Pollos (<span id="count-pollos">0</span>)
+                            </button>
+                            <button onclick="filterByCategory('milanesas')" id="filter-milanesas" class="btn btn-light filter-btn">
+                                Milanesas (<span id="count-milanesas">0</span>)
+                            </button>
+                            <button onclick="filterByCategory('empanadas')" id="filter-empanadas" class="btn btn-light filter-btn">
+                                Empanadas (<span id="count-empanadas">0</span>)
+                            </button>
+                            <button onclick="filterByCategory('carnes')" id="filter-carnes" class="btn btn-light filter-btn">
+                                Carnes (<span id="count-carnes">0</span>)
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="price-filter" class="form-label small fw-medium">Rango de precio</label>
+                        <select id="price-filter" class="form-select">
+                            <option value="all">Todos los precios</option>
+                            <option value="0-2000">Hasta $2.000</option>
+                            <option value="2000-4000">$2.000 - $4.000</option>
+                            <option value="4000-6000">$4.000 - $6.000</option>
+                            <option value="6000+">Más de $6.000</option>
+                        </select>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <p class="mb-0 text-secondary">
+                            Mostrando <span id="results-count" class="fw-semibold text-dark">0</span> comidas
+                            <span id="filter-description" class="text-muted"></span>
+                        </p>
+                        <button onclick="clearAllFilters()" class="btn btn-link text-danger text-decoration-none p-0">
+                            Limpiar filtros
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="products-container" class="row g-4">
+            </div>
+        <div id="empty-state" class="text-center py-5 d-none">
+            <div class="d-inline-flex bg-light rounded-circle mb-4" style="width: 6rem; height: 6rem;">
+                <svg class="m-auto text-secondary" width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </div>
+            <h3 class="h4 text-body-secondary mb-2">No se encontraron comidas</h3>
+            <p class="text-muted mb-4">Probá ajustando los filtros de búsqueda</p>
+            <button onclick="clearAllFilters()" class="btn btn-danger px-4 py-2">
+                Limpiar filtros
+            </button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function menuPopup(action) {
+            let msg = '';
+            switch(action) {
+                case 'carrito': msg = 'Navegando al carrito de compras.'; break;
+                case 'pedidos': msg = 'Mostrando tus pedidos realizados.'; break;
+                case 'perfil': msg = 'Accediendo a tu perfil de usuario.'; break;
+                case 'cerrar': msg = 'Cerrando sesión...'; break;
+                default: msg = 'Acción desconocida.';
+            }
+            alert(msg);
+        }
+        const products = [
+            { id: 1, name: "Pollo al Spiedo Entero", category: "pollos", price: 3500, available: true, popular: true, new: false, image: "🍗", description: "Pollo entero dorado al spiedo con especias secretas", prepTime: "45-60 min", portions: "4-6 personas" },
+            { id: 2, name: "Medio Pollo al Spiedo", category: "pollos", price: 1800, available: true, popular: true, new: false, image: "🍗", description: "Media porción de nuestro famoso pollo al spiedo", prepTime: "30-45 min", portions: "2-3 personas" },
+            { id: 3, name: "Cuarto de Pollo", category: "pollos", price: 950, available: true, popular: false, new: false, image: "🍗", description: "Cuarto de pollo jugoso con piel dorada", prepTime: "20-30 min", portions: "1-2 personas" },
+            { id: 4, name: "Milanesas de Pollo (4 unidades)", category: "milanesas", price: 2800, available: true, popular: true, new: false, image: "🍖", description: "Milanesas de pollo caseras, tiernas y doradas", prepTime: "25-35 min", portions: "3-4 personas" },
+            { id: 5, name: "Milanesas de Carne (4 unidades)", category: "milanesas", price: 3200, available: true, popular: true, new: false, image: "🥩", description: "Milanesas de carne vacuna, jugosas y sabrosas", prepTime: "30-40 min", portions: "3-4 personas" },
+            { id: 6, name: "Milanesas Napolitanas (4 unidades)", category: "milanesas", price: 3800, available: false, popular: true, new: false, image: "🍕", description: "Milanesas con jamón, queso y salsa de tomate", prepTime: "35-45 min", portions: "3-4 personas" },
+            { id: 7, name: "Empanadas de Carne (6 unidades)", category: "empanadas", price: 2700, available: true, popular: true, new: false, image: "🥟", description: "Empanadas caseras rellenas de carne cortada a cuchillo", prepTime: "20-30 min", portions: "2-3 personas" },
+            { id: 8, name: "Empanadas de Pollo (6 unidades)", category: "empanadas", price: 2500, available: true, popular: false, new: false, image: "🥟", description: "Empanadas de pollo desmenuzado con verduras", prepTime: "20-30 min", portions: "2-3 personas" },
+            { id: 9, name: "Empanadas de Jamón y Queso (6 unidades)", category: "empanadas", price: 2400, available: true, popular: false, new: false, image: "🥟", description: "Empanadas clásicas de jamón cocido y queso", prepTime: "20-30 min", portions: "2-3 personas" },
+            { id: 10, name: "Empanadas de Verdura (6 unidades)", category: "empanadas", price: 2200, available: true, popular: false, new: true, image: "🥟", description: "Empanadas vegetarianas con acelga, cebolla y queso", prepTime: "20-30 min", portions: "2-3 personas" },
+            { id: 11, name: "Bife de Chorizo", category: "carnes", price: 4500, available: true, popular: true, new: false, image: "🥩", description: "Bife de chorizo jugoso a la parrilla", prepTime: "15-25 min", portions: "1 persona" },
+            { id: 12, name: "Asado de Tira", category: "carnes", price: 3800, available: true, popular: false, new: false, image: "🥩", description: "Asado de tira tierno con hueso", prepTime: "40-60 min", portions: "2-3 personas" },
+            { id: 13, name: "Matambre a la Pizza", category: "carnes", price: 5200, available: false, popular: true, new: false, image: "🍕", description: "Matambre relleno con jamón, queso y salsa", prepTime: "60-90 min", portions: "4-6 personas" },
+            { id: 14, name: "Pollo Grillé", category: "pollos", price: 2800, available: true, popular: false, new: true, image: "🍗", description: "Pollo marinado y grillado con hierbas", prepTime: "35-45 min", portions: "2-3 personas" }
+        ];
+        let filteredProducts = [...products];
+        let currentCategory = 'all';
+        let currentSearch = '';
+        let currentPriceFilter = 'all';
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCategoryCounts();
+            updateSummaryStats();
+            renderProducts();
+            setupEventListeners();
+        });
+        function setupEventListeners() {
+            document.getElementById('search-input').addEventListener('input', handleSearch);
+            document.getElementById('price-filter').addEventListener('change', handlePriceFilter);
+        }
+        function handleSearch(event) {
+            currentSearch = event.target.value.toLowerCase();
+            const clearBtn = document.getElementById('clear-search');
+            if (currentSearch) {
+                clearBtn.classList.remove('d-none');
+            } else {
+                clearBtn.classList.add('d-none');
+            }
+            applyFilters();
+        }
+        function clearSearch() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('clear-search').classList.add('d-none');
+            currentSearch = '';
+            applyFilters();
+        }
+        function handlePriceFilter(event) {
+            currentPriceFilter = event.target.value;
+            applyFilters();
+        }
+        function filterByCategory(category) {
+            currentCategory = category;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('filter-active');
+                if(btn.id !== 'filter-all') {
+                    btn.classList.add('btn-light');
+                }
+            });
+            const activeBtn = document.getElementById(`filter-${category}`);
+            activeBtn.classList.add('filter-active');
+            activeBtn.classList.remove('btn-light');
+            applyFilters();
+        }
+        function applyFilters() {
+            filteredProducts = products.filter(product => {
+                if (currentCategory !== 'all' && product.category !== currentCategory) return false;
+                if (currentSearch && !product.name.toLowerCase().includes(currentSearch)) return false;
+                if (!passesPriceFilter(product.price)) return false;
+                return true;
+            });
+            renderProducts();
+            updateResultsCount();
+        }
+        function passesPriceFilter(price) {
+            switch (currentPriceFilter) {
+                case 'all': return true;
+                case '0-2000': return price <= 2000;
+                case '2000-4000': return price > 2000 && price <= 4000;
+                case '4000-6000': return price > 4000 && price <= 6000;
+                case '6000+': return price > 6000;
+                default: return true;
+            }
+        }
+        function clearAllFilters() {
+            currentCategory = 'all';
+            currentSearch = '';
+            currentPriceFilter = 'all';
+            document.getElementById('search-input').value = '';
+            document.getElementById('clear-search').classList.add('d-none');
+            document.getElementById('price-filter').value = 'all';
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('filter-active');
+                if (btn.id !== 'filter-all') btn.classList.add('btn-light');
+            });
+            document.getElementById('filter-all').classList.add('filter-active');
+            document.getElementById('filter-all').classList.remove('btn-light');
+            applyFilters();
+        }
+        function updateCategoryCounts() {
+            const counts = { all: products.length, pollos: products.filter(p => p.category === 'pollos').length, milanesas: products.filter(p => p.category === 'milanesas').length, empanadas: products.filter(p => p.category === 'empanadas').length, carnes: products.filter(p => p.category === 'carnes').length };
+            Object.keys(counts).forEach(category => {
+                const element = document.getElementById(`count-${category}`);
+                if (element) element.textContent = counts[category];
+            });
+        }
+        function updateSummaryStats() {
+            document.getElementById('total-products').textContent = products.length;
+            document.getElementById('available-products').textContent = products.filter(p => p.available).length;
+        }
+        function updateResultsCount() {
+            document.getElementById('results-count').textContent = filteredProducts.length;
+            let description = '';
+            if (currentSearch) description += ` que contienen "${currentSearch}"`;
+            if (currentCategory !== 'all') description += ` en categoría "${currentCategory}"`;
+            document.getElementById('filter-description').textContent = description;
+        }
+        function renderProducts() {
+            const container = document.getElementById('products-container');
+            const emptyState = document.getElementById('empty-state');
+            if (filteredProducts.length === 0) {
+                container.classList.add('d-none');
+                emptyState.classList.remove('d-none');
+                return;
+            }
+            container.classList.remove('d-none');
+            emptyState.classList.add('d-none');
+            container.innerHTML = filteredProducts.map(product => `
+                <div class="col-md-6 col-lg-4">
+                    <div class="card product-card h-100 shadow-sm rounded-4 overflow-hidden hover-lift smooth-transition fade-in ${!product.available ? 'unavailable' : ''}">
+                        <div class="product-image-bg d-flex align-items-center justify-content-center position-relative">
+                            <span class="display-1">${product.image}</span>
+                            ${product.popular ? `<div class="position-absolute top-0 start-0 m-2 badge popular-badge text-white py-1 px-2 small">🔥 POPULAR</div>` : ''}
+                            ${product.new ? `<div class="position-absolute top-0 end-0 m-2 badge new-badge text-white py-1 px-2 small">✨ NUEVO</div>` : ''}
+                        </div>
+                        <div class="card-body d-flex flex-column p-4">
+                            <div class="mb-3">
+                                <h3 class="h5 fw-semibold text-dark mb-1">${product.name}</h3>
+                                <p class="small text-muted mb-2">${product.description}</p>
+                                <div class="d-flex small text-secondary gap-3">
+                                    <span>⏱️ ${product.prepTime}</span>
+                                    <span>👥 ${product.portions}</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="fs-4 fw-bold text-danger">$${product.price.toLocaleString()}</div>
+                                <span class="badge bg-light text-dark rounded-pill text-capitalize fw-medium">${product.category}</span>
+                            </div>
+                            <div class="mt-auto d-grid gap-2 d-sm-flex">
+                                <button onclick="viewProduct(${product.id})" class="btn btn-outline-secondary w-100">Ver detalles</button>
+                                ${product.available ? 
+                                    `<button onclick="addToCart(${product.id})" class="btn btn-danger w-100">Agregar</button>` : 
+                                    `<button disabled class="btn btn-secondary w-100">No disponible</button>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        function viewProduct(productId) {
+            alert(`Navegando a los detalles del producto ID: ${productId}`);
+        }
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product && product.available) {
+                alert(`${product.name} agregado al carrito - $${product.price.toLocaleString()}`);
+            }
+        }
+    </script>
+</body>
+</html>
