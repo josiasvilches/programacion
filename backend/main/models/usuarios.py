@@ -67,13 +67,19 @@ class Usuario(db.Model):
     
     @staticmethod
     def from_json(user_json):
-        user_json = {
-            "usuario_id": 1,
-            "nombre": "Josías Vilches",
-            "rol": "ADMIN",
-            "estado": "activo",
-            "email": "jl.vilches@alumno.um.edu.ar",
-            "password": "123456"
-        }
-        usuario = Usuario.from_json(user_json)
-        print(usuario.to_json())
+        id = user_json.get("usuario_id")
+        nombre = user_json.get("nombre")
+        rol = user_json.get("rol")
+        estado = user_json.get("estado")
+        email = user_json.get("email")
+        password = user_json.get("password")
+        numero = user_json.get("numero")
+        return Usuario(
+            usuario_id=id,
+            nombre=nombre,
+            rol=rol,
+            estado=estado,
+            email=email,
+            plain_password=password,
+            numero=numero
+        )
