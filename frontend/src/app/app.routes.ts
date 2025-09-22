@@ -3,11 +3,11 @@ import { HomeComponent } from './pages/home/home.component';
 import { ComidasComponent } from './pages/comidas/comidas.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
-import { UserComponent } from './components/user/user.component';
-import { ProductComponent } from './components/product/product.component';
-import { CartComponent } from './components/cart/cart.component';
-import { PaymentComponent } from './components/payment/payment.component';
-import { OrdersComponent } from './components/orders/orders.component';
+import { UserComponent } from './pages/user/user.component';
+import { CartComponent } from './pages/cart/cart.component';
+import { PaymentComponent } from './pages/payment/payment.component';
+import { OrdersComponent } from './pages/orders/orders.component';
+import { ProductComponent } from './pages/product/product.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },

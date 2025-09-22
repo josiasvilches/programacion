@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss']
 })
@@ -12,15 +13,24 @@ export class FooterComponent {
   currentYear: number = new Date().getFullYear();
   
   socialLinks = [
-    { name: 'Facebook', url: '#', icon: 'bi-facebook' },
-    { name: 'Instagram', url: '#', icon: 'bi-instagram' },
-    { name: 'Twitter', url: '#', icon: 'bi-twitter' }
+    { name: 'Facebook', url: 'https://facebook.com', icon: 'facebook' },
+    { name: 'Instagram', url: 'https://instagram.com', icon: 'instagram' },
+    { name: 'Twitter', url: 'https://twitter.com', icon: 'twitter' }
   ];
 
   quickLinks = [
-    { name: 'Menú', route: '/menu' },
-    { name: 'Sobre Nosotros', route: '/about' },
-    { name: 'Contacto', route: '/contact' },
-    { name: 'Políticas', route: '/policies' }
+    { name: 'Inicio', route: '/' },
+    { name: 'Comidas', route: '/comidas' },
+    { name: 'Carrito', route: '/cart' },
+    { name: 'Mis Pedidos', route: '/orders' }
   ];
+
+  getSocialIcon(iconName: string): string {
+    const icons: { [key: string]: string } = {
+      'facebook': 'f',
+      'instagram': '📷',
+      'twitter': '🐦'
+    };
+    return icons[iconName] || '📱';
+  }
 }

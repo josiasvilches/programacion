@@ -1,11 +1,11 @@
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { HeaderComponent } from '../header/header.component';
-import { FooterComponent } from '../footer/footer.component';
 import { CartService } from '../../services/cart.service';
 import { OrderService } from '../../services/order.service';
 import { CartItem } from '../../models/product.interface';
+import { HeaderComponent } from '../../components/header/header.component';
+import { FooterComponent } from '../../components/footer/footer.component';
 
 interface PaymentMethod {
   id: string;
