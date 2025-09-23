@@ -3,35 +3,34 @@
   <div class="flex flex-col h-full">
     <!-- Logo -->
     <div class="flex items-center justify-center h-16 border-b border-gray-200">
-      <div routerLink="/" class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+      <div
+        routerLink="/"
+        class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center text-white font-bold text-sm"
+      >
         RC
       </div>
     </div>
-    
+
     <!-- Navigation Items -->
     <nav class="flex-1 py-4">
       <div class="space-y-2 px-2">
-        <div 
-          *ngFor="let item of sidebarItems" 
+        <div
+          *ngFor="let item of sidebarItems"
           class="sidebar-item rounded-lg p-3 cursor-pointer smooth-transition"
           [routerLink]="item.route"
-          routerLinkActive="active">
+          routerLinkActive="active"
+        >
           <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.icon"></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              [attr.d]="item.icon"
+            ></path>
           </svg>
           <div class="tooltip">{{ item.tooltip }}</div>
         </div>
       </div>
     </nav>
-    
-    <!-- User Profile -->
-    <div class="border-t border-gray-200 p-2">
-      <div class="sidebar-item rounded-lg p-3 cursor-pointer">
-        <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-        </svg>
-        <div class="tooltip">Perfil</div>
-      </div>
-    </div>
   </div>
 </div>

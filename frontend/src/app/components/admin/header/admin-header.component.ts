@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-header',
@@ -13,16 +14,26 @@ export class AdminHeaderComponent implements OnInit {
   @Input() subtitle: string = 'Gestiona tu rotisería';
   
   currentTime: string = '';
+  isUserDropdownOpen = false;
   adminUser = {
     name: 'Admin',
     initials: 'A'
   };
 
-  constructor() {}
+  constructor(private router: Router) {}
 
   ngOnInit() {
     this.updateTime();
     setInterval(() => this.updateTime(), 1000);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    // Cerrar dropdown si se hace clic fuera de él
+    const target = event.target as HTMLElement;
+    if (!target.closest('.relative')) {
+      this.isUserDropdownOpen = false;
+    }
   }
 
   private updateTime() {
@@ -32,5 +43,33 @@ export class AdminHeaderComponent implements OnInit {
       minute: '2-digit',
       second: '2-digit'
     });
+  }
+
+  toggleUserDropdown() {
+    this.isUserDropdownOpen = !this.isUserDropdownOpen;
+  }
+
+  closeUserDropdown() {
+    this.isUserDropdownOpen = false;
+  }
+
+  goToProfile() {
+    this.router.navigate(['/admin/profile']);
+    this.closeUserDropdown();
+  }
+
+  goToWebsite() {
+    // Abrir la página web en una nueva pestaña
+    window.open('/', '_blank');
+    this.closeUserDropdown();
+  }
+
+  logout() {
+    // TODO: Implementar lógica de cerrar sesión
+    if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+      console.log('Cerrando sesión...');
+      // Aquí iría la lógica de logout
+      this.closeUserDropdown();
+    }
   }
 }

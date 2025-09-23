@@ -13,6 +13,7 @@ import { AdminProductsComponent } from './pages/admin/products/admin-products.co
 import { AdminUsersComponent } from './pages/admin/users/admin-users.component';
 import { AdminOrdersComponent } from './pages/admin/orders/admin-orders.component';
 import { AdminEmailComponent } from './pages/admin/email/admin-email.component';
+import { AdminProfileComponent } from './pages/admin/profile/admin-profile.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -29,5 +30,6 @@ export const routes: Routes = [
   { path: 'admin/users', component: AdminUsersComponent },
   { path: 'admin/orders', component: AdminOrdersComponent },
   { path: 'admin/email', component: AdminEmailComponent },
+  { path: 'admin/profile', component: AdminProfileComponent },
   { path: '**', redirectTo: '' }
 ];
