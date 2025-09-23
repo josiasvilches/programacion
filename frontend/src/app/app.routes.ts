@@ -8,8 +8,11 @@ import { CartComponent } from './pages/cart/cart.component';
 import { PaymentComponent } from './pages/payment/payment.component';
 import { OrdersComponent } from './pages/orders/orders.component';
 import { ProductComponent } from './pages/product/product.component';
+import { AdminDashboardComponent } from './pages/admin/dashboard/admin-dashboard.component';
 import { AdminProductsComponent } from './pages/admin/products/admin-products.component';
 import { AdminUsersComponent } from './pages/admin/users/admin-users.component';
+import { AdminOrdersComponent } from './pages/admin/orders/admin-orders.component';
+import { AdminEmailComponent } from './pages/admin/email/admin-email.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -21,7 +24,10 @@ export const routes: Routes = [
   { path: 'cart', component: CartComponent },
   { path: 'payment', component: PaymentComponent },
   { path: 'orders', component: OrdersComponent },
+  { path: 'admin', component: AdminDashboardComponent },
   { path: 'admin/products', component: AdminProductsComponent },
   { path: 'admin/users', component: AdminUsersComponent },
+  { path: 'admin/orders', component: AdminOrdersComponent },
+  { path: 'admin/email', component: AdminEmailComponent },
   { path: '**', redirectTo: '' }
 ];

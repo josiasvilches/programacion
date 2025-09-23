@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrativo - Rotisería Cacho</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .smooth-transition {
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-item {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .sidebar-item:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+            transform: translateX(4px);
+        }
+        
+        .sidebar-item.active {
+            background-color: #ef4444;
+            color: white;
+        }
+        
+        .sidebar-item.active:hover {
+            background-color: #dc2626;
+        }
+        
+        .tooltip {
+            position: absolute;
+            left: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 8px 12px;
+            rounded: 6px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .sidebar-item:hover .tooltip {
+            opacity: 1;
+        }
+        
+        .tooltip::before {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 5px solid transparent;
+            border-right-color: #1f2937;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .status-inactive {
+            background-color: #fef2f2;
+            color: #991b1b;
+        }
+        
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+
+    <!-- Main Content -->
+    <div class="ml-16 min-h-screen">
+      
+    
+
+        <!-- Profile Section -->
+        <div id="profile-section" class="p-6 fade-in">
+            <!-- Profile Header -->
+            <div class="bg-white rounded-xl shadow-sm mb-8">
+                <div class="relative">
+                    <!-- Cover Image -->
+                    <div class="h-32 bg-gradient-to-r from-red-500 to-red-600 rounded-t-xl"></div>
+                    
+                    <!-- Profile Info -->
+                    <div class="relative px-6 pb-6">
+                        <div class="flex items-end -mt-16 mb-6">
+                            <div class="relative">
+                                <div class="w-32 h-32 bg-white rounded-full p-2 shadow-lg">
+                                    <div class="w-full h-full bg-red-500 rounded-full flex items-center justify-center text-white text-4xl font-bold">
+                                        AC
+                                    </div>
+                                </div>
+                                <button class="absolute bottom-2 right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white hover:bg-blue-600 smooth-transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div class="ml-6 flex-1">
+                                <h1 class="text-3xl font-bold text-gray-800">Alejandro Cacho</h1>
+                                <p class="text-gray-600 text-lg">Administrador Principal</p>
+                                <p class="text-gray-500 text-sm mt-1">Rotisería Cacho - Propietario</p>
+                                
+                                <div class="flex items-center space-x-4 mt-4">
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                        Buenos Aires, Argentina
+                                    </div>
+                                    
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 0V6a2 2 0 012-2h4a2 2 0 012 2v1m-6 0h8m-9 0v10a2 2 0 002 2h8a2 2 0 002-2V7H7z"></path>
+                                        </svg>
+                                        Miembro desde Enero 2020
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-3">
+                                <button onclick="editProfile()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 smooth-transition">
+                                    <div class="flex items-center space-x-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                        </svg>
+                                        <span>Editar Perfil</span>
+                                    </div>
+                                </button>
+                                
+                                <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 smooth-transition">
+                                    <div class="flex items-center space-x-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                        <span>Configuración</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Personal Information -->
+                <div class="lg:col-span-2 space-y-8">
+                    <!-- Contact Information -->
+                    <div class="bg-white rounded-xl shadow-sm">
+                        <div class="p-6 border-b border-gray-200">
+                            <h2 class="text-lg font-semibold text-gray-800">Información Personal</h2>
+                        </div>
+                        
+                        <div class="p-6 space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo</label>
+                                    <input type="text" value="Alejandro Cacho" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" readonly>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                    <input type="email" value="alejandro@rotiseriacacho.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" readonly>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                                    <input type="tel" value="+54 11 4567-8900" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" readonly>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">WhatsApp</label>
+                                    <input type="tel" value="+54 11 4567-8900" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" readonly>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Dirección del Local</label>
+                                <input type="text" value="Av. Corrientes 1234, CABA, Buenos Aires" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" readonly>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Horarios de Atención</label>
+                                <textarea rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" readonly>Lunes a Viernes: 11:00 - 15:00 y 19:00 - 23:30
+Sábados: 11:00 - 16:00 y 19:00 - 00:00
+Domingos: 11:00 - 16:00 y 19:00 - 23:00</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Business Information -->
+                    <div class="bg-white rounded-xl shadow-sm">
+                        <div class="p-6 border-b border-gray-200">
+                            <h2 class="text-lg font-semibold text-gray-800">Información del Negocio</h2>
+                        </div>
+                        
+                        <div class="p-6 space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre del Negocio</label>
+                                    <input type="text" value="Rotisería Cacho" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" readonly>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">CUIT</label>
+                                    <input type="text" value="20-12345678-9" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" readonly>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Fecha de Apertura</label>
+                                    <input type="date" value="2020-01-15" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" readonly>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Negocio</label>
+                                    <input type="text" value="Rotisería y Comidas Preparadas" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" readonly>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                                <textarea rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" readonly>Rotisería familiar con más de 4 años de experiencia en el barrio. Especialistas en pollos al spiedo, milanesas caseras y empanadas artesanales. Nos caracterizamos por la calidad de nuestros productos y la atención personalizada a cada cliente.</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar Info -->
+                <div class="space-y-8">
+                    <!-- Quick Stats -->
+                    <div class="bg-white rounded-xl shadow-sm">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-800">Estadísticas Rápidas</h3>
+                        </div>
+                        
+                        <div class="p-6 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Productos Activos</span>
+                                <span class="font-semibold text-gray-800">24</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Clientes Registrados</span>
+                                <span class="font-semibold text-gray-800">1,247</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Pedidos Este Mes</span>
+                                <span class="font-semibold text-gray-800">342</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Ventas Este Mes</span>
+                                <span class="font-semibold text-green-600">$1.245.600</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Campañas Enviadas</span>
+                                <span class="font-semibold text-gray-800">47</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Settings -->
+                    <div class="bg-white rounded-xl shadow-sm">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-800">Configuración de Cuenta</h3>
+                        </div>
+                        
+                        <div class="p-6 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium text-gray-800">Notificaciones Email</p>
+                                    <p class="text-sm text-gray-600">Recibir alertas por email</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" checked class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium text-gray-800">Notificaciones Push</p>
+                                    <p class="text-sm text-gray-600">Alertas en el navegador</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" checked class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium text-gray-800">Modo Oscuro</p>
+                                    <p class="text-sm text-gray-600">Tema oscuro del panel</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security -->
+                    <div class="bg-white rounded-xl shadow-sm">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-800">Seguridad</h3>
+                        </div>
+                        
+                        <div class="p-6 space-y-4">
+                            <button class="w-full text-left p-3 rounded-lg hover:bg-gray-50 smooth-transition">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m0 0a2 2 0 012 2m-2-2h-6m6 0v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9a2 2 0 012-2h2M7 7V3a2 2 0 012-2h4a2 2 0 012 2v4M7 7H3a2 2 0 00-2 2v6a2 2 0 002 2h4m-4-8h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-800">Cambiar Contraseña</p>
+                                        <p class="text-sm text-gray-600">Actualizar tu contraseña</p>
+                                    </div>
+                                </div>
+                            </button>
+                            
+                            <button class="w-full text-left p-3 rounded-lg hover:bg-gray-50 smooth-transition">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-800">Autenticación 2FA</p>
+                                        <p class="text-sm text-gray-600">Configurar verificación en dos pasos</p>
+                                    </div>
+                                </div>
+                            </button>
+                            
+                            <button class="w-full text-left p-3 rounded-lg hover:bg-gray-50 smooth-transition">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-800">Sesiones Activas</p>
+                                        <p class="text-sm text-gray-600">Ver dispositivos conectados</p>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Logout -->
+                    <div class="bg-white rounded-xl shadow-sm">
+                        <div class="p-6">
+                            <button onclick="logout()" class="w-full bg-red-500 text-white py-3 rounded-lg font-medium hover:bg-red-600 smooth-transition">
+                                <div class="flex items-center justify-center space-x-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                    </svg>
+                                    <span>Cerrar Sesión</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+     
+    </div>
+
+    <script>
+        let currentSection = 'profile';
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTime();
+            setInterval(updateTime, 1000);
+            updateDiscountPreview();
+            setDefaultExpiryDate();
+        });
+
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('es-AR', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        // Show section
+        function showSection(section) {
+            // Hide all sections
+            document.getElementById('products-section').classList.add('hidden');
+            document.getElementById('users-section').classList.add('hidden');
+            document.getElementById('marketing-section').classList.add('hidden');
+            document.getElementById('profile-section').classList.add('hidden');
+            
+            // Show selected section
+            document.getElementById(section + '-section').classList.remove('hidden');
+            
+            // Update sidebar active state
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Update page title
+            const titles = {
+                'products': { title: 'Gestión de Productos', subtitle: 'Administrá tu inventario y precios' },
+                'users': { title: 'Gestión de Usuarios', subtitle: 'Administrá tu base de clientes' },
+                'marketing': { title: 'Email Marketing', subtitle: 'Creá y enviá campañas promocionales' },
+                'profile': { title: 'Mi Perfil', subtitle: 'Administrá tu información personal y configuración' }
+            };
+            
+            document.getElementById('page-title').textContent = titles[section].title;
+            document.getElementById('page-subtitle').textContent = titles[section].subtitle;
+            
+            currentSection = section;
+        }
+
+        // Product modal functions
+        function showAddProductModal() {
+            document.getElementById('add-product-modal').classList.remove('hidden');
+        }
+
+        function closeAddProductModal() {
+            document.getElementById('add-product-modal').classList.add('hidden');
+        }
+
+        // Marketing functions
+        function updateDiscountPreview() {
+            const discountType = document.getElementById('discount-type').value;
+            const discountValue = document.getElementById('discount-value').value || '20';
+            const discountCode = document.getElementById('discount-code').value || 'OFERTA20';
+            const customMessage = document.getElementById('custom-message').value || '¡Aprovechá esta oferta especial en nuestros deliciosos productos!';
+            
+            let discountText = '';
+            switch(discountType) {
+                case 'percentage':
+                    discountText = `${discountValue}% OFF`;
+                    break;
+                case 'fixed':
+                    discountText = `$${discountValue} OFF`;
+                    break;
+                case 'free-delivery':
+                    discountText = 'ENVÍO GRATIS';
+                    break;
+            }
+            
+            document.getElementById('preview-discount').textContent = discountText;
+            document.getElementById('preview-code').textContent = discountCode;
+            document.getElementById('preview-message').textContent = customMessage;
+        }
+
+        function generateDiscountCode() {
+            const codes = ['OFERTA', 'DESCUENTO', 'PROMO', 'ESPECIAL', 'AHORRO'];
+            const numbers = Math.floor(Math.random() * 99) + 1;
+            const randomCode = codes[Math.floor(Math.random() * codes.length)] + numbers;
+            
+            document.getElementById('discount-code').value = randomCode;
+            updateDiscountPreview();
+        }
+
+        function setDefaultExpiryDate() {
+            const today = new Date();
+            const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+            const dateString = nextWeek.toISOString().split('T')[0];
+            document.getElementById('expiry-date').value = dateString;
+            
+            // Update preview
+            const formattedDate = nextWeek.toLocaleDateString('es-AR');
+            document.getElementById('preview-expiry').textContent = `Válido hasta: ${formattedDate}`;
+        }
+
+        function sendCampaign() {
+            const subject = document.getElementById('email-subject').value || '¡Oferta especial en Rotisería Cacho!';
+            const discountCode = document.getElementById('discount-code').value || 'OFERTA20';
+            
+            // Show loading state
+            const button = event.currentTarget;
+            const originalContent = button.innerHTML;
+            button.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <div class="loading-spinner w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
+                    <span>Enviando...</span>
+                </div>
+            `;
+            button.disabled = true;
+            
+            // Simulate sending
+            setTimeout(() => {
+                button.innerHTML = originalContent;
+                button.disabled = false;
+                
+                alert(`¡Campaña enviada exitosamente!\n\nAsunto: ${subject}\nCódigo: ${discountCode}\nEnviado a: 1,089 clientes\n\nLa campaña aparecerá en el historial en unos minutos.`);
+                
+                // Reset form
+                document.getElementById('email-subject').value = '';
+                document.getElementById('discount-code').value = '';
+                document.getElementById('custom-message').value = '';
+                generateDiscountCode();
+                updateDiscountPreview();
+            }, 3000);
+        }
+
+        // Event listeners for marketing form
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = ['discount-type', 'discount-value', 'discount-code', 'custom-message'];
+            inputs.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener('input', updateDiscountPreview);
+                    element.addEventListener('change', updateDiscountPreview);
+                }
+            });
+            
+            // Update expiry date preview
+            const expiryInput = document.getElementById('expiry-date');
+            if (expiryInput) {
+                expiryInput.addEventListener('change', function() {
+                    const date = new Date(this.value);
+                    const formattedDate = date.toLocaleDateString('es-AR');
+                    document.getElementById('preview-expiry').textContent = `Válido hasta: ${formattedDate}`;
+                });
+            }
+        });
+
+        // Profile functions
+        function editProfile() {
+            const inputs = document.querySelectorAll('#profile-section input, #profile-section textarea');
+            const isEditing = inputs[0].hasAttribute('readonly');
+            
+            if (isEditing) {
+                // Enable editing
+                inputs.forEach(input => {
+                    input.removeAttribute('readonly');
+                    input.classList.add('bg-blue-50', 'border-blue-300');
+                });
+                
+                // Change button text
+                event.currentTarget.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Guardar Cambios</span>
+                    </div>
+                `;
+                event.currentTarget.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                event.currentTarget.classList.add('bg-green-500', 'hover:bg-green-600');
+            } else {
+                // Save changes
+                inputs.forEach(input => {
+                    input.setAttribute('readonly', true);
+                    input.classList.remove('bg-blue-50', 'border-blue-300');
+                });
+                
+                // Change button back
+                event.currentTarget.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                        </svg>
+                        <span>Editar Perfil</span>
+                    </div>
+                `;
+                event.currentTarget.classList.remove('bg-green-500', 'hover:bg-green-600');
+                event.currentTarget.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                
+                alert('¡Perfil actualizado exitosamente!');
+            }
+        }
+
+        function logout() {
+            if (confirm('¿Estás seguro que querés cerrar sesión?')) {
+                alert('Sesión cerrada exitosamente. Redirigiendo al login...');
+                // Here you would redirect to login page
+                // window.location.href = '/login';
+            }
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'983c378e13794e64',t:'MTc1ODY1MzMxNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
