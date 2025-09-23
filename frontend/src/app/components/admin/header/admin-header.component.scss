@@ -1,0 +1,13 @@
+// AdminHeader styles with Tailwind CSS
+// Most styles are handled directly in the HTML with Tailwind classes
+
+:host {
+  display: block;
+}
+@media (max-width: 768px) {
+    .subtitle {
+      display: none; // text-sm
+    }
+}
+
+// Additional animations or custom styles can be added here if needed
