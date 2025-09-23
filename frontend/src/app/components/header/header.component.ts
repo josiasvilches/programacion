@@ -12,6 +12,7 @@ import { CartService } from '../../services/cart.service';
 })
 export class HeaderComponent implements OnInit {
   isDropdownOpen = false;
+  isMobileMenuOpen = false;
   cartItemsCount = 0;
 
   // Usuario hardcodeado - cambiar a null para simular usuario no logueado
@@ -46,11 +47,22 @@ export class HeaderComponent implements OnInit {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
+  }
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     const target = event.target as HTMLElement;
     if (!target.closest('.user-dropdown')) {
       this.isDropdownOpen = false;
+    }
+    if (!target.closest('.mobile-menu-container')) {
+      this.isMobileMenuOpen = false;
     }
   }
 
@@ -76,9 +88,11 @@ export class HeaderComponent implements OnInit {
   onAdminPanelClick() {
     this.router.navigate(['/admin']);
     this.isDropdownOpen = false;
+    this.closeMobileMenu();
   }
 
   onLogout() {
     console.log('Logout user');
+    this.closeMobileMenu();
   }
 }
