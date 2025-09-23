@@ -25,7 +25,7 @@
             <div class="user-avatar w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
               {{ adminUser.initials }}
             </div>
-            <span class="text-sm font-medium text-gray-700">{{ adminUser.name }}</span>
+            <span class="text-sm font-medium text-gray-700 md:block hidden">{{ adminUser.name }}</span>
             <svg 
               class="w-4 h-4 text-gray-500 transition-transform duration-200"
               [ngClass]="{'rotate-180': isUserDropdownOpen}"

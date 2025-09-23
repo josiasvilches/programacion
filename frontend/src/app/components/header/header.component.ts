@@ -18,7 +18,8 @@ export class HeaderComponent implements OnInit {
   user = {
     name: 'Juan Díaz',
     initials: 'JD',
-    notifications: 3
+    notifications: 3,
+    role: 'empleado' // Puede ser 'admin', 'empleado', 'cliente'
   };
   // Para probar sin usuario logueado, cambiar a: user = null;
 
@@ -26,6 +27,11 @@ export class HeaderComponent implements OnInit {
   get isUserLoggedIn(): boolean {
     return this.user !== null;
     // return false;
+  }
+
+  // Getter para verificar si el usuario puede acceder al panel de administración
+  get canAccessAdminPanel(): boolean {
+    return this.user && (this.user.role === 'admin' || this.user.role === 'empleado');
   }
 
   constructor(private cartService: CartService, private router: Router) {}
@@ -65,6 +71,11 @@ export class HeaderComponent implements OnInit {
 
   onOrdersClick() {
     this.router.navigate(['/orders']);
+  }
+
+  onAdminPanelClick() {
+    this.router.navigate(['/admin']);
+    this.isDropdownOpen = false;
   }
 
   onLogout() {

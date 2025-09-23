@@ -87,6 +87,15 @@
               <span class="mr-3">📦</span>
               Pedidos
             </a>
+            @if (canAccessAdminPanel) {
+            <a
+              (click)="onAdminPanelClick()"
+              class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50 smooth-transition cursor-pointer"
+            >
+              <span class="mr-3">⚙️</span>
+              Panel de Administración
+            </a>
+            }
             <hr class="my-2 border-gray-200" />
             <a
               (click)="onLogout()"

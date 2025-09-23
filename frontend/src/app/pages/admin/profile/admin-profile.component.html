@@ -1,10 +1,10 @@
 <!-- Admin Layout -->
 <app-admin-sidebar></app-admin-sidebar>
-<app-admin-header></app-admin-header>
+<app-admin-header title="Perfil" ></app-admin-header>
 
 <!-- Main Content -->
 <div class="admin-content ml-16 pt-16 min-h-screen bg-gray-50">
-  <div class="max-w-7xl mx-auto px-6 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
     
     <!-- Profile Header -->
     <div class="bg-white rounded-xl shadow-sm mb-8 animate-fade-in">
@@ -14,28 +14,31 @@
         
         <!-- Profile Info -->
         <div class="relative px-6 pb-6">
-          <div class="flex items-end -mt-16 mb-6">
-            <div class="relative">
-              <div class="w-32 h-32 bg-white rounded-full p-2 shadow-lg">
-                <div class="w-full h-full bg-red-500 rounded-full flex items-center justify-center text-white text-4xl font-bold">
-                  {{ getUserInitials() }}
+          <div class="flex flex-col lg:flex-row lg:items-end -mt-16 mb-6 gap-6">
+            <!-- Avatar Section -->
+            <div class="flex justify-center lg:justify-start">
+              <div class="relative">
+                <div class="w-32 h-32 bg-white rounded-full p-2 shadow-lg">
+                  <div class="w-full h-full bg-red-500 rounded-full flex items-center justify-center text-white text-4xl font-bold">
+                    {{ getUserInitials() }}
+                  </div>
                 </div>
+                <button class="absolute bottom-2 right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white hover:bg-blue-600 smooth-transition">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                  </svg>
+                </button>
               </div>
-              <button class="absolute bottom-2 right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white hover:bg-blue-600 smooth-transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                </svg>
-              </button>
             </div>
             
-            <div class="ml-6 flex-1">
-              <h1 class="text-3xl font-bold text-gray-800">{{ profileData.name }}</h1>
-              <p class="text-gray-600 text-lg">Administrador Principal</p>
+            <!-- Profile Details -->
+            <div class="flex-1 text-center lg:text-left lg:ml-6">
+              <h1 class="text-2xl lg:text-3xl font-bold text-gray-800">{{ profileData.name }}</h1>
+              <p class="text-gray-600 text-base lg:text-lg">Administrador Principal</p>
               <p class="text-gray-500 text-sm mt-1">{{ profileData.businessName }} - Propietario</p>
               
-              <div class="flex items-center space-x-4 mt-4">
-                
-                <div class="flex items-center text-sm text-gray-600">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-center lg:justify-start space-y-2 sm:space-y-0 sm:space-x-4 mt-4">
+                <div class="flex items-center justify-center lg:justify-start text-sm text-gray-600">
                   <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 0V6a2 2 0 012-2h4a2 2 0 012 2v1m-6 0h8m-9 0v10a2 2 0 002 2h8a2 2 0 002-2V7H7z"></path>
                   </svg>
@@ -44,11 +47,12 @@
               </div>
             </div>
             
-            <div class="flex space-x-3">
+            <!-- Action Buttons -->
+            <div class="flex justify-center lg:justify-end w-full lg:w-auto">
               <button 
                 (click)="openEditModal()" 
-                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 smooth-transition">
-                <div class="flex items-center space-x-2">
+                class="w-full lg:w-auto px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 smooth-transition">
+                <div class="flex items-center justify-center space-x-2">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                   </svg>
@@ -61,30 +65,30 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
       <!-- Personal Information -->
-      <div class="lg:col-span-2 space-y-8">
+      <div class="order-2 lg:order-1 lg:col-span-2 space-y-6 lg:space-y-8">
         <!-- Contact Information -->
         <div class="bg-white rounded-xl shadow-sm card-hover">
-          <div class="p-6 border-b border-gray-200">
+          <div class="p-4 sm:p-6 border-b border-gray-200">
             <h2 class="text-lg font-semibold text-gray-800">Información Personal</h2>
           </div>
           
-          <div class="p-6 space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="p-4 sm:p-6 space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo</label>
-                <div class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800">{{ profileData.name }}</div>
+                <div class="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 text-sm sm:text-base">{{ profileData.name }}</div>
               </div>
               
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                <div class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800">{{ profileData.email }}</div>
+                <div class="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 text-sm sm:text-base break-all">{{ profileData.email }}</div>
               </div>
               
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
-                <div class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800">{{ profileData.phone }}</div>
+                <div class="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 text-sm sm:text-base">{{ profileData.phone }}</div>
               </div>
             </div>
           </div>
@@ -92,60 +96,60 @@
       </div>
 
       <!-- Sidebar Info -->
-      <div class="space-y-8">
+      <div class="order-1 lg:order-2 space-y-6 lg:space-y-8">
         <!-- Quick Stats -->
         <div class="bg-white rounded-xl shadow-sm card-hover">
-          <div class="p-6 border-b border-gray-200">
+          <div class="p-4 sm:p-6 border-b border-gray-200">
             <h3 class="text-lg font-semibold text-gray-800">Estadísticas Rápidas</h3>
           </div>
           
-          <div class="p-6 space-y-4">
+          <div class="p-4 sm:p-6 space-y-3 sm:space-y-4">
             <div class="flex items-center justify-between">
-              <span class="text-gray-600">Productos Activos</span>
-              <span class="font-semibold text-gray-800">{{ quickStats.activeProducts }}</span>
+              <span class="text-gray-600 text-sm sm:text-base">Productos Activos</span>
+              <span class="font-semibold text-gray-800 text-sm sm:text-base">{{ quickStats.activeProducts }}</span>
             </div>
             
             <div class="flex items-center justify-between">
-              <span class="text-gray-600">Clientes Registrados</span>
-              <span class="font-semibold text-gray-800">{{ quickStats.registeredClients | number }}</span>
+              <span class="text-gray-600 text-sm sm:text-base">Clientes Registrados</span>
+              <span class="font-semibold text-gray-800 text-sm sm:text-base">{{ quickStats.registeredClients | number }}</span>
             </div>
             
             <div class="flex items-center justify-between">
-              <span class="text-gray-600">Pedidos Este Mes</span>
-              <span class="font-semibold text-gray-800">{{ quickStats.ordersThisMonth }}</span>
+              <span class="text-gray-600 text-sm sm:text-base">Pedidos Este Mes</span>
+              <span class="font-semibold text-gray-800 text-sm sm:text-base">{{ quickStats.ordersThisMonth }}</span>
             </div>
             
             <div class="flex items-center justify-between">
-              <span class="text-gray-600">Ventas Este Mes</span>
-              <span class="font-semibold text-green-600">{{ quickStats.salesThisMonth }}</span>
+              <span class="text-gray-600 text-sm sm:text-base">Ventas Este Mes</span>
+              <span class="font-semibold text-green-600 text-sm sm:text-base">{{ quickStats.salesThisMonth }}</span>
             </div>
             
             <div class="flex items-center justify-between">
-              <span class="text-gray-600">Campañas Enviadas</span>
-              <span class="font-semibold text-gray-800">{{ quickStats.campaignsSent }}</span>
+              <span class="text-gray-600 text-sm sm:text-base">Campañas Enviadas</span>
+              <span class="font-semibold text-gray-800 text-sm sm:text-base">{{ quickStats.campaignsSent }}</span>
             </div>
           </div>
         </div>
 
         <!-- Security -->
         <div class="bg-white rounded-xl shadow-sm card-hover">
-          <div class="p-6 border-b border-gray-200">
+          <div class="p-4 sm:p-6 border-b border-gray-200">
             <h3 class="text-lg font-semibold text-gray-800">Seguridad</h3>
           </div>
           
-          <div class="p-6 space-y-4">
+          <div class="p-4 sm:p-6 space-y-4">
             <button 
               (click)="changePassword()"
               class="w-full text-left p-3 rounded-lg hover:bg-gray-50 smooth-transition">
               <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
                   <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m0 0a2 2 0 012 2m-2-2h-6m6 0v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9a2 2 0 012-2h2M7 7V3a2 2 0 012-2h4a2 2 0 012 2v4M7 7H3a2 2 0 00-2 2v6a2 2 0 002 2h4m-4-8h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
                 </div>
                 <div>
-                  <p class="font-medium text-gray-800">Cambiar Contraseña</p>
-                  <p class="text-sm text-gray-600">Actualizar tu contraseña</p>
+                  <p class="font-medium text-gray-800 text-sm sm:text-base">Cambiar Contraseña</p>
+                  <p class="text-xs sm:text-sm text-gray-600">Actualizar tu contraseña</p>
                 </div>
               </div>
             </button>
@@ -154,15 +158,15 @@
 
         <!-- Logout -->
         <div class="bg-white rounded-xl shadow-sm card-hover">
-          <div class="p-6">
+          <div class="p-4 sm:p-6">
             <button 
               (click)="logout()" 
-              class="w-full bg-red-500 text-white py-3 rounded-lg font-medium hover:bg-red-600 smooth-transition">
+              class="w-full bg-red-500 text-white py-2 sm:py-3 rounded-lg font-medium hover:bg-red-600 smooth-transition">
               <div class="flex items-center justify-center space-x-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 sm:w-5 h-4 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                 </svg>
-                <span>Cerrar Sesión</span>
+                <span class="text-sm sm:text-base">Cerrar Sesión</span>
               </div>
             </button>
           </div>

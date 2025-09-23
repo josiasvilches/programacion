@@ -73,6 +73,46 @@
       }
     }
   }
+  
+  // Responsive profile layout improvements
+  .profile-layout {
+    transition: all 0.3s ease;
+    
+    @media (max-width: 1024px) {
+      flex-direction: column;
+      text-align: center;
+      gap: 1.5rem;
+    }
+  }
+  
+  .profile-avatar-container {
+    position: relative;
+    
+    @media (max-width: 1024px) {
+      display: flex;
+      justify-content: center;
+    }
+  }
+  
+  .profile-content {
+    @media (max-width: 1024px) {
+      margin-left: 0;
+      margin-top: 1rem;
+    }
+  }
+  
+  .profile-actions-container {
+    @media (max-width: 1024px) {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      
+      button {
+        width: 100%;
+        max-width: 200px;
+      }
+    }
+  }
 }
 
 // Stats cards
@@ -167,28 +207,52 @@
 }
 
 // Responsive design
+@media (max-width: 1024px) {
+  .admin-content {
+    margin-left: 0;
+    padding-top: 64px;
+  }
+}
+
 @media (max-width: 768px) {
   .admin-content {
+    padding-top: 8rem;
+    padding-left: 4.2rem;
     .profile-header {
+      .cover-gradient {
+        height: 24rem; // h-24 equivalent (96px)
+      }
+      
       .profile-info {
-        flex-direction: column;
-        text-align: center;
+        padding-top: 2rem; // More space for mobile layout
         
         .profile-avatar {
-          margin: 0 auto -60px auto;
+          margin-top: -4rem; // -mt-16 equivalent (64px)
+          margin-bottom: 0;
         }
         
         .profile-details {
-          margin-top: 80px;
-          margin-left: 0;
+          margin-top: 1.5rem;
+          
+          h1 {
+            font-size: 1.5rem; // text-2xl
+            line-height: 2rem;
+          }
+          
+          .profile-meta {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 0.5rem;
+          }
         }
         
         .profile-actions {
-          margin-top: 20px;
-          width: 100%;
+          margin-top: 1.5rem;
           
           button {
             width: 100%;
+            justify-content: center;
           }
         }
       }
@@ -196,7 +260,7 @@
     
     .content-grid {
       grid-template-columns: 1fr;
-      gap: 20px;
+      gap: 1.5rem;
       
       .sidebar-content {
         order: -1;
@@ -204,8 +268,33 @@
     }
     
     .modal-content {
-      margin: 10px;
-      max-height: calc(100vh - 40px);
+      margin: 0.5rem;
+      max-height: calc(100vh - 1rem);
+    }
+    
+    // Make cards more mobile-friendly
+    .card-hover {
+      .p-6 {
+        padding: 1rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-content {
+    .profile-header {
+      .profile-info {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        
+        .profile-details {
+          h1 {
+            font-size: 1.25rem; // text-xl for very small screens
+            line-height: 1.75rem;
+          }
+        }
+      }
     }
   }
 }
