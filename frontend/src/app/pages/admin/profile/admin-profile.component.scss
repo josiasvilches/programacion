@@ -181,13 +181,13 @@
 
 // Loading spinner
 .loading-spinner {
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
   animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 // Notification styles
