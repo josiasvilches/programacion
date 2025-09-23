@@ -1,0 +1,57 @@
+<!-- Footer -->
+<footer id="contacto" class="bg-gray-800 text-white py-12">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="grid md:grid-cols-3 gap-8">
+      <!-- Logo y Descripción -->
+      <div>
+        <div class="flex items-center space-x-3 mb-4">
+          <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center text-white font-bold">
+            RC
+          </div>
+          <h3 class="text-xl font-bold">Rotisería Cacho</h3>
+        </div>
+        <p class="text-gray-300 mb-4">
+          Más de 35 años llevando el auténtico sabor argentino a tu mesa.
+        </p>
+        <div class="flex space-x-4">
+          <a *ngFor="let social of socialLinks" 
+             [href]="social.url" 
+             [title]="social.name"
+             class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-700 smooth-transition text-white">
+            <span [innerHTML]="getSocialIcon(social.icon)"></span>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Contacto -->
+      <div>
+        <h4 class="text-lg font-bold mb-4">Contacto</h4>
+        <div class="space-y-2 text-gray-300">
+          <p>📞 (011) 4567-8900</p>
+          <p>📍 Av. Principal 123, Ciudad</p>
+          <p>✉️ info@rotiseriasabor.com</p>
+        </div>
+      </div>
+      
+      <!-- Horarios -->
+      <div>
+        <h4 class="text-lg font-bold mb-4">Horarios de Atención</h4>
+        <div class="space-y-2 text-gray-300">
+          <p>Lun - Vie: 11:00 - 22:00</p>
+          <p>Sábados: 11:00 - 23:00</p>
+          <p>Domingos: 12:00 - 22:00</p>
+        </div>
+      </div>
+    </div>
+    
+    
+    <!-- Footer Bottom -->
+    <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400">
+      <div class="flex flex-col md:flex-row justify-center items-center">
+        <p class="mb-2 md:mb-0">
+          &copy; {{ currentYear }} Rotisería El Buen Sabor. Todos los derechos reservados.
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>

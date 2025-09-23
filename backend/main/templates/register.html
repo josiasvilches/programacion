@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenid@ a Grupo F' Rotisería</title>
+    <style>
+        @font-face {
+            font-family: 'JOES BURGUER';
+            src: url('https://example.com/joes-burger-font.ttf'); /* Cambia esta URL por la correcta */
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #ff5722;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-family: 'JOES BURGUER', sans-serif;
+            font-size: 36px;
+            margin: 0;
+        }
+
+        .content {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .content h2 {
+            font-size: 24px;
+            color: #ff5722;
+        }
+
+        .content p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin: 10px 0;
+        }
+
+        .footer {
+            background-color: #333;
+            color: #ffffff;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>¡Bienvenid@ a Grupo F' Rotisería!</h1>
+        </div>
+        <div class="content">
+            <h2>Hola, {{ usuario.nombre }}!</h2>
+            <p>Estamos muy contentos de que seas parte de nuestra familia.</p>
+            <p>Tu rol es: <strong>{{ usuario.rol }}</strong>. ¡Ya sabes qué hacer!</p>
+        </div>
+        <div class="footer">
+            <p>Grupo F' Rotisería - ¡Las mejores comidas para compartir!</p>
+        </div>
+    </div>
+</body>
+</html>

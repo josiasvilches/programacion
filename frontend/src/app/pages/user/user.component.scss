@@ -1,0 +1,308 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:host {
+  font-family: 'Inter', sans-serif;
+}
+
+// Smooth transitions
+.smooth-transition {
+  transition: all 0.3s ease;
+}
+
+// Input focus styles
+.input-focus:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  outline: none;
+}
+
+// Hover lift effect
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+// Gradient background
+.gradient-bg {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+// Form field styling
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  transition: all 0.3s ease;
+  
+  &:focus {
+    transform: translateY(-1px);
+  }
+  
+  &::placeholder {
+    color: #9ca3af;
+    transition: color 0.3s ease;
+  }
+  
+  &:focus::placeholder {
+    color: #d1d5db;
+  }
+  
+  // Disabled state
+  &:disabled {
+    cursor: not-allowed;
+    background-color: #f9fafb;
+  }
+  
+  // Error state
+  &.border-red-500 {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  }
+}
+
+// Button hover effects
+button {
+  transition: all 0.3s ease;
+  
+  &:not(:disabled):hover {
+    transform: translateY(-1px);
+  }
+  
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
+// Profile picture container
+.profile-picture-container {
+  position: relative;
+  display: inline-block;
+  
+  .profile-picture {
+    transition: transform 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.02);
+    }
+  }
+  
+  .edit-photo-btn {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+// Password strength indicator
+.password-strength {
+  .strength-bar {
+    height: 8px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    
+    &.active {
+      transform: scaleY(1.2);
+    }
+  }
+}
+
+// Stats grid animation
+.stats-grid {
+  .stat-item {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      
+      .stat-value {
+        color: #ef4444;
+      }
+    }
+  }
+}
+
+// Navigation header
+nav {
+  backdrop-filter: blur(10px);
+  
+  .nav-item {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      color: #ef4444;
+      transform: translateX(-2px);
+    }
+  }
+}
+
+// Card hover effects
+.profile-card {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+  }
+}
+
+// Form animations
+.form-section {
+  animation: fadeInUp 0.6s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Loading spinner
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Mobile responsiveness
+@media (max-width: 768px) {
+  .profile-header {
+    .profile-picture {
+      width: 120px;
+      height: 120px;
+      
+      .initials {
+        font-size: 2.5rem;
+      }
+    }
+  }
+  
+  .profile-title {
+    font-size: 2rem;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .profile-card {
+    padding: 1.5rem;
+  }
+  
+  .gradient-bg {
+    padding: 2rem 1rem;
+  }
+  
+  .nav-header {
+    padding: 1rem;
+  }
+}
+
+// Status badges
+.status-badge {
+  &.premium {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+  }
+  
+  &.active {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+  }
+}
+
+// Error message animation
+.error-message {
+  animation: slideInDown 0.3s ease;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Focus visible for accessibility
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .gradient-bg {
+    background: #dc2626;
+  }
+  
+  .input-focus:focus {
+    border-color: #000;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.3);
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// Dark mode support (future enhancement)
+@media (prefers-color-scheme: dark) {
+  // Dark mode styles would go here
+}
+
+// Print styles
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .gradient-bg {
+    background: #6b7280 !important;
+    color: white !important;
+  }
+}

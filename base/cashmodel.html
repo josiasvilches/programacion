@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra - Rotisería Cacho</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .smooth-transition {
+            transition: all 0.3s ease;
+        }
+        
+        .input-focus:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        .step-active {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+        
+        .step-completed {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .step-inactive {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+        
+        .payment-method {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .payment-method:hover {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+        
+        .payment-method.selected {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .checkout-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        
+        .checkout-btn:hover {
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .security-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .error-input {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+        
+        .success-input {
+            border-color: #10b981;
+            background-color: #f0fdf4;
+        }
+        
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+
+    <!-- Progress Steps -->
+    <div class="bg-white border-b border-gray-200">
+        <div class="max-w-6xl mx-auto px-6 py-6">
+            <div class="flex items-center justify-center space-x-8">
+                <div class="flex items-center space-x-3">
+                    <div id="step-1" class="step-completed w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <span class="text-sm font-medium text-gray-600">Carrito</span>
+                </div>
+                
+                <div class="h-px bg-gray-300 w-16"></div>
+                
+                <div class="flex items-center space-x-3">
+                    <div id="step-2" class="step-active w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                    <span class="text-sm font-medium text-gray-800">Datos y Pago</span>
+                </div>
+                
+                <div class="h-px bg-gray-300 w-16"></div>
+                
+                <div class="flex items-center space-x-3">
+                    <div id="step-3" class="step-inactive w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                    <span class="text-sm font-medium text-gray-400">Confirmación</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Checkout Form -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Day and Time Selection -->
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center space-x-2">
+                        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <span>¿Cuándo querés retirar tu pedido?</span>
+                    </h2>
+                    
+                    <!-- Day Selection -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">Seleccionar día</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div class="payment-method border-2 border-red-300 bg-red-50 rounded-lg p-3 selected cursor-pointer" onclick="selectDay('today')">
+                                <div class="text-center">
+                                    <input type="radio" name="day" value="today" checked class="text-red-500 mb-2">
+                                    <div class="font-medium text-gray-800 text-sm">Hoy</div>
+                                    <div class="text-xs text-gray-600" id="today-date"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="payment-method border-2 border-gray-200 rounded-lg p-3 cursor-pointer" onclick="selectDay('tomorrow')">
+                                <div class="text-center">
+                                    <input type="radio" name="day" value="tomorrow" class="text-red-500 mb-2">
+                                    <div class="font-medium text-gray-800 text-sm">Mañana</div>
+                                    <div class="text-xs text-gray-600" id="tomorrow-date"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="payment-method border-2 border-gray-200 rounded-lg p-3 cursor-pointer" onclick="selectDay('day3')">
+                                <div class="text-center">
+                                    <input type="radio" name="day" value="day3" class="text-red-500 mb-2">
+                                    <div class="font-medium text-gray-800 text-sm" id="day3-name"></div>
+                                    <div class="text-xs text-gray-600" id="day3-date"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="payment-method border-2 border-gray-200 rounded-lg p-3 cursor-pointer" onclick="selectDay('day4')">
+                                <div class="text-center">
+                                    <input type="radio" name="day" value="day4" class="text-red-500 mb-2">
+                                    <div class="font-medium text-gray-800 text-sm" id="day4-name"></div>
+                                    <div class="text-xs text-gray-600" id="day4-date"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Time Selection -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">Seleccionar horario</label>
+                        <div id="time-slots" class="grid grid-cols-3 md:grid-cols-6 gap-3">
+                            <!-- Time slots will be populated by JavaScript -->
+                        </div>
+                        
+                        <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                            <div class="flex items-start space-x-3">
+                                <svg class="w-5 h-5 text-blue-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div>
+                                    <h4 class="font-medium text-blue-800 text-sm mb-1">Información importante</h4>
+                                    <p class="text-blue-700 text-xs">
+                                        • Los pedidos se preparan con 30-45 minutos de anticipación<br>
+                                        • Horario de atención: Lunes a Domingo de 11:00 a 23:00<br>
+                                        • Los productos se mantienen calientes hasta el momento del retiro
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center space-x-2">
+                        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                        </svg>
+                        <span>Método de Pago</span>
+                    </h2>
+                    
+                    <!-- Payment Options -->
+                    <div class="space-y-4 mb-6">
+                        <div class="payment-method border-2 border-gray-200 rounded-lg p-4 selected" onclick="selectPaymentMethod('cash')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <input type="radio" name="payment-method" value="cash" checked class="text-red-500">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-2xl">💵</span>
+                                        <div>
+                                            <h3 class="font-medium text-gray-800">Efectivo</h3>
+                                            <p class="text-sm text-gray-600">Pago al retirar en el local</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="text-green-600 text-sm font-medium">Sin recargo</span>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-method border-2 border-gray-200 rounded-lg p-4" onclick="selectPaymentMethod('card')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <input type="radio" name="payment-method" value="card" class="text-red-500">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-2xl">💳</span>
+                                        <div>
+                                            <h3 class="font-medium text-gray-800">Tarjeta de Débito/Crédito</h3>
+                                            <p class="text-sm text-gray-600">Pago al retirar en el local</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="text-blue-600 text-sm font-medium">Seguro</span>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-method border-2 border-gray-200 rounded-lg p-4" onclick="selectPaymentMethod('transfer')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <input type="radio" name="payment-method" value="transfer" class="text-red-500">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-2xl">🏦</span>
+                                        <div>
+                                            <h3 class="font-medium text-gray-800">Transferencia Bancaria</h3>
+                                            <p class="text-sm text-gray-600">Pago anticipado</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="text-green-600 text-sm font-medium">5% descuento</span>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-method border-2 border-gray-200 rounded-lg p-4" onclick="selectPaymentMethod('digital')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <input type="radio" name="payment-method" value="digital" class="text-red-500">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-2xl">📱</span>
+                                        <div>
+                                            <h3 class="font-medium text-gray-800">Billeteras Digitales</h3>
+                                            <p class="text-sm text-gray-600">MercadoPago, Ualá al retirar</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="text-blue-600 text-sm font-medium">Instantáneo</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Transfer Details -->
+                    <div id="transfer-details" class="hidden bg-green-50 rounded-lg p-4">
+                        <h3 class="font-medium text-green-800 mb-3">Datos para transferencia</h3>
+                        <div class="space-y-2 text-sm text-green-700">
+                            <p><strong>Banco:</strong> Banco Nación</p>
+                            <p><strong>CBU:</strong> 0110599520000012345678</p>
+                            <p><strong>Alias:</strong> ROTISERIA.CACHO.MP</p>
+                            <p><strong>Titular:</strong> Rotisería Cacho S.R.L.</p>
+                        </div>
+                        <p class="text-xs text-green-600 mt-3">Enviá el comprobante por WhatsApp al confirmar el pedido</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl shadow-sm p-6 sticky top-24">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-6">Resumen del Pedido</h3>
+                    
+                    <!-- Order Items -->
+                    <div class="space-y-4 mb-6">
+                        <div class="flex items-center space-x-3 pb-3 border-b border-gray-100">
+                            <span class="text-2xl">🍗</span>
+                            <div class="flex-1">
+                                <h4 class="font-medium text-gray-800 text-sm">Pollo al Spiedo Entero</h4>
+                                <p class="text-xs text-gray-500">Cantidad: 1</p>
+                            </div>
+                            <span class="font-semibold text-gray-800">$3.500</span>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3 pb-3 border-b border-gray-100">
+                            <span class="text-2xl">🍖</span>
+                            <div class="flex-1">
+                                <h4 class="font-medium text-gray-800 text-sm">Milanesas de Pollo (4 unidades)</h4>
+                                <p class="text-xs text-gray-500">Cantidad: 2</p>
+                            </div>
+                            <span class="font-semibold text-gray-800">$5.600</span>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3 pb-3 border-b border-gray-100">
+                            <span class="text-2xl">🥟</span>
+                            <div class="flex-1">
+                                <h4 class="font-medium text-gray-800 text-sm">Empanadas de Carne (6 unidades)</h4>
+                                <p class="text-xs text-gray-500">Cantidad: 1</p>
+                            </div>
+                            <span class="font-semibold text-gray-800">$2.700</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Price Breakdown -->
+                    <div class="space-y-3 mb-6">
+                        <div class="flex justify-between text-gray-600">
+                            <span>Subtotal (4 productos)</span>
+                            <span id="order-subtotal">$11.800</span>
+                        </div>
+                        
+                        <div id="discount-row" class="flex justify-between text-green-600 hidden">
+                            <span>Descuento (5%)</span>
+                            <span id="discount-amount">-$590</span>
+                        </div>
+                        
+                        <div class="border-t border-gray-200 pt-3">
+                            <div class="flex justify-between text-lg font-semibold text-gray-800">
+                                <span>Total</span>
+                                <span id="final-total">$11.800</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selected Pickup Info -->
+                    <div id="selected-pickup-info" class="bg-blue-50 rounded-lg p-4 mb-6">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span class="text-sm font-medium text-blue-800">Fecha y hora de retiro</span>
+                        </div>
+                        <p class="text-blue-700 text-sm font-medium" id="selected-day-display">Hoy</p>
+                        <p class="text-blue-600 text-xs" id="selected-time-display">Seleccionar horario</p>
+                        <p class="text-blue-600 text-xs">Rotisería Cacho - Av. Corrientes 1234</p>
+                    </div>
+
+                    <!-- Payment Method Info -->
+                    <div id="selected-payment-info" class="bg-gray-50 rounded-lg p-4 mb-6">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                            </svg>
+                            <span class="text-sm font-medium text-gray-700">Método de pago</span>
+                        </div>
+                        <p class="text-gray-700 text-sm font-medium">💵 Efectivo</p>
+                        <p class="text-gray-600 text-xs">Pago al retirar en el local</p>
+                    </div>
+
+                    <!-- Place Order Button -->
+                    <button onclick="placeOrder()" id="place-order-btn" class="w-full checkout-btn text-white py-4 rounded-xl text-lg font-semibold smooth-transition mb-4">
+                        <div class="flex items-center justify-center space-x-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Confirmar Pedido</span>
+                        </div>
+                    </button>
+
+                    <!-- Terms -->
+                    <div class="flex items-start space-x-2 mb-4">
+                        <input type="checkbox" id="terms-checkbox" class="mt-1 text-red-500" required>
+                        <label for="terms-checkbox" class="text-xs text-gray-600">
+                            Acepto los <a href="#" class="text-red-500 hover:underline">términos y condiciones</a> y la <a href="#" class="text-red-500 hover:underline">política de privacidad</a>
+                        </label>
+                    </div>
+
+                    <!-- Security Info -->
+                    <div class="text-center">
+                        <div class="flex items-center justify-center space-x-2 text-xs text-gray-500">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                            <span>Tus datos están protegidos</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div id="loading-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-white rounded-2xl p-8 text-center">
+                <div class="loading-spinner w-12 h-12 border-4 border-red-200 border-t-red-500 rounded-full mx-auto mb-4"></div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Procesando tu pedido...</h3>
+                <p class="text-gray-600">Por favor, no cierres esta ventana</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedPaymentMethod = 'cash';
+        let selectedDay = 'today';
+        let selectedTime = '';
+        let subtotal = 11800;
+
+        // Days data
+        const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+        // Time slots (11:00 to 23:00)
+        const timeSlots = [
+            '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
+            '14:00', '14:30', '15:00', '15:30', '16:00', '16:30',
+            '17:00', '17:30', '18:00', '18:30', '19:00', '19:30',
+            '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00'
+        ];
+
+        // Payment method data
+        const paymentMethods = {
+            cash: { name: '💵 Efectivo', description: 'Pago al retirar en el local' },
+            card: { name: '💳 Tarjeta', description: 'Débito/Crédito al retirar' },
+            transfer: { name: '🏦 Transferencia', description: 'Pago anticipado' },
+            digital: { name: '📱 Billetera Digital', description: 'MercadoPago, Ualá al retirar' }
+        };
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            initializeDates();
+            generateTimeSlots();
+            updateSummary();
+        });
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // No form validation needed since personal info was removed
+        }
+
+        // Initialize dates
+        function initializeDates() {
+            const today = new Date();
+            
+            // Set today's date
+            document.getElementById('today-date').textContent = formatDate(today);
+            
+            // Set tomorrow's date
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            document.getElementById('tomorrow-date').textContent = formatDate(tomorrow);
+            
+            // Set day 3
+            const day3 = new Date(today);
+            day3.setDate(today.getDate() + 2);
+            document.getElementById('day3-name').textContent = days[day3.getDay()];
+            document.getElementById('day3-date').textContent = formatDate(day3);
+            
+            // Set day 4
+            const day4 = new Date(today);
+            day4.setDate(today.getDate() + 3);
+            document.getElementById('day4-name').textContent = days[day4.getDay()];
+            document.getElementById('day4-date').textContent = formatDate(day4);
+        }
+
+        // Format date
+        function formatDate(date) {
+            return `${date.getDate()} ${months[date.getMonth()]}`;
+        }
+
+        // Generate time slots
+        function generateTimeSlots() {
+            const container = document.getElementById('time-slots');
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinutes = now.getMinutes();
+            
+            container.innerHTML = timeSlots.map(time => {
+                const [hour, minute] = time.split(':').map(Number);
+                const isDisabled = selectedDay === 'today' && 
+                    (hour < currentHour || (hour === currentHour && minute <= currentMinutes + 45));
+                
+                return `
+                    <div class="payment-method border-2 border-gray-200 rounded-lg p-2 text-center cursor-pointer ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}" 
+                         onclick="${isDisabled ? '' : `selectTime('${time}')`}">
+                        <div class="text-sm font-medium text-gray-800">${time}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Day selection
+        function selectDay(day) {
+            selectedDay = day;
+            selectedTime = ''; // Reset time selection
+            
+            // Update radio buttons
+            document.querySelectorAll('input[name="day"]').forEach(radio => {
+                radio.checked = radio.value === day;
+            });
+            
+            // Update visual selection
+            document.querySelectorAll('.payment-method').forEach(el => {
+                if (el.onclick && el.onclick.toString().includes('selectDay')) {
+                    el.classList.remove('selected');
+                }
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // Regenerate time slots based on selected day
+            generateTimeSlots();
+            updatePickupInfo();
+        }
+
+        // Time selection
+        function selectTime(time) {
+            selectedTime = time;
+            
+            // Update visual selection
+            document.querySelectorAll('#time-slots .payment-method').forEach(el => {
+                el.classList.remove('selected', 'border-red-300', 'bg-red-50');
+                el.classList.add('border-gray-200');
+            });
+            
+            event.currentTarget.classList.add('selected', 'border-red-300', 'bg-red-50');
+            event.currentTarget.classList.remove('border-gray-200');
+            
+            updatePickupInfo();
+        }
+
+        // Payment method selection
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            
+            // Update radio buttons
+            document.querySelectorAll('input[name="payment-method"]').forEach(radio => {
+                radio.checked = radio.value === method;
+            });
+            
+            // Update visual selection
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // Show/hide transfer details
+            const transferDetails = document.getElementById('transfer-details');
+            if (method === 'transfer') {
+                transferDetails.classList.remove('hidden');
+            } else {
+                transferDetails.classList.add('hidden');
+            }
+            
+            updatePaymentInfo();
+            updateTotal();
+        }
+
+        // Update pickup info
+        function updatePickupInfo() {
+            const dayNames = {
+                'today': 'Hoy',
+                'tomorrow': 'Mañana',
+                'day3': document.getElementById('day3-name').textContent,
+                'day4': document.getElementById('day4-name').textContent
+            };
+            
+            const dayDisplay = dayNames[selectedDay];
+            const timeDisplay = selectedTime || 'Seleccionar horario';
+            
+            document.getElementById('selected-day-display').textContent = dayDisplay;
+            document.getElementById('selected-time-display').textContent = timeDisplay;
+        }
+
+        // Update payment info
+        function updatePaymentInfo() {
+            const paymentInfo = paymentMethods[selectedPaymentMethod];
+            const infoElement = document.getElementById('selected-payment-info');
+            
+            infoElement.innerHTML = `
+                <div class="flex items-center space-x-2 mb-2">
+                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                    </svg>
+                    <span class="text-sm font-medium text-gray-700">Método de pago</span>
+                </div>
+                <p class="text-gray-700 text-sm font-medium">${paymentInfo.name}</p>
+                <p class="text-gray-600 text-xs">${paymentInfo.description}</p>
+            `;
+        }
+
+        // Update total
+        function updateTotal() {
+            let total = subtotal;
+            let discount = 0;
+            
+            // Apply transfer discount
+            if (selectedPaymentMethod === 'transfer') {
+                discount = subtotal * 0.05;
+                total -= discount;
+                document.getElementById('discount-row').classList.remove('hidden');
+                document.getElementById('discount-amount').textContent = `-$${discount.toLocaleString()}`;
+            } else {
+                document.getElementById('discount-row').classList.add('hidden');
+            }
+            
+            document.getElementById('final-total').textContent = `$${total.toLocaleString()}`;
+        }
+
+        // Update summary
+        function updateSummary() {
+            updatePickupInfo();
+            updatePaymentInfo();
+            updateTotal();
+        }
+
+        // Validation functions
+        function validateOrder() {
+            if (!selectedTime) {
+                alert('Por favor, seleccioná un horario para retirar tu pedido');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Place order
+        function placeOrder() {
+            // Validate required fields
+            if (!validateOrder()) {
+                return;
+            }
+            
+            // Check terms acceptance
+            if (!document.getElementById('terms-checkbox').checked) {
+                alert('Debés aceptar los términos y condiciones para continuar');
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('loading-modal').classList.remove('hidden');
+            
+            // Simulate order processing
+            setTimeout(() => {
+                document.getElementById('loading-modal').classList.add('hidden');
+                
+                const orderNumber = Math.floor(Math.random() * 10000) + 1000;
+                const total = document.getElementById('final-total').textContent;
+                const paymentInfo = paymentMethods[selectedPaymentMethod];
+                
+                const dayNames = {
+                    'today': 'Hoy',
+                    'tomorrow': 'Mañana',
+                    'day3': document.getElementById('day3-name').textContent,
+                    'day4': document.getElementById('day4-name').textContent
+                };
+                
+                let orderSummary = `¡Pedido confirmado!\n\n`;
+                orderSummary += `Número de pedido: #${orderNumber}\n`;
+                orderSummary += `Total: ${total}\n\n`;
+                orderSummary += `Retiro: ${dayNames[selectedDay]} a las ${selectedTime}\n`;
+                orderSummary += `Local: Rotisería Cacho - Av. Corrientes 1234\n\n`;
+                orderSummary += `Método de pago: ${paymentInfo.name}\n`;
+                
+                if (selectedPaymentMethod === 'transfer') {
+                    orderSummary += `\nRealizá la transferencia y enviá el comprobante por WhatsApp.\n`;
+                }
+                
+                orderSummary += `\nTu pedido estará listo en el horario seleccionado.\n¡Gracias por tu compra!`;
+                
+                alert(orderSummary);
+            }, 3000);
+        }
+
+        // Navigation functions
+        function goBack() {
+            if (confirm('¿Estás seguro que querés volver? Se perderán los datos ingresados.')) {
+                alert('Volviendo al carrito...');
+            }
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9832687ac463f635',t:'MTc1ODU1MDQ2MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

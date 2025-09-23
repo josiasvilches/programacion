@@ -1,0 +1,332 @@
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Header -->
+    <app-admin-header 
+      title="Email Marketing" 
+      subtitle="Campañas y Promociones">
+    </app-admin-header>
+
+    <!-- Action Bar -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+        <div>
+          <h2 class="text-xl font-bold text-gray-900">Campañas de Email</h2>
+          <p class="text-gray-600">Crea y envía promociones a tus clientes</p>
+        </div>
+        <div class="flex items-center space-x-3">
+          <button 
+            (click)="openTemplatesModal()"
+            class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 smooth-transition flex items-center space-x-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
+            </svg>
+            <span>Plantillas</span>
+          </button>
+          <button 
+            (click)="openNewCampaignModal()"
+            class="gradient-bg text-white px-6 py-3 rounded-lg font-medium hover-lift smooth-transition flex items-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            <span>Nueva Campaña</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Campaigns List -->
+    <div class="space-y-6">
+      <div 
+        *ngFor="let campaign of campaigns" 
+        class="promo-card bg-white rounded-xl shadow-sm p-6 fade-in">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex-1">
+            <div class="flex items-center space-x-3 mb-2">
+              <h3 class="text-lg font-bold text-gray-900">{{ campaign.name }}</h3>
+              <span class="text-white text-xs px-3 py-1 rounded-full font-medium" 
+                    [ngClass]="getStatusClass(campaign.status)">
+                {{ getStatusName(campaign.status) }}
+              </span>
+            </div>
+            <p class="text-gray-600 mb-2">{{ campaign.subject }}</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button 
+              *ngIf="campaign.status === 'draft'"
+              (click)="openEditCampaignModal(campaign)" 
+              class="bg-yellow-500 text-white px-3 py-1 rounded-lg text-sm font-medium hover-lift smooth-transition">
+              Editar
+            </button>
+            <button 
+              *ngIf="campaign.status === 'draft'"
+              (click)="deleteCampaign(campaign.id)" 
+              class="bg-red-500 text-white px-3 py-1 rounded-lg text-sm font-medium hover-lift smooth-transition">
+              Eliminar
+            </button>
+            <button 
+              *ngIf="campaign.status === 'scheduled'"
+              (click)="cancelScheduled(campaign.id)" 
+              class="bg-gray-500 text-white px-3 py-1 rounded-lg text-sm font-medium hover-lift smooth-transition">
+              Cancelar
+            </button>
+            <button 
+              *ngIf="campaign.status === 'sent'"
+              (click)="duplicateCampaign(campaign)" 
+              class="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm font-medium hover-lift smooth-transition">
+              Duplicar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New Campaign Modal -->
+<div 
+  *ngIf="showCampaignModal" 
+  class="fixed inset-0 z-50 modal-backdrop"
+  (click)="closeCampaignModal()">
+  <div class="fixed inset-0 flex items-center justify-center p-4">
+    <div class="modal-content bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto" 
+         (click)="$event.stopPropagation()">
+      <div class="p-6 border-b border-gray-200">
+        <div class="flex justify-between items-center">
+          <h3 class="text-xl font-bold text-gray-900">
+            {{ isEditMode ? 'Editar Campaña' : 'Nueva Campaña de Email' }}
+          </h3>
+          <button 
+            (click)="closeCampaignModal()"
+            class="text-gray-400 hover:text-gray-600 smooth-transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
+        <!-- Left Column - Form -->
+        <div class="space-y-6">
+          <form #emailForm="ngForm">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de la Campaña</label>
+                <input 
+                  type="text" 
+                  [(ngModel)]="campaignForm.name"
+                  name="campaignName"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus smooth-transition" 
+                  placeholder="Ej: Promoción Fin de Semana" 
+                  required>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Asunto del Email</label>
+                <input 
+                  type="text" 
+                  [(ngModel)]="campaignForm.subject"
+                  name="campaignSubject"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus smooth-transition" 
+                  placeholder="¡Oferta especial solo para ti!" 
+                  required>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Plantilla</label>
+                <div class="grid grid-cols-2 gap-3">
+                  <div 
+                    *ngFor="let template of templates.slice(0, 2)"
+                    class="template-card border-2 border-gray-200 rounded-lg p-4 text-center cursor-pointer" 
+                    [ngClass]="{'selected border-red-500': selectedTemplate === template.id}"
+                    (click)="selectTemplate(template.id)">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-2"
+                         [ngClass]="'bg-' + template.color + '-100'">
+                      <svg class="w-6 h-6" [ngClass]="'text-' + template.color + '-600'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path 
+                          *ngIf="template.id === 'promo'"
+                          stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z">
+                        </path>
+                        <path 
+                          *ngIf="template.id === 'news'"
+                          stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z">
+                        </path>
+                      </svg>
+                    </div>
+                    <p class="text-sm font-medium">{{ template.name.split(' ')[1] }}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Contenido Principal</label>
+                <textarea 
+                  [(ngModel)]="campaignForm.content"
+                  name="campaignContent"
+                  rows="6" 
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus smooth-transition" 
+                  placeholder="Escribe aquí el contenido de tu promoción..."></textarea>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Llamada a la Acción</label>
+                <input 
+                  type="text" 
+                  [(ngModel)]="campaignForm.cta"
+                  name="campaignCTA"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus smooth-transition" 
+                  placeholder="¡Pedir Ahora!">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Programar Envío</label>
+                <div class="grid grid-cols-2 gap-3">
+                  <input 
+                    type="date" 
+                    [(ngModel)]="campaignForm.date"
+                    name="campaignDate"
+                    class="px-4 py-3 border border-gray-300 rounded-lg input-focus smooth-transition">
+                  <input 
+                    type="time" 
+                    [(ngModel)]="campaignForm.time"
+                    name="campaignTime"
+                    class="px-4 py-3 border border-gray-300 rounded-lg input-focus smooth-transition">
+                </div>
+                <p class="text-xs text-gray-500 mt-1">Dejar vacío para envío inmediato</p>
+              </div>
+            </div>
+          </form>
+          
+          <!-- Recipients Selection -->
+          <div class="border-t pt-6">
+            <h4 class="text-lg font-semibold text-gray-900 mb-4">Destinatarios</h4>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <label class="flex items-center space-x-3">
+                  <input 
+                    type="checkbox" 
+                    [(ngModel)]="selectAllUsers"
+                    (change)="toggleAllUsers()"
+                    class="user-checkbox w-4 h-4 rounded">
+                  <span class="font-medium text-gray-900">Seleccionar Todos</span>
+                </label>
+                <span class="text-sm text-gray-600">{{ getSelectedCount() }} seleccionados</span>
+              </div>
+              
+              <div class="max-h-48 overflow-y-auto space-y-2">
+                <div 
+                  *ngFor="let user of getActiveUsers()" 
+                  class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
+                  <label class="flex items-center space-x-3 flex-1 cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      [checked]="isUserSelected(user.id)"
+                      (change)="toggleUser(user.id)"
+                      class="user-checkbox w-4 h-4 rounded">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                        {{ getUserInitials(user.name) }}
+                      </div>
+                      <div>
+                        <p class="font-medium text-gray-900">{{ user.name }}</p>
+                        <p class="text-sm text-gray-500">{{ user.email }}</p>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right Column - Preview -->
+        <div class="space-y-6">
+          <div>
+            <h4 class="text-lg font-semibold text-gray-900 mb-4">Vista Previa</h4>
+            <div class="email-preview rounded-lg p-6 min-h-[300px]">
+              <div *ngIf="!campaignForm.name && !campaignForm.subject && !campaignForm.content" 
+                   class="text-center text-gray-500 mt-20">
+                <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+                <p>La vista previa aparecerá aquí</p>
+              </div>
+              <div *ngIf="campaignForm.name || campaignForm.subject || campaignForm.content" 
+                   [innerHTML]="getEmailPreview()">
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex justify-end space-x-4">
+            <button 
+              type="button" 
+              (click)="saveDraft()"
+              class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 smooth-transition">
+              Guardar Borrador
+            </button>
+            <button 
+              type="button" 
+              (click)="sendCampaign()"
+              class="gradient-bg text-white px-6 py-3 rounded-lg font-medium hover-lift smooth-transition">
+              {{ campaignForm.date && campaignForm.time ? 'Programar Campaña' : 'Enviar Campaña' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Templates Modal -->
+<div 
+  *ngIf="showTemplatesModal" 
+  class="fixed inset-0 z-50 modal-backdrop"
+  (click)="closeTemplatesModal()">
+  <div class="fixed inset-0 flex items-center justify-center p-4">
+    <div class="modal-content bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto" 
+         (click)="$event.stopPropagation()">
+      <div class="p-6 border-b border-gray-200">
+        <div class="flex justify-between items-center">
+          <h3 class="text-xl font-bold text-gray-900">Plantillas de Email</h3>
+          <button 
+            (click)="closeTemplatesModal()"
+            class="text-gray-400 hover:text-gray-600 smooth-transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div 
+            *ngFor="let template of templates"
+            class="template-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-all cursor-pointer">
+            <div class="h-48 p-4 text-white text-center flex flex-col justify-center"
+                 [ngClass]="'bg-gradient-to-br from-' + template.color + '-500 to-' + template.color + '-600'">
+              <h3 class="text-lg font-bold mb-2">{{ template.preview }}</h3>
+              <p class="text-sm opacity-90">{{ template.description }}</p>
+            </div>
+            <div class="p-4">
+              <h4 class="font-semibold mb-2">{{ template.name }}</h4>
+              <p class="text-sm text-gray-600 mb-3">{{ template.description }}</p>
+              <button 
+                (click)="useTemplate(template.id)"
+                class="w-full text-white py-2 rounded-lg font-medium transition-colors"
+                [ngClass]="'bg-' + template.color + '-500 hover:bg-' + template.color + '-600'">
+                Usar Plantilla
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -12,10 +12,11 @@ class Producto(db.Model):
     imagen_url = db.Column(db.String(255), nullable=True)
 
     valoraciones = db.relationship('Valoracion', backref='producto', lazy=True)
-    pedidos = db.relationship('PedidoProducto', backref='producto', lazy=True)
+    pedidos = db.relationship('PedidoProducto', backref='producto', lazy=True, cascade="all, delete-orphan")
 
-    def to_json(self):
-        return {
+    # administradores o trabajadores de rotisería
+    def to_json_complete(self):
+        prod_json = {
             'producto_id': self.producto_id,
             'nombre': self.nombre,
             'precio': float(self.precio),
@@ -24,3 +25,24 @@ class Producto(db.Model):
             'descripcion': self.descripcion,
             'imagen_url': self.imagen_url
         }
+        return prod_json
+    
+    # clientes
+    def to_json(self):
+        prod_json = {
+            'nombre': self.nombre,
+            'precio': float(self.precio),
+            'id_categoria': self.id_categoria,
+            'descripcion': self.descripcion,
+            'imagen_url': self.imagen_url
+        }
+        return prod_json
+
+    # invitados que todavía NO son clientes
+    def to_json_short(self):
+        prod_json = {
+            'nombre': self.nombre,
+            'precio': float(self.precio),
+            'imagen_url': self.imagen_url
+        }
+

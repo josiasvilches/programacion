@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras - Rotisería Cacho</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .smooth-transition {
+            transition: all 0.3s ease;
+        }
+        
+        .input-focus:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-2px);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        .quantity-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .quantity-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .quantity-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .bounce-in {
+            animation: bounceIn 0.6s ease-out;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .slide-out {
+            animation: slideOut 0.3s ease-in-out forwards;
+        }
+        
+        @keyframes slideOut {
+            0% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(100%); opacity: 0; }
+        }
+        
+        .cart-item {
+            transition: all 0.3s ease;
+        }
+        
+        .cart-item:hover {
+            background-color: #fafafa;
+        }
+        
+        .unavailable-item {
+            opacity: 0.6;
+            background-color: #fef2f2;
+        }
+        
+        .checkout-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        
+        .checkout-btn:hover {
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+ 
+
+    <!-- Breadcrumb -->
+    <div class="max-w-6xl mx-auto px-6 py-4">
+        <nav class="flex items-center space-x-2 text-sm text-gray-600">
+            <button onclick="goToHome()" class="hover:text-red-500 smooth-transition">Inicio</button>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+            <span class="text-gray-800 font-medium">Carrito de Compras</span>
+        </nav>
+    </div>
+
+    <!-- Cart Header -->
+    <div class="max-w-6xl mx-auto px-6 mb-8">
+        <div class="bg-white rounded-2xl shadow-sm p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Tu Pedido</h2>
+                    <p class="text-gray-600">
+                        <span id="total-items">0</span> productos en tu carrito
+                    </p>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button onclick="continueShopping()" class="flex items-center space-x-2 text-red-500 hover:text-red-600 smooth-transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        <span class="font-medium">Seguir comprando</span>
+                    </button>
+                    
+                    <button onclick="clearCart()" id="clear-cart-btn" class="flex items-center space-x-2 text-gray-500 hover:text-red-500 smooth-transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span class="font-medium">Vaciar carrito</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-6 pb-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Cart Items -->
+            <div class="lg:col-span-2">
+                <!-- Cart Items Container -->
+                <div id="cart-items-container" class="space-y-4">
+                    <!-- Cart items will be dynamically inserted here -->
+                </div>
+
+                <!-- Empty Cart State -->
+                <div id="empty-cart" class="bg-white rounded-2xl shadow-sm p-12 text-center hidden">
+                    <div class="w-24 h-24 bg-gray-100 rounded-full mx-auto mb-6 flex items-center justify-center">
+                        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5-6M20 13v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6m16 0V9a2 2 0 00-2-2H6a2 2 0 00-2 2v4.01"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-600 mb-3">Tu carrito está vacío</h3>
+                    <p class="text-gray-500 mb-8">Agregá algunos productos deliciosos para empezar tu pedido</p>
+                    <button onclick="continueShopping()" class="bg-red-500 text-white px-8 py-3 rounded-xl font-semibold hover:bg-red-600 smooth-transition">
+                        Explorar productos
+                    </button>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl shadow-sm p-6 sticky top-24">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-6">Resumen del pedido</h3>
+                    
+                    <!-- Order Details -->
+                    <div class="space-y-4 mb-6">
+                        <div class="flex justify-between text-gray-600">
+                            <span>Productos (<span id="summary-items">0</span>)</span>
+                            <span id="subtotal">$0</span>
+                        </div>
+                        
+                        <div class="flex justify-between text-gray-600">
+                            <span>Envío</span>
+                            <span id="shipping-cost" class="text-green-600 font-medium">Gratis</span>
+                        </div>
+                        
+                        <div class="border-t border-gray-200 pt-4">
+                            <div class="flex justify-between text-lg font-semibold text-gray-800">
+                                <span>Total</span>
+                                <span id="total-amount">$0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delivery Info -->
+                    <div class="bg-blue-50 rounded-lg p-4 mb-6">
+                        <div class="flex items-start space-x-3">
+                            <svg class="w-5 h-5 text-blue-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <div>
+                                <h4 class="font-medium text-blue-800 text-sm mb-1">Información de entrega</h4>
+                                <p class="text-blue-700 text-xs">
+                                    • Tiempo estimado: 45-60 minutos<br>
+                                    • Envío gratis en pedidos mayores a $3.000<br>
+                                    • Los productos se entregan calientes
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Checkout Button -->
+                    <button onclick="proceedToCheckout()" id="checkout-btn" class="w-full checkout-btn text-white py-4 rounded-xl text-lg font-semibold smooth-transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <div class="flex items-center justify-center space-x-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                            </svg>
+                            <span>Proceder al pago</span>
+                        </div>
+                    </button>
+
+                    <!-- Payment Methods -->
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <h4 class="text-sm font-medium text-gray-700 mb-3">Métodos de pago aceptados</h4>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-6 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold">💳</div>
+                            <div class="w-8 h-6 bg-red-600 rounded text-white text-xs flex items-center justify-center font-bold">💳</div>
+                            <div class="w-8 h-6 bg-green-600 rounded text-white text-xs flex items-center justify-center font-bold">💵</div>
+                            <span class="text-xs text-gray-500">y más...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl p-8 max-w-md w-full bounce-in">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-red-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                    <h3 id="modal-title" class="text-xl font-semibold text-gray-800 mb-2">Confirmar acción</h3>
+                    <p id="modal-message" class="text-gray-600 mb-6">¿Estás seguro que querés realizar esta acción?</p>
+                    <div class="flex space-x-3">
+                        <button onclick="closeModal()" class="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg hover:bg-gray-300 smooth-transition">
+                            Cancelar
+                        </button>
+                        <button onclick="confirmAction()" id="confirm-btn" class="flex-1 bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 smooth-transition">
+                            Confirmar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample cart data (in a real app, this would come from localStorage or API)
+        let cartItems = [
+            {
+                id: 1,
+                name: "Pollo al Spiedo Entero",
+                price: 3500,
+                quantity: 1,
+                image: "🍗",
+                available: true,
+                category: "Pollos"
+            },
+            {
+                id: 4,
+                name: "Milanesas de Pollo (4 unidades)",
+                price: 2800,
+                quantity: 2,
+                image: "🍖",
+                available: true,
+                category: "Milanesas"
+            },
+            {
+                id: 7,
+                name: "Empanadas de Carne (6 unidades)",
+                price: 2700,
+                quantity: 1,
+                image: "🥟",
+                available: true,
+                category: "Empanadas"
+            },
+            {
+                id: 13,
+                name: "Matambre a la Pizza",
+                price: 5200,
+                quantity: 1,
+                image: "🍕",
+                available: false,
+                category: "Carnes"
+            }
+        ];
+
+        let pendingAction = null;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCart();
+            updateSummary();
+        });
+
+        // Render cart items
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            const emptyCart = document.getElementById('empty-cart');
+            
+            if (cartItems.length === 0) {
+                container.classList.add('hidden');
+                emptyCart.classList.remove('hidden');
+                return;
+            }
+            
+            container.classList.remove('hidden');
+            emptyCart.classList.add('hidden');
+            
+            container.innerHTML = cartItems.map(item => `
+                <div class="cart-item bg-white rounded-2xl shadow-sm p-6 ${!item.available ? 'unavailable-item' : ''}" data-item-id="${item.id}">
+                    <div class="flex items-center space-x-6">
+                        <!-- Product Image -->
+                        <div class="w-20 h-20 bg-gradient-to-br from-red-50 to-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <span class="text-3xl">${item.image}</span>
+                        </div>
+                        
+                        <!-- Product Info -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-1">${item.name}</h3>
+                                    <p class="text-sm text-gray-500 mb-2">${item.category}</p>
+                                    ${!item.available ? `
+                                        <div class="inline-flex items-center px-2 py-1 bg-red-100 text-red-600 rounded-full text-xs font-medium">
+                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                            </svg>
+                                            No disponible
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                
+                                <!-- Remove Button -->
+                                <button onclick="showRemoveConfirmation(${item.id})" class="text-gray-400 hover:text-red-500 smooth-transition p-2" title="Eliminar producto">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quantity and Price Controls -->
+                    <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                        <div class="flex items-center space-x-4">
+                            <span class="text-sm text-gray-600">Cantidad:</span>
+                            <div class="flex items-center border border-gray-300 rounded-lg">
+                                <button onclick="decreaseQuantity(${item.id})" class="quantity-btn p-2 text-gray-600 hover:text-red-500 hover:bg-red-50 rounded-l-lg smooth-transition ${item.quantity <= 1 ? 'opacity-50 cursor-not-allowed' : ''}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                                    </svg>
+                                </button>
+                                <span class="px-4 py-2 text-lg font-semibold min-w-[3rem] text-center">${item.quantity}</span>
+                                <button onclick="increaseQuantity(${item.id})" class="quantity-btn p-2 text-gray-600 hover:text-red-500 hover:bg-red-50 rounded-r-lg smooth-transition ${item.quantity >= 10 ? 'opacity-50 cursor-not-allowed' : ''}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="text-right">
+                            <div class="text-sm text-gray-500">$${item.price.toLocaleString()} c/u</div>
+                            <div class="text-xl font-bold text-red-500">$${(item.price * item.quantity).toLocaleString()}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update quantity functions
+        function increaseQuantity(itemId) {
+            const item = cartItems.find(item => item.id === itemId);
+            if (item && item.quantity < 10) {
+                item.quantity++;
+                renderCart();
+                updateSummary();
+                
+                // Add animation
+                const itemElement = document.querySelector(`[data-item-id="${itemId}"]`);
+                itemElement.classList.add('pulse-animation');
+                setTimeout(() => itemElement.classList.remove('pulse-animation'), 300);
+            }
+        }
+
+        function decreaseQuantity(itemId) {
+            const item = cartItems.find(item => item.id === itemId);
+            if (item && item.quantity > 1) {
+                item.quantity--;
+                renderCart();
+                updateSummary();
+                
+                // Add animation
+                const itemElement = document.querySelector(`[data-item-id="${itemId}"]`);
+                itemElement.classList.add('pulse-animation');
+                setTimeout(() => itemElement.classList.remove('pulse-animation'), 300);
+            }
+        }
+
+        // Remove item functions
+        function showRemoveConfirmation(itemId) {
+            const item = cartItems.find(item => item.id === itemId);
+            if (item) {
+                pendingAction = () => removeItem(itemId);
+                document.getElementById('modal-title').textContent = 'Eliminar producto';
+                document.getElementById('modal-message').textContent = `¿Estás seguro que querés eliminar "${item.name}" del carrito?`;
+                document.getElementById('confirmation-modal').classList.remove('hidden');
+            }
+        }
+
+        function removeItem(itemId) {
+            const itemElement = document.querySelector(`[data-item-id="${itemId}"]`);
+            if (itemElement) {
+                itemElement.classList.add('slide-out');
+                setTimeout(() => {
+                    cartItems = cartItems.filter(item => item.id !== itemId);
+                    renderCart();
+                    updateSummary();
+                }, 300);
+            }
+        }
+
+        // Clear cart function
+        function clearCart() {
+            if (cartItems.length === 0) return;
+            
+            pendingAction = () => {
+                cartItems = [];
+                renderCart();
+                updateSummary();
+            };
+            
+            document.getElementById('modal-title').textContent = 'Vaciar carrito';
+            document.getElementById('modal-message').textContent = '¿Estás seguro que querés eliminar todos los productos del carrito?';
+            document.getElementById('confirmation-modal').classList.remove('hidden');
+        }
+
+        // Update summary
+        function updateSummary() {
+            const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+            const availableItems = cartItems.filter(item => item.available);
+            const subtotal = availableItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shippingCost = subtotal >= 3000 ? 0 : 500;
+            const total = subtotal + shippingCost;
+            
+            // Update header
+            document.getElementById('total-items').textContent = totalItems;
+            
+            // Update summary
+            document.getElementById('summary-items').textContent = totalItems;
+            document.getElementById('subtotal').textContent = `$${subtotal.toLocaleString()}`;
+            document.getElementById('total-amount').textContent = `$${total.toLocaleString()}`;
+            
+            // Update shipping
+            const shippingElement = document.getElementById('shipping-cost');
+            if (shippingCost === 0) {
+                shippingElement.textContent = 'Gratis';
+                shippingElement.className = 'text-green-600 font-medium';
+            } else {
+                shippingElement.textContent = `$${shippingCost.toLocaleString()}`;
+                shippingElement.className = 'text-gray-600';
+            }
+            
+            // Update checkout button
+            const checkoutBtn = document.getElementById('checkout-btn');
+            const clearCartBtn = document.getElementById('clear-cart-btn');
+            
+            if (availableItems.length === 0) {
+                checkoutBtn.disabled = true;
+                checkoutBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                clearCartBtn.classList.add('hidden');
+            } else {
+                checkoutBtn.disabled = false;
+                checkoutBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                clearCartBtn.classList.remove('hidden');
+            }
+        }
+
+        // Modal functions
+        function closeModal() {
+            document.getElementById('confirmation-modal').classList.add('hidden');
+            pendingAction = null;
+        }
+
+        function confirmAction() {
+            if (pendingAction) {
+                pendingAction();
+                pendingAction = null;
+            }
+            closeModal();
+        }
+
+        // Checkout function
+        function proceedToCheckout() {
+            const availableItems = cartItems.filter(item => item.available);
+            if (availableItems.length === 0) return;
+            
+            const total = availableItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shippingCost = total >= 3000 ? 0 : 500;
+            const finalTotal = total + shippingCost;
+            
+            let orderSummary = 'Resumen del pedido:\n\n';
+            availableItems.forEach(item => {
+                orderSummary += `• ${item.name} x${item.quantity} - $${(item.price * item.quantity).toLocaleString()}\n`;
+            });
+            
+            orderSummary += `\nSubtotal: $${total.toLocaleString()}`;
+            orderSummary += `\nEnvío: ${shippingCost === 0 ? 'Gratis' : '$' + shippingCost.toLocaleString()}`;
+            orderSummary += `\nTotal: $${finalTotal.toLocaleString()}`;
+            orderSummary += '\n\n¡Procediendo al pago!';
+            
+            alert(orderSummary);
+        }
+
+        // Navigation functions
+        function goBack() {
+            alert('Volviendo a la página anterior...');
+        }
+
+        function goToHome() {
+            alert('Navegando al inicio...');
+        }
+
+        function goToCategory(category) {
+            alert(`Navegando a la página de ${category}...`);
+        }
+
+        function continueShopping() {
+            alert('Volviendo al catálogo de productos...');
+        }
+
+        function logout() {
+            if (confirm('¿Estás seguro que querés cerrar sesión?')) {
+                alert('Cerrando sesión...');
+            }
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9832695a50b2db36',t:'MTc1ODU1MDQ5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

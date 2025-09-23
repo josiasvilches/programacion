@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Rotisería Cacho</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .smooth-transition {
+            transition: all 0.3s ease;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(-50px) scale(0.95); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-6">
+        <!-- Profile Header -->
+        <div class="bg-white rounded-xl shadow-sm mb-8 fade-in">
+            <div class="relative">
+                <!-- Cover Image -->
+                <div class="h-32 bg-gradient-to-r from-red-500 to-red-600 rounded-t-xl"></div>
+                
+                <!-- Profile Info -->
+                <div class="relative px-6 pb-6">
+                    <div class="flex items-end -mt-16 mb-6">
+                        <div class="relative">
+                            <div class="w-32 h-32 bg-white rounded-full p-2 shadow-lg">
+                                <div class="w-full h-full bg-red-500 rounded-full flex items-center justify-center text-white text-4xl font-bold">
+                                    AC
+                                </div>
+                            </div>
+                            <button class="absolute bottom-2 right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white hover:bg-blue-600 smooth-transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="ml-6 flex-1">
+                            <h1 class="text-3xl font-bold text-gray-800" id="profile-name">Alejandro Cacho</h1>
+                            <p class="text-gray-600 text-lg">Administrador Principal</p>
+                            <p class="text-gray-500 text-sm mt-1" id="profile-business">Rotisería Cacho - Propietario</p>
+                            
+                            <div class="flex items-center space-x-4 mt-4">
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    <span id="profile-location">Buenos Aires, Argentina</span>
+                                </div>
+                                
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 0V6a2 2 0 012-2h4a2 2 0 012 2v1m-6 0h8m-9 0v10a2 2 0 002 2h8a2 2 0 002-2V7H7z"></path>
+                                    </svg>
+                                    Miembro desde Enero 2020
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-3">
+                            <button onclick="openEditModal()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 smooth-transition">
+                                <div class="flex items-center space-x-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                    </svg>
+                                    <span>Editar Perfil</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Personal Information -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Contact Information -->
+                <div class="bg-white rounded-xl shadow-sm card-hover">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-lg font-semibold text-gray-800">Información Personal</h2>
+                    </div>
+                    
+                    <div class="p-6 space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo</label>
+                                <div class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800" id="display-name">Alejandro Cacho</div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <div class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800" id="display-email">alejandro@rotiseriacacho.com</div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                                <div class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800" id="display-phone">+54 11 4567-8900</div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">WhatsApp</label>
+                                <div class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800" id="display-whatsapp">+54 11 4567-8900</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Dirección del Local</label>
+                            <div class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800" id="display-address">Av. Corrientes 1234, CABA, Buenos Aires</div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Horarios de Atención</label>
+                            <div class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 whitespace-pre-line" id="display-schedule">Lunes a Viernes: 11:00 - 15:00 y 19:00 - 23:30
+Sábados: 11:00 - 16:00 y 19:00 - 00:00
+Domingos: 11:00 - 16:00 y 19:00 - 23:00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Business Information -->
+                <div class="bg-white rounded-xl shadow-sm card-hover">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-lg font-semibold text-gray-800">Información del Negocio</h2>
+                    </div>
+                    
+                    <div class="p-6 space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nombre del Negocio</label>
+                                <div class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800" id="display-business-name">Rotisería Cacho</div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">CUIT</label>
+                                <div class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800" id="display-cuit">20-12345678-9</div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Fecha de Apertura</label>
+                                <div class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800" id="display-opening-date">15/01/2020</div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Negocio</label>
+                                <div class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800" id="display-business-type">Rotisería y Comidas Preparadas</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                            <div class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800" id="display-description">Rotisería familiar con más de 4 años de experiencia en el barrio. Especialistas en pollos al spiedo, milanesas caseras y empanadas artesanales. Nos caracterizamos por la calidad de nuestros productos y la atención personalizada a cada cliente.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Info -->
+            <div class="space-y-8">
+                <!-- Quick Stats -->
+                <div class="bg-white rounded-xl shadow-sm card-hover">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-800">Estadísticas Rápidas</h3>
+                    </div>
+                    
+                    <div class="p-6 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Productos Activos</span>
+                            <span class="font-semibold text-gray-800">24</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Clientes Registrados</span>
+                            <span class="font-semibold text-gray-800">1,247</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Pedidos Este Mes</span>
+                            <span class="font-semibold text-gray-800">342</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Ventas Este Mes</span>
+                            <span class="font-semibold text-green-600">$1.245.600</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Campañas Enviadas</span>
+                            <span class="font-semibold text-gray-800">47</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Settings -->
+                <div class="bg-white rounded-xl shadow-sm card-hover">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-800">Configuración de Cuenta</h3>
+                    </div>
+                    
+                    <div class="p-6 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="font-medium text-gray-800">Notificaciones Email</p>
+                                <p class="text-sm text-gray-600">Recibir alertas por email</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" checked class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="font-medium text-gray-800">Notificaciones Push</p>
+                                <p class="text-sm text-gray-600">Alertas en el navegador</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" checked class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="font-medium text-gray-800">Modo Oscuro</p>
+                                <p class="text-sm text-gray-600">Tema oscuro del panel</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security -->
+                <div class="bg-white rounded-xl shadow-sm card-hover">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-800">Seguridad</h3>
+                    </div>
+                    
+                    <div class="p-6 space-y-4">
+                        <button class="w-full text-left p-3 rounded-lg hover:bg-gray-50 smooth-transition">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m0 0a2 2 0 012 2m-2-2h-6m6 0v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9a2 2 0 012-2h2M7 7V3a2 2 0 012-2h4a2 2 0 012 2v4M7 7H3a2 2 0 00-2 2v6a2 2 0 002 2h4m-4-8h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800">Cambiar Contraseña</p>
+                                    <p class="text-sm text-gray-600">Actualizar tu contraseña</p>
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button class="w-full text-left p-3 rounded-lg hover:bg-gray-50 smooth-transition">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800">Autenticación 2FA</p>
+                                    <p class="text-sm text-gray-600">Configurar verificación en dos pasos</p>
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button class="w-full text-left p-3 rounded-lg hover:bg-gray-50 smooth-transition">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800">Sesiones Activas</p>
+                                    <p class="text-sm text-gray-600">Ver dispositivos conectados</p>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Logout -->
+                <div class="bg-white rounded-xl shadow-sm card-hover">
+                    <div class="p-6">
+                        <button onclick="logout()" class="w-full bg-red-500 text-white py-3 rounded-lg font-medium hover:bg-red-600 smooth-transition">
+                            <div class="flex items-center justify-center space-x-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                <span>Cerrar Sesión</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="edit-modal" class="fixed inset-0 modal-overlay z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-content">
+                <div class="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-2xl">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xl font-semibold text-gray-800">Editar Perfil</h3>
+                        <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600 smooth-transition">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <form id="edit-form" class="p-6 space-y-8">
+                    <!-- Personal Information -->
+                    <div>
+                        <h4 class="text-lg font-medium text-gray-800 mb-4">Información Personal</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo *</label>
+                                <input type="text" id="edit-name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" required>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                                <input type="email" id="edit-email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" required>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono *</label>
+                                <input type="tel" id="edit-phone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" required>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">WhatsApp</label>
+                                <input type="tel" id="edit-whatsapp" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Dirección del Local *</label>
+                            <input type="text" id="edit-address" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" required>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Horarios de Atención</label>
+                            <textarea id="edit-schedule" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="Ejemplo:&#10;Lunes a Viernes: 11:00 - 15:00 y 19:00 - 23:30&#10;Sábados: 11:00 - 16:00 y 19:00 - 00:00&#10;Domingos: 11:00 - 16:00 y 19:00 - 23:00"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Business Information -->
+                    <div>
+                        <h4 class="text-lg font-medium text-gray-800 mb-4">Información del Negocio</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nombre del Negocio *</label>
+                                <input type="text" id="edit-business-name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" required>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">CUIT *</label>
+                                <input type="text" id="edit-cuit" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" required>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Fecha de Apertura</label>
+                                <input type="date" id="edit-opening-date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Negocio</label>
+                                <input type="text" id="edit-business-type" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Descripción del Negocio</label>
+                            <textarea id="edit-description" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="Describe tu negocio, especialidades, años de experiencia, etc."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-4 pt-6 border-t border-gray-200">
+                        <button type="button" onclick="closeEditModal()" class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 smooth-transition">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="flex-1 gradient-bg text-white px-6 py-3 rounded-lg hover:shadow-lg smooth-transition">
+                            <div class="flex items-center justify-center space-x-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span>Guardar Cambios</span>
+                            </div>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Profile data object
+        const profileData = {
+            name: 'Alejandro Cacho',
+            email: 'alejandro@rotiseriacacho.com',
+            phone: '+54 11 4567-8900',
+            whatsapp: '+54 11 4567-8900',
+            address: 'Av. Corrientes 1234, CABA, Buenos Aires',
+            schedule: 'Lunes a Viernes: 11:00 - 15:00 y 19:00 - 23:30\nSábados: 11:00 - 16:00 y 19:00 - 00:00\nDomingos: 11:00 - 16:00 y 19:00 - 23:00',
+            businessName: 'Rotisería Cacho',
+            cuit: '20-12345678-9',
+            openingDate: '2020-01-15',
+            businessType: 'Rotisería y Comidas Preparadas',
+            description: 'Rotisería familiar con más de 4 años de experiencia en el barrio. Especialistas en pollos al spiedo, milanesas caseras y empanadas artesanales. Nos caracterizamos por la calidad de nuestros productos y la atención personalizada a cada cliente.'
+        };
+
+        // Open edit modal
+        function openEditModal() {
+            // Populate form with current data
+            document.getElementById('edit-name').value = profileData.name;
+            document.getElementById('edit-email').value = profileData.email;
+            document.getElementById('edit-phone').value = profileData.phone;
+            document.getElementById('edit-whatsapp').value = profileData.whatsapp;
+            document.getElementById('edit-address').value = profileData.address;
+            document.getElementById('edit-schedule').value = profileData.schedule;
+            document.getElementById('edit-business-name').value = profileData.businessName;
+            document.getElementById('edit-cuit').value = profileData.cuit;
+            document.getElementById('edit-opening-date').value = profileData.openingDate;
+            document.getElementById('edit-business-type').value = profileData.businessType;
+            document.getElementById('edit-description').value = profileData.description;
+            
+            // Show modal
+            document.getElementById('edit-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Update display data
+        function updateDisplay() {
+            document.getElementById('profile-name').textContent = profileData.name;
+            document.getElementById('profile-business').textContent = `${profileData.businessName} - Propietario`;
+            document.getElementById('display-name').textContent = profileData.name;
+            document.getElementById('display-email').textContent = profileData.email;
+            document.getElementById('display-phone').textContent = profileData.phone;
+            document.getElementById('display-whatsapp').textContent = profileData.whatsapp;
+            document.getElementById('display-address').textContent = profileData.address;
+            document.getElementById('display-schedule').textContent = profileData.schedule;
+            document.getElementById('display-business-name').textContent = profileData.businessName;
+            document.getElementById('display-cuit').textContent = profileData.cuit;
+            
+            // Format opening date
+            const date = new Date(profileData.openingDate);
+            const formattedDate = date.toLocaleDateString('es-AR');
+            document.getElementById('display-opening-date').textContent = formattedDate;
+            
+            document.getElementById('display-business-type').textContent = profileData.businessType;
+            document.getElementById('display-description').textContent = profileData.description;
+        }
+
+        // Handle form submission
+        document.getElementById('edit-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            
+            // Update profile data
+            profileData.name = document.getElementById('edit-name').value;
+            profileData.email = document.getElementById('edit-email').value;
+            profileData.phone = document.getElementById('edit-phone').value;
+            profileData.whatsapp = document.getElementById('edit-whatsapp').value;
+            profileData.address = document.getElementById('edit-address').value;
+            profileData.schedule = document.getElementById('edit-schedule').value;
+            profileData.businessName = document.getElementById('edit-business-name').value;
+            profileData.cuit = document.getElementById('edit-cuit').value;
+            profileData.openingDate = document.getElementById('edit-opening-date').value;
+            profileData.businessType = document.getElementById('edit-business-type').value;
+            profileData.description = document.getElementById('edit-description').value;
+            
+            // Show loading state
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalContent = submitButton.innerHTML;
+            submitButton.innerHTML = `
+                <div class="flex items-center justify-center space-x-2">
+                    <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Guardando...</span>
+                </div>
+            `;
+            submitButton.disabled = true;
+            
+            // Simulate save delay
+            setTimeout(() => {
+                // Update display
+                updateDisplay();
+                
+                // Reset button
+                submitButton.innerHTML = originalContent;
+                submitButton.disabled = false;
+                
+                // Close modal
+                closeEditModal();
+                
+                // Show success message
+                showSuccessMessage('¡Perfil actualizado exitosamente!');
+            }, 1500);
+        });
+
+        // Show success message
+        function showSuccessMessage(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 fade-in';
+            successDiv.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(successDiv);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('¿Estás seguro que querés cerrar sesión?')) {
+                alert('Sesión cerrada exitosamente. Redirigiendo al login...');
+                // Here you would redirect to login page
+                // window.location.href = '/login';
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('edit-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !document.getElementById('edit-modal').classList.contains('hidden')) {
+                closeEditModal();
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'983d2884830575f3',t:'MTc1ODY2MzE4NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

@@ -1,0 +1,33 @@
+.home-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  .main-content {
+    flex: 1;
+
+    // Ensure sections have proper spacing
+    > * {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Global section spacing
+:host ::ng-deep {
+  section {
+    padding: 3rem 0;
+
+    @media (max-width: 768px) {
+      padding: 2rem 0;
+    }
+  }
+}
+
+// Smooth scrolling for anchor links
+html {
+  scroll-behavior: smooth;
+}
+.smooth-transition {
+  transition: all 0.3s ease;
+}

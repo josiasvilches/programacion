@@ -1,0 +1,257 @@
+// Base layout adjustments for admin panel
+.admin-layout {
+  display: flex;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 4.2rem;
+  padding-top: 10rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
+}
+
+// Stats cards
+.stats-card {
+  background: white;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Order cards
+.order-card {
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+  position: relative;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  // Status-based styling
+  &.status-pending {
+    border-left: 4px solid #f59e0b;
+  }
+  
+  &.status-preparing {
+    border-left: 4px solid #3b82f6;
+  }
+  
+  &.status-ready {
+    border-left: 4px solid #10b981;
+  }
+  
+  &.status-delivered {
+    border-left: 4px solid #6b7280;
+  }
+  
+  &.status-cancelled {
+    border-left: 4px solid #ef4444;
+  }
+  
+  // Urgent orders
+  &.urgent-order {
+    border: 2px solid #ef4444;
+    background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #ef4444, #dc2626, #ef4444, #dc2626);
+      background-size: 400% 400%;
+      border-radius: 0.75rem;
+      z-index: -1;
+      animation: urgentPulse 2s ease-in-out infinite;
+    }
+  }
+}
+
+// Status badges
+.status-badge {
+  &.status-pending {
+    background-color: #f59e0b;
+  }
+  
+  &.status-preparing {
+    background-color: #3b82f6;
+  }
+  
+  &.status-ready {
+    background-color: #10b981;
+  }
+  
+  &.status-delivered {
+    background-color: #6b7280;
+  }
+  
+  &.status-cancelled {
+    background-color: #ef4444;
+  }
+}
+
+// Filter buttons
+.filter-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid #d1d5db;
+  
+  &.active {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white;
+    border-color: #dc2626;
+  }
+  
+  &:not(.active) {
+    background: white;
+    color: #6b7280;
+    
+    &:hover {
+      background: #f9fafb;
+      color: #374151;
+    }
+  }
+}
+
+// Action buttons
+.action-button {
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// Gradient background
+.gradient-bg {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+// Hover lift effect
+.hover-lift {
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+// Modal styles
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  animation: slideIn 0.3s ease-out;
+}
+
+// Timeline styles
+.timeline-item {
+  position: relative;
+  
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 1rem;
+    top: 2rem;
+    bottom: -1rem;
+    width: 2px;
+    background: #e5e7eb;
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes urgentPulse {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .main-content {
+    margin-top: 9rem;
+    margin-left: 3.7rem;
+    padding: 1rem;
+  }
+}
+
+// Custom scrollbar for modal
+.modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: #dc2626;
+  border-radius: 3px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: #b91c1c;
+}
+
+// Focus styles
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+}
+
+// Utility classes
+.text-shadow {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.card-shadow {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.card-shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
