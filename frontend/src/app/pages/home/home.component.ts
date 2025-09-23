@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { Schedule, ContactInfo, Testimonial } from '../../models/product.interface';
@@ -62,11 +63,11 @@ export class HomeComponent {
   ];
 
   isOpen = true; // This could be calculated based on current time
+  
+  constructor(private router: Router) {}
+
   onViewMenu() {
-    const element = document.getElementById('menu');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    this.router.navigate(['/comidas']);
   }
 
   onCallNow() {
@@ -90,6 +91,4 @@ export class HomeComponent {
     const index = name.charCodeAt(0) % colors.length;
     return colors[index];
   }
-
-  constructor() {}
 }
