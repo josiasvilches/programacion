@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/components/carrousel/recommended-products-carrousel/recommended-products-carrousel.component.scss"],
+  "sourcesContent": [".smooth-transition {\n  transition: all 0.3s ease;\n}\n\n.hover-lift:hover {\n  transform: translateY(-5px);\n}\n"],
+  "mappings": ";AAAA,CAAA;AACE,cAAA,IAAA,KAAA;;AAGF,CAAA,UAAA;AACE,aAAA,WAAA;;",
+  "names": []
+}

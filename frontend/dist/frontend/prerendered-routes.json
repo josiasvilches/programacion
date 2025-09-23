@@ -1,0 +1,18 @@
+{
+  "routes": {
+    "/": {},
+    "/admin": {},
+    "/admin/email": {},
+    "/admin/orders": {},
+    "/admin/products": {},
+    "/admin/profile": {},
+    "/admin/users": {},
+    "/cart": {},
+    "/comidas": {},
+    "/login": {},
+    "/orders": {},
+    "/payment": {},
+    "/register": {},
+    "/user": {}
+  }
+}

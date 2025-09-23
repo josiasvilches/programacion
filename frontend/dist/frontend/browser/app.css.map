@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/app.scss"],
+  "sourcesContent": ["// Main application styles\n:host {\n  display: block;\n  min-height: 100vh;\n}\n\n// Global layout container\n.app-container {\n  min-height: 100vh;\n  display: flex;\n  flex-direction: column;\n}"],
+  "mappings": ";AACA;AACE,WAAA;AACA,cAAA;;AAIF,CAAA;AACE,cAAA;AACA,WAAA;AACA,kBAAA;;",
+  "names": []
+}

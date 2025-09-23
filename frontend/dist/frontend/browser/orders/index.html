@@ -1,0 +1,283 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="utf-8">
+  <title>Frontend</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="stylesheet" href="styles.css"><link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" as="style"><style ng-app-id="ng">
+
+[_nghost-ng-c3984273398] {
+  display: block;
+  min-height: 100vh;
+}
+.app-container[_ngcontent-ng-c3984273398] {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+/*# sourceMappingURL=/app.css.map */</style><style ng-app-id="ng">
+
+.smooth-transition[_ngcontent-ng-c249627429] {
+  transition: all 0.3s ease;
+}
+.bgCustom[_ngcontent-ng-c249627429] {
+  background-color: rgba(255, 255, 255, 0.3294117647);
+}
+.input-focus[_ngcontent-ng-c249627429]:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+.hover-lift[_ngcontent-ng-c249627429]:hover {
+  transform: translateY(-2px);
+}
+.gradient-bg[_ngcontent-ng-c249627429] {
+  background:
+    linear-gradient(
+      135deg,
+      #ef4444 0%,
+      #dc2626 100%);
+}
+.order-card[_ngcontent-ng-c249627429] {
+  transition: all 0.3s ease;
+}
+.order-card[_ngcontent-ng-c249627429]:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+.filter-btn[_ngcontent-ng-c249627429] {
+  transition: all 0.3s ease;
+}
+.filter-active[_ngcontent-ng-c249627429] {
+  background-color: #ef4444;
+  color: white;
+}
+.filter-active[_ngcontent-ng-c249627429]:hover {
+  background-color: #dc2626;
+}
+.fade-in[_ngcontent-ng-c249627429] {
+  animation: _ngcontent-ng-c249627429_fadeIn 0.5s ease-in;
+}
+@keyframes _ngcontent-ng-c249627429_fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.pulse-animation[_ngcontent-ng-c249627429] {
+  animation: _ngcontent-ng-c249627429_pulse 2s infinite;
+}
+@keyframes _ngcontent-ng-c249627429_pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+.status-pending[_ngcontent-ng-c249627429] {
+  background-color: #fbbf24;
+}
+.status-preparing[_ngcontent-ng-c249627429] {
+  background-color: #3b82f6;
+}
+.status-ready[_ngcontent-ng-c249627429] {
+  background-color: #10b981;
+}
+.status-delivered[_ngcontent-ng-c249627429] {
+  background-color: #6b7280;
+}
+.status-cancelled[_ngcontent-ng-c249627429] {
+  background-color: #ef4444;
+}
+@media (max-width: 768px) {
+  .order-card[_ngcontent-ng-c249627429] {
+    padding: 1rem;
+  }
+  .filter-btn[_ngcontent-ng-c249627429] {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+  .gradient-bg[_ngcontent-ng-c249627429] {
+    padding: 2rem 0;
+  }
+  .gradient-bg[_ngcontent-ng-c249627429]   .text-4xl[_ngcontent-ng-c249627429] {
+    font-size: 2rem;
+  }
+  .gradient-bg[_ngcontent-ng-c249627429]   .text-xl[_ngcontent-ng-c249627429] {
+    font-size: 1.125rem;
+  }
+}
+@media (max-width: 640px) {
+  .bg-white.bg-opacity-20[_ngcontent-ng-c249627429] {
+    flex-direction: column;
+  }
+  .bg-white.bg-opacity-20[_ngcontent-ng-c249627429]   .text-center[_ngcontent-ng-c249627429] {
+    margin-bottom: 1rem;
+  }
+  .bg-white.bg-opacity-20[_ngcontent-ng-c249627429]   .h-8.w-px[_ngcontent-ng-c249627429] {
+    display: none;
+  }
+}
+.filter-btn[_ngcontent-ng-c249627429]:focus {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+}
+.order-card[_ngcontent-ng-c249627429]:focus-within {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+}
+button[_ngcontent-ng-c249627429]:focus {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+}
+.fixed.inset-0[_ngcontent-ng-c249627429] {
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.overflow-y-auto[_ngcontent-ng-c249627429]::-webkit-scrollbar {
+  width: 6px;
+}
+.overflow-y-auto[_ngcontent-ng-c249627429]::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+.overflow-y-auto[_ngcontent-ng-c249627429]::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+.overflow-y-auto[_ngcontent-ng-c249627429]::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+.text-center.py-16[_ngcontent-ng-c249627429]   .w-24.h-24[_ngcontent-ng-c249627429] {
+  transition: transform 0.3s ease;
+}
+.text-center.py-16[_ngcontent-ng-c249627429]   .w-24.h-24[_ngcontent-ng-c249627429]:hover {
+  transform: scale(1.05);
+}
+.loading-state[_ngcontent-ng-c249627429]   .order-card[_ngcontent-ng-c249627429] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+input[type=text][_ngcontent-ng-c249627429]:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+select[_ngcontent-ng-c249627429]:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+.status-pending[_ngcontent-ng-c249627429], 
+.status-preparing[_ngcontent-ng-c249627429], 
+.status-ready[_ngcontent-ng-c249627429], 
+.status-delivered[_ngcontent-ng-c249627429], 
+.status-cancelled[_ngcontent-ng-c249627429] {
+  transition: all 0.3s ease;
+}
+@media (prefers-color-scheme: dark) {
+  .bg-white[_ngcontent-ng-c249627429] {
+    background-color: #ffffff;
+    color: #f9fafb;
+  }
+  .text-gray-800[_ngcontent-ng-c249627429] {
+    color: #f9fafb;
+  }
+  .text-gray-600[_ngcontent-ng-c249627429] {
+    color: #d1d5db;
+  }
+  .border-gray-200[_ngcontent-ng-c249627429] {
+    border-color: #374151;
+  }
+}
+/*# sourceMappingURL=/orders.component.css.map */</style><style ng-app-id="ng">
+
+.smooth-transition[_ngcontent-ng-c2052491815] {
+  transition: all 0.3s ease;
+}
+.user-dropdown[_ngcontent-ng-c2052491815] {
+  position: relative;
+}
+.rotate-180[_ngcontent-ng-c2052491815] {
+  transform: rotate(180deg);
+}
+.mobile-menu-container[_ngcontent-ng-c2052491815] {
+  position: relative;
+}
+.mobile-menu-dropdown[_ngcontent-ng-c2052491815] {
+  animation: _ngcontent-ng-c2052491815_slideDown 0.3s ease-out;
+  transform-origin: top;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+}
+.mobile-menu-dropdown.hidden[_ngcontent-ng-c2052491815] {
+  animation: _ngcontent-ng-c2052491815_slideUp 0.2s ease-in;
+}
+@keyframes _ngcontent-ng-c2052491815_slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes _ngcontent-ng-c2052491815_slideUp {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+}
+@media (max-width: 768px) {
+  .mobile-menu-dropdown[_ngcontent-ng-c2052491815]   .user-info[_ngcontent-ng-c2052491815] {
+    background:
+      linear-gradient(
+        135deg,
+        #f3f4f6 0%,
+        #e5e7eb 100%);
+  }
+  .mobile-menu-dropdown[_ngcontent-ng-c2052491815]   a[_ngcontent-ng-c2052491815]:active {
+    transform: scale(0.98);
+  }
+}
+@media (hover: hover) {
+  .mobile-menu-dropdown[_ngcontent-ng-c2052491815]   a[_ngcontent-ng-c2052491815]:hover {
+    background-color: rgba(243, 244, 246, 0.8);
+    transform: translateX(4px);
+  }
+}
+.cart-button[_ngcontent-ng-c2052491815]:active {
+  transform: scale(0.95);
+}
+.mobile-menu-button[_ngcontent-ng-c2052491815]   svg[_ngcontent-ng-c2052491815] {
+  transition: all 0.3s ease;
+}
+.mobile-menu-button[_ngcontent-ng-c2052491815]:hover   svg[_ngcontent-ng-c2052491815] {
+  transform: scale(1.1);
+}
+/*# sourceMappingURL=/header.component.css.map */</style><style ng-app-id="ng">
+
+.smooth-transition[_ngcontent-ng-c1913404311] {
+  transition: all 0.3s ease;
+}
+a[_ngcontent-ng-c1913404311]:hover {
+  transform: translateY(-2px);
+}
+@media (max-width: 768px) {
+  .grid[_ngcontent-ng-c1913404311] {
+    gap: 1.5rem;
+  }
+}
+/*# sourceMappingURL=/footer.component.css.map */</style></head>
+<body><!--nghm--><script type="text/javascript" id="ng-event-dispatch-contract">(()=>{function p(t,n,r,o,e,i,f,m){return{eventType:t,event:n,targetElement:r,eic:o,timeStamp:e,eia:i,eirp:f,eiack:m}}function u(t){let n=[],r=e=>{n.push(e)};return{c:t,q:n,et:[],etc:[],d:r,h:e=>{r(p(e.type,e,e.target,t,Date.now()))}}}function s(t,n,r){for(let o=0;o<n.length;o++){let e=n[o];(r?t.etc:t.et).push(e),t.c.addEventListener(e,t.h,r)}}function c(t,n,r,o,e=window){let i=u(t);e._ejsas||(e._ejsas={}),e._ejsas[n]=i,s(i,r),s(i,o,!0)}window.__jsaction_bootstrap=c;})();
+</script><script>window.__jsaction_bootstrap(document.body,"ng",["click","input","change"],[]);</script>
+  <app-root ng-version="20.3.1" _nghost-ng-c3984273398="" ngh="3" ng-server-context="ssg"><router-outlet _ngcontent-ng-c3984273398=""></router-outlet><app-orders _nghost-ng-c249627429="" ngh="2"><div _ngcontent-ng-c249627429="" class="min-h-screen flex flex-col bg-gray-50"><app-header _ngcontent-ng-c249627429="" _nghost-ng-c2052491815="" ngh="0"><nav _ngcontent-ng-c2052491815="" class="bg-white shadow-sm sticky top-0 z-50 relative"><div _ngcontent-ng-c2052491815="" class="max-w-6xl mx-auto px-4 sm:px-6 py-4"><div _ngcontent-ng-c2052491815="" class="flex justify-between items-center"><div _ngcontent-ng-c2052491815="" class="flex items-center space-x-3"><a _ngcontent-ng-c2052491815="" routerlink="/" class="flex items-center space-x-3" href="/" jsaction="click:;"><div _ngcontent-ng-c2052491815="" class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center text-white font-bold"> RC </div><h1 _ngcontent-ng-c2052491815="" class="text-xl font-bold text-gray-800">Rotisería Cacho</h1></a></div><div _ngcontent-ng-c2052491815="" class="hidden md:flex items-center space-x-8"><a _ngcontent-ng-c2052491815="" routerlink="/comidas" class="text-gray-600 hover:text-red-500 smooth-transition cursor-pointer" href="/comidas" jsaction="click:;">Comidas</a><a _ngcontent-ng-c2052491815="" routerlink="/comidas" class="text-gray-600 hover:text-red-500 smooth-transition cursor-pointer" href="/comidas" jsaction="click:;">Guarniciones</a></div><div _ngcontent-ng-c2052491815="" class="hidden md:flex items-center space-x-4"><div _ngcontent-ng-c2052491815="" class="relative user-dropdown"><button _ngcontent-ng-c2052491815="" class="flex items-center space-x-2 text-gray-700 hover:text-red-500 smooth-transition" jsaction="click:;"><div _ngcontent-ng-c2052491815="" class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white text-sm font-bold"> JD </div><span _ngcontent-ng-c2052491815="" class="hidden md:block font-medium">Juan Díaz</span><svg _ngcontent-ng-c2052491815="" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4 transition-transform duration-200"><path _ngcontent-ng-c2052491815="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button><div _ngcontent-ng-c2052491815="" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 hidden"><a _ngcontent-ng-c2052491815="" routerlink="/user" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50 smooth-transition cursor-pointer" href="/user" jsaction="click:;"><span _ngcontent-ng-c2052491815="" class="mr-3">👤</span> Mi Usuario </a><a _ngcontent-ng-c2052491815="" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50 smooth-transition cursor-pointer"><span _ngcontent-ng-c2052491815="" class="mr-3">🔔</span> Notificaciones <span _ngcontent-ng-c2052491815="" class="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-1"> 3 </span><!--container--></a><a _ngcontent-ng-c2052491815="" routerlink="/orders" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50 smooth-transition cursor-pointer" href="/orders" jsaction="click:;"><span _ngcontent-ng-c2052491815="" class="mr-3">📦</span> Pedidos </a><a _ngcontent-ng-c2052491815="" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50 smooth-transition cursor-pointer" jsaction="click:;"><span _ngcontent-ng-c2052491815="" class="mr-3">⚙️</span> Panel de Administración </a><!--container--><hr _ngcontent-ng-c2052491815="" class="my-2 border-gray-200"><a _ngcontent-ng-c2052491815="" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50 smooth-transition cursor-pointer" jsaction="click:;"><span _ngcontent-ng-c2052491815="" class="mr-3">🚪</span> Cerrar Sesión </a></div></div><!--container--><!--container--><button _ngcontent-ng-c2052491815="" class="relative flex items-center space-x-2 text-gray-700 hover:text-red-500 smooth-transition" jsaction="click:;"><div _ngcontent-ng-c2052491815="" class="relative"><svg _ngcontent-ng-c2052491815="" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-6 h-6"><path _ngcontent-ng-c2052491815="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5-6M20 13v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6m16 0V9a2 2 0 00-2-2H6a2 2 0 00-2 2v4.01"></path></svg><!--container--></div><span _ngcontent-ng-c2052491815="" class="hidden md:block font-medium">Carrito</span></button></div><div _ngcontent-ng-c2052491815="" class="flex md:hidden items-center space-x-3"><button _ngcontent-ng-c2052491815="" class="relative flex items-center text-gray-700 hover:text-red-500 smooth-transition" jsaction="click:;"><div _ngcontent-ng-c2052491815="" class="relative"><svg _ngcontent-ng-c2052491815="" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-6 h-6"><path _ngcontent-ng-c2052491815="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5-6M20 13v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6m16 0V9a2 2 0 00-2-2H6a2 2 0 00-2 2v4.01"></path></svg><!--container--></div></button><div _ngcontent-ng-c2052491815="" class="mobile-menu-container"><button _ngcontent-ng-c2052491815="" class="flex items-center justify-center w-10 h-10 text-gray-700 hover:text-red-500 smooth-transition" jsaction="click:;"><svg _ngcontent-ng-c2052491815="" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-6 h-6"><path _ngcontent-ng-c2052491815="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><!--container--><!--container--></button></div></div></div><!--container--><div _ngcontent-ng-c2052491815="" class="absolute top-full left-0 right-0 md:hidden mobile-menu-dropdown bg-white shadow-lg border-t border-gray-200 z-40 hidden"><div _ngcontent-ng-c2052491815="" class="px-2 pt-4 pb-3 space-y-1"><a _ngcontent-ng-c2052491815="" routerlink="/comidas" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-red-500 smooth-transition rounded-lg" href="/comidas" jsaction="click:;"> Comidas </a><a _ngcontent-ng-c2052491815="" routerlink="/comidas" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-red-500 smooth-transition rounded-lg" href="/comidas" jsaction="click:;"> Guarniciones </a><div _ngcontent-ng-c2052491815="" class="border-t border-gray-200 mt-4 pt-4"><div _ngcontent-ng-c2052491815="" class="flex items-center px-4 py-3 bg-gray-50 rounded-lg mb-3"><div _ngcontent-ng-c2052491815="" class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3"> JD </div><div _ngcontent-ng-c2052491815=""><p _ngcontent-ng-c2052491815="" class="font-medium text-gray-800">Juan Díaz</p><p _ngcontent-ng-c2052491815="" class="text-sm text-gray-600">empleado</p></div></div><a _ngcontent-ng-c2052491815="" routerlink="/user" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-red-500 smooth-transition rounded-lg" href="/user" jsaction="click:;"><span _ngcontent-ng-c2052491815="" class="mr-3 text-lg">👤</span> Mi Usuario </a><a _ngcontent-ng-c2052491815="" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-red-500 smooth-transition rounded-lg" jsaction="click:;"><span _ngcontent-ng-c2052491815="" class="mr-3 text-lg">🔔</span> Notificaciones <span _ngcontent-ng-c2052491815="" class="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-1"> 3 </span><!--container--></a><a _ngcontent-ng-c2052491815="" routerlink="/orders" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-red-500 smooth-transition rounded-lg" href="/orders" jsaction="click:;"><span _ngcontent-ng-c2052491815="" class="mr-3 text-lg">📦</span> Pedidos </a><a _ngcontent-ng-c2052491815="" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-red-500 smooth-transition rounded-lg" jsaction="click:;"><span _ngcontent-ng-c2052491815="" class="mr-3 text-lg">⚙️</span> Panel de Administración </a><!--container--><a _ngcontent-ng-c2052491815="" class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 smooth-transition rounded-lg mt-2" jsaction="click:;"><span _ngcontent-ng-c2052491815="" class="mr-3 text-lg">🚪</span> Cerrar Sesión </a></div><!--container--><!--container--></div></div></div></nav></app-header><div _ngcontent-ng-c249627429="" class="gradient-bg text-white py-12"><div _ngcontent-ng-c249627429="" class="max-w-4xl mx-auto px-6 text-center"><h2 _ngcontent-ng-c249627429="" class="text-4xl font-bold mb-4">Historial de Pedidos</h2><p _ngcontent-ng-c249627429="" class="text-xl text-red-100 mb-8">Seguí el estado de tus pedidos y repetí tus favoritos</p><div _ngcontent-ng-c249627429="" class="flex justify-center"><div _ngcontent-ng-c249627429="" class="backdrop-blur-sm rounded-lg p-4 flex items-center space-x-6 bgCustom"><div _ngcontent-ng-c249627429="" class="text-center"><div _ngcontent-ng-c249627429="" class="text-2xl font-bold">15</div><div _ngcontent-ng-c249627429="" class="text-sm text-red-100">Pedidos totales</div></div><div _ngcontent-ng-c249627429="" class="h-8 w-px bg-white bg-opacity-30"></div><div _ngcontent-ng-c249627429="" class="text-center"><div _ngcontent-ng-c249627429="" class="text-2xl font-bold">$100.300</div><div _ngcontent-ng-c249627429="" class="text-sm text-red-100">Total gastado</div></div><div _ngcontent-ng-c249627429="" class="h-8 w-px bg-white bg-opacity-30"></div><div _ngcontent-ng-c249627429="" class="text-center"><div _ngcontent-ng-c249627429="" class="text-2xl font-bold">3</div><div _ngcontent-ng-c249627429="" class="text-sm text-red-100">Pendientes</div></div></div></div></div></div><div _ngcontent-ng-c249627429="" class="max-w-4xl mx-auto px-6 py-8"><div _ngcontent-ng-c249627429="" class="bg-white rounded-2xl shadow-sm p-6 mb-8"><div _ngcontent-ng-c249627429="" class="flex flex-col space-y-4"><div _ngcontent-ng-c249627429="" class="flex-1"><div _ngcontent-ng-c249627429="" class="relative"><input _ngcontent-ng-c249627429="" type="text" placeholder="Buscar por número de pedido o productos..." class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg input-focus smooth-transition" value="" jsaction="input:;"><div _ngcontent-ng-c249627429="" class="absolute inset-y-0 left-0 pl-4 flex items-center"><svg _ngcontent-ng-c249627429="" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-5 h-5 text-gray-400"><path _ngcontent-ng-c249627429="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></div></div></div><div _ngcontent-ng-c249627429="" class="flex flex-wrap gap-2"><button _ngcontent-ng-c249627429="" class="filter-btn px-4 py-2 rounded-lg text-sm font-medium smooth-transition hover:bg-gray-300 filter-active" jsaction="click:;"> Todos (15) </button><button _ngcontent-ng-c249627429="" class="filter-btn px-4 py-2 rounded-lg text-sm font-medium smooth-transition hover:bg-gray-300 bg-gray-200 text-gray-700" jsaction="click:;"> Pendientes (1) </button><button _ngcontent-ng-c249627429="" class="filter-btn px-4 py-2 rounded-lg text-sm font-medium smooth-transition hover:bg-gray-300 bg-gray-200 text-gray-700" jsaction="click:;"> En preparación (1) </button><button _ngcontent-ng-c249627429="" class="filter-btn px-4 py-2 rounded-lg text-sm font-medium smooth-transition hover:bg-gray-300 bg-gray-200 text-gray-700" jsaction="click:;"> Listos (1) </button><button _ngcontent-ng-c249627429="" class="filter-btn px-4 py-2 rounded-lg text-sm font-medium smooth-transition hover:bg-gray-300 bg-gray-200 text-gray-700" jsaction="click:;"> Entregados (10) </button><button _ngcontent-ng-c249627429="" class="filter-btn px-4 py-2 rounded-lg text-sm font-medium smooth-transition hover:bg-gray-300 bg-gray-200 text-gray-700" jsaction="click:;"> Cancelados (2) </button></div><div _ngcontent-ng-c249627429="" class="grid grid-cols-1 md:grid-cols-3 gap-4"><div _ngcontent-ng-c249627429=""><label _ngcontent-ng-c249627429="" class="block text-sm font-medium text-gray-700 mb-2">Período</label><select _ngcontent-ng-c249627429="" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus smooth-transition" jsaction="change:;"><option _ngcontent-ng-c249627429="" value="all">Todos los períodos</option><option _ngcontent-ng-c249627429="" value="today">Hoy</option><option _ngcontent-ng-c249627429="" value="week">Esta semana</option><option _ngcontent-ng-c249627429="" value="month">Este mes</option><option _ngcontent-ng-c249627429="" value="custom">Rango personalizado</option></select></div><div _ngcontent-ng-c249627429=""><label _ngcontent-ng-c249627429="" class="block text-sm font-medium text-gray-700 mb-2">Monto</label><select _ngcontent-ng-c249627429="" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus smooth-transition" jsaction="change:;"><option _ngcontent-ng-c249627429="" value="all">Todos los montos</option><option _ngcontent-ng-c249627429="" value="0-2000">Hasta $2.000</option><option _ngcontent-ng-c249627429="" value="2000-5000">$2.000 - $5.000</option><option _ngcontent-ng-c249627429="" value="5000-10000">$5.000 - $10.000</option><option _ngcontent-ng-c249627429="" value="10000+">Más de $10.000</option></select></div><div _ngcontent-ng-c249627429=""><label _ngcontent-ng-c249627429="" class="block text-sm font-medium text-gray-700 mb-2">Ordenar por</label><select _ngcontent-ng-c249627429="" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus smooth-transition" jsaction="change:;"><option _ngcontent-ng-c249627429="" value="date-desc">Más recientes</option><option _ngcontent-ng-c249627429="" value="date-asc">Más antiguos</option><option _ngcontent-ng-c249627429="" value="amount-desc">Mayor monto</option><option _ngcontent-ng-c249627429="" value="amount-asc">Menor monto</option><option _ngcontent-ng-c249627429="" value="status">Por estado</option></select></div></div><!--container--><div _ngcontent-ng-c249627429="" class="flex justify-between items-center pt-4 border-t border-gray-200"><p _ngcontent-ng-c249627429="" class="text-gray-600"> Mostrando <span _ngcontent-ng-c249627429="" class="font-semibold text-gray-800">15</span> pedidos </p><button _ngcontent-ng-c249627429="" class="text-red-500 hover:text-red-600 font-medium text-sm smooth-transition" jsaction="click:;"> Limpiar filtros </button></div></div></div><div _ngcontent-ng-c249627429="" class="space-y-4"><div _ngcontent-ng-c249627429="" class="order-card bg-white rounded-2xl shadow-sm p-6 hover-lift smooth-transition fade-in"><div _ngcontent-ng-c249627429="" class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"><div _ngcontent-ng-c249627429="" class="flex-1"><div _ngcontent-ng-c249627429="" class="flex items-center space-x-4 mb-3"><h3 _ngcontent-ng-c249627429="" class="text-lg font-semibold text-gray-900">Pedido #1001</h3><span _ngcontent-ng-c249627429="" class="px-3 py-1 rounded-full text-white text-sm font-medium status-delivered"> Entregado </span></div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-2"> 📅 15/01/2024, 07:30 p.&nbsp;m. • 📍 Retiro en local - Av. Corrientes 1234, CABA </div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-3"> 2 productos: <!--ngtns--> Pollo al Spiedo Entero (1),  <!--ngtns--> Papas Fritas Caseras (1) <!--container--><!--container--></div><div _ngcontent-ng-c249627429="" class="text-2xl font-bold text-red-500">$4500</div></div><div _ngcontent-ng-c249627429="" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3"><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 smooth-transition text-sm" jsaction="click:;"> Ver detalles </button><!--container--><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 smooth-transition text-sm" jsaction="click:;"> Repetir pedido </button><!--container--></div></div></div><div _ngcontent-ng-c249627429="" class="order-card bg-white rounded-2xl shadow-sm p-6 hover-lift smooth-transition fade-in"><div _ngcontent-ng-c249627429="" class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"><div _ngcontent-ng-c249627429="" class="flex-1"><div _ngcontent-ng-c249627429="" class="flex items-center space-x-4 mb-3"><h3 _ngcontent-ng-c249627429="" class="text-lg font-semibold text-gray-900">Pedido #1002</h3><span _ngcontent-ng-c249627429="" class="px-3 py-1 rounded-full text-white text-sm font-medium status-cancelled"> Cancelado </span></div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-2"> 📅 14/01/2024, 08:15 p.&nbsp;m. • 📍 Retiro en local - Av. Corrientes 1234, CABA </div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-3"> 1 producto: <!--ngtns--> Empanadas de Carne (6 unidades) (1) <!--container--><!--container--></div><div _ngcontent-ng-c249627429="" class="text-2xl font-bold text-red-500">$2700</div></div><div _ngcontent-ng-c249627429="" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3"><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 smooth-transition text-sm" jsaction="click:;"> Ver detalles </button><!--container--><!--container--></div></div></div><div _ngcontent-ng-c249627429="" class="order-card bg-white rounded-2xl shadow-sm p-6 hover-lift smooth-transition fade-in"><div _ngcontent-ng-c249627429="" class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"><div _ngcontent-ng-c249627429="" class="flex-1"><div _ngcontent-ng-c249627429="" class="flex items-center space-x-4 mb-3"><h3 _ngcontent-ng-c249627429="" class="text-lg font-semibold text-gray-900">Pedido #1003</h3><span _ngcontent-ng-c249627429="" class="px-3 py-1 rounded-full text-white text-sm font-medium status-ready"> Listo </span></div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-2"> 📅 13/01/2024, 06:45 p.&nbsp;m. • 📍 Retiro en local - Av. Corrientes 1234, CABA </div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-3"> 3 productos: <!--ngtns--> Milanesas de Pollo (4 unidades) (1),  <!--ngtns--> Ensalada Mixta (1) <!--container--> y 1 más... <!--container--></div><div _ngcontent-ng-c249627429="" class="text-2xl font-bold text-red-500">$6200</div></div><div _ngcontent-ng-c249627429="" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3"><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 smooth-transition text-sm" jsaction="click:;"> Ver detalles </button><!--container--><!--container--></div></div></div><div _ngcontent-ng-c249627429="" class="order-card bg-white rounded-2xl shadow-sm p-6 hover-lift smooth-transition fade-in"><div _ngcontent-ng-c249627429="" class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"><div _ngcontent-ng-c249627429="" class="flex-1"><div _ngcontent-ng-c249627429="" class="flex items-center space-x-4 mb-3"><h3 _ngcontent-ng-c249627429="" class="text-lg font-semibold text-gray-900">Pedido #1004</h3><span _ngcontent-ng-c249627429="" class="px-3 py-1 rounded-full text-white text-sm font-medium status-preparing"> En preparación </span></div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-2"> 📅 12/01/2024, 09:00 p.&nbsp;m. • 📍 Retiro en local - Av. Corrientes 1234, CABA </div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-3"> 3 productos: <!--ngtns--> Pollo al Spiedo Entero (2),  <!--ngtns--> Papas Fritas Caseras (2) <!--container--> y 1 más... <!--container--></div><div _ngcontent-ng-c249627429="" class="text-2xl font-bold text-red-500">$8900</div></div><div _ngcontent-ng-c249627429="" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3"><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 smooth-transition text-sm" jsaction="click:;"> Ver detalles </button><!--container--><!--container--></div></div></div><div _ngcontent-ng-c249627429="" class="order-card bg-white rounded-2xl shadow-sm p-6 hover-lift smooth-transition fade-in"><div _ngcontent-ng-c249627429="" class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"><div _ngcontent-ng-c249627429="" class="flex-1"><div _ngcontent-ng-c249627429="" class="flex items-center space-x-4 mb-3"><h3 _ngcontent-ng-c249627429="" class="text-lg font-semibold text-gray-900">Pedido #1005</h3><span _ngcontent-ng-c249627429="" class="px-3 py-1 rounded-full text-white text-sm font-medium status-pending"> Pendiente </span></div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-2"> 📅 11/01/2024, 07:00 p.&nbsp;m. • 📍 Retiro en local - Av. Corrientes 1234, CABA </div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-3"> 2 productos: <!--ngtns--> Empanadas de Pollo (6 unidades) (1),  <!--ngtns--> Flan Casero (1) <!--container--><!--container--></div><div _ngcontent-ng-c249627429="" class="text-2xl font-bold text-red-500">$3700</div></div><div _ngcontent-ng-c249627429="" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3"><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 smooth-transition text-sm" jsaction="click:;"> Ver detalles </button><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 smooth-transition text-sm" jsaction="click:;"> Cancelar </button><!--container--><!--container--></div></div></div><div _ngcontent-ng-c249627429="" class="order-card bg-white rounded-2xl shadow-sm p-6 hover-lift smooth-transition fade-in"><div _ngcontent-ng-c249627429="" class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"><div _ngcontent-ng-c249627429="" class="flex-1"><div _ngcontent-ng-c249627429="" class="flex items-center space-x-4 mb-3"><h3 _ngcontent-ng-c249627429="" class="text-lg font-semibold text-gray-900">Pedido #1006</h3><span _ngcontent-ng-c249627429="" class="px-3 py-1 rounded-full text-white text-sm font-medium status-delivered"> Entregado </span></div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-2"> 📅 10/01/2024, 08:30 p.&nbsp;m. • 📍 Retiro en local - Av. Corrientes 1234, CABA </div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-3"> 4 productos: <!--ngtns--> Pollo al Spiedo Entero (3),  <!--ngtns--> Empanadas de Carne (6 unidades) (1) <!--container--> y 2 más... <!--container--></div><div _ngcontent-ng-c249627429="" class="text-2xl font-bold text-red-500">$12.500</div></div><div _ngcontent-ng-c249627429="" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3"><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 smooth-transition text-sm" jsaction="click:;"> Ver detalles </button><!--container--><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 smooth-transition text-sm" jsaction="click:;"> Repetir pedido </button><!--container--></div></div></div><div _ngcontent-ng-c249627429="" class="order-card bg-white rounded-2xl shadow-sm p-6 hover-lift smooth-transition fade-in"><div _ngcontent-ng-c249627429="" class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"><div _ngcontent-ng-c249627429="" class="flex-1"><div _ngcontent-ng-c249627429="" class="flex items-center space-x-4 mb-3"><h3 _ngcontent-ng-c249627429="" class="text-lg font-semibold text-gray-900">Pedido #1007</h3><span _ngcontent-ng-c249627429="" class="px-3 py-1 rounded-full text-white text-sm font-medium status-delivered"> Entregado </span></div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-2"> 📅 09/01/2024, 06:15 p.&nbsp;m. • 📍 Retiro en local - Av. Corrientes 1234, CABA </div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-3"> 3 productos: <!--ngtns--> Milanesas de Carne (4 unidades) (1),  <!--ngtns--> Puré de Papas (1) <!--container--> y 1 más... <!--container--></div><div _ngcontent-ng-c249627429="" class="text-2xl font-bold text-red-500">$5400</div></div><div _ngcontent-ng-c249627429="" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3"><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 smooth-transition text-sm" jsaction="click:;"> Ver detalles </button><!--container--><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 smooth-transition text-sm" jsaction="click:;"> Repetir pedido </button><!--container--></div></div></div><div _ngcontent-ng-c249627429="" class="order-card bg-white rounded-2xl shadow-sm p-6 hover-lift smooth-transition fade-in"><div _ngcontent-ng-c249627429="" class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"><div _ngcontent-ng-c249627429="" class="flex-1"><div _ngcontent-ng-c249627429="" class="flex items-center space-x-4 mb-3"><h3 _ngcontent-ng-c249627429="" class="text-lg font-semibold text-gray-900">Pedido #1008</h3><span _ngcontent-ng-c249627429="" class="px-3 py-1 rounded-full text-white text-sm font-medium status-delivered"> Entregado </span></div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-2"> 📅 08/01/2024, 07:45 p.&nbsp;m. • 📍 Retiro en local - Av. Corrientes 1234, CABA </div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-3"> 3 productos: <!--ngtns--> Empanadas de Jamón y Queso (6 unidades) (1),  <!--ngtns--> Ensalada Mixta (1) <!--container--> y 1 más... <!--container--></div><div _ngcontent-ng-c249627429="" class="text-2xl font-bold text-red-500">$4100</div></div><div _ngcontent-ng-c249627429="" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3"><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 smooth-transition text-sm" jsaction="click:;"> Ver detalles </button><!--container--><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 smooth-transition text-sm" jsaction="click:;"> Repetir pedido </button><!--container--></div></div></div><div _ngcontent-ng-c249627429="" class="order-card bg-white rounded-2xl shadow-sm p-6 hover-lift smooth-transition fade-in"><div _ngcontent-ng-c249627429="" class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"><div _ngcontent-ng-c249627429="" class="flex-1"><div _ngcontent-ng-c249627429="" class="flex items-center space-x-4 mb-3"><h3 _ngcontent-ng-c249627429="" class="text-lg font-semibold text-gray-900">Pedido #1009</h3><span _ngcontent-ng-c249627429="" class="px-3 py-1 rounded-full text-white text-sm font-medium status-delivered"> Entregado </span></div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-2"> 📅 07/01/2024, 12:30 p.&nbsp;m. • 📍 Retiro en local - Av. Corrientes 1234, CABA </div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-3"> 5 productos: <!--ngtns--> Pollo al Spiedo Medio (1),  <!--ngtns--> Milanesas de Pollo (4 unidades) (1) <!--container--> y 3 más... <!--container--></div><div _ngcontent-ng-c249627429="" class="text-2xl font-bold text-red-500">$7800</div></div><div _ngcontent-ng-c249627429="" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3"><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 smooth-transition text-sm" jsaction="click:;"> Ver detalles </button><!--container--><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 smooth-transition text-sm" jsaction="click:;"> Repetir pedido </button><!--container--></div></div></div><div _ngcontent-ng-c249627429="" class="order-card bg-white rounded-2xl shadow-sm p-6 hover-lift smooth-transition fade-in"><div _ngcontent-ng-c249627429="" class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"><div _ngcontent-ng-c249627429="" class="flex-1"><div _ngcontent-ng-c249627429="" class="flex items-center space-x-4 mb-3"><h3 _ngcontent-ng-c249627429="" class="text-lg font-semibold text-gray-900">Pedido #1010</h3><span _ngcontent-ng-c249627429="" class="px-3 py-1 rounded-full text-white text-sm font-medium status-delivered"> Entregado </span></div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-2"> 📅 06/01/2024, 08:45 p.&nbsp;m. • 📍 Retiro en local - Av. Corrientes 1234, CABA </div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-3"> 3 productos: <!--ngtns--> Empanadas de Carne (6 unidades) (1),  <!--ngtns--> Agua Mineral 1.5L (1) <!--container--> y 1 más... <!--container--></div><div _ngcontent-ng-c249627429="" class="text-2xl font-bold text-red-500">$3200</div></div><div _ngcontent-ng-c249627429="" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3"><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 smooth-transition text-sm" jsaction="click:;"> Ver detalles </button><!--container--><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 smooth-transition text-sm" jsaction="click:;"> Repetir pedido </button><!--container--></div></div></div><div _ngcontent-ng-c249627429="" class="order-card bg-white rounded-2xl shadow-sm p-6 hover-lift smooth-transition fade-in"><div _ngcontent-ng-c249627429="" class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"><div _ngcontent-ng-c249627429="" class="flex-1"><div _ngcontent-ng-c249627429="" class="flex items-center space-x-4 mb-3"><h3 _ngcontent-ng-c249627429="" class="text-lg font-semibold text-gray-900">Pedido #1011</h3><span _ngcontent-ng-c249627429="" class="px-3 py-1 rounded-full text-white text-sm font-medium status-delivered"> Entregado </span></div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-2"> 📅 05/01/2024, 09:15 p.&nbsp;m. • 📍 Retiro en local - Av. Corrientes 1234, CABA </div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-3"> 5 productos: <!--ngtns--> Pollo al Spiedo Entero (2),  <!--ngtns--> Milanesas de Carne (4 unidades) (2) <!--container--> y 3 más... <!--container--></div><div _ngcontent-ng-c249627429="" class="text-2xl font-bold text-red-500">$15.600</div></div><div _ngcontent-ng-c249627429="" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3"><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 smooth-transition text-sm" jsaction="click:;"> Ver detalles </button><!--container--><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 smooth-transition text-sm" jsaction="click:;"> Repetir pedido </button><!--container--></div></div></div><div _ngcontent-ng-c249627429="" class="order-card bg-white rounded-2xl shadow-sm p-6 hover-lift smooth-transition fade-in"><div _ngcontent-ng-c249627429="" class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"><div _ngcontent-ng-c249627429="" class="flex-1"><div _ngcontent-ng-c249627429="" class="flex items-center space-x-4 mb-3"><h3 _ngcontent-ng-c249627429="" class="text-lg font-semibold text-gray-900">Pedido #1012</h3><span _ngcontent-ng-c249627429="" class="px-3 py-1 rounded-full text-white text-sm font-medium status-delivered"> Entregado </span></div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-2"> 📅 04/01/2024, 07:20 p.&nbsp;m. • 📍 Retiro en local - Av. Corrientes 1234, CABA </div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-3"> 2 productos: <!--ngtns--> Empanadas de Jamón y Queso (6 unidades) (1),  <!--ngtns--> Flan Casero (1) <!--container--><!--container--></div><div _ngcontent-ng-c249627429="" class="text-2xl font-bold text-red-500">$2800</div></div><div _ngcontent-ng-c249627429="" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3"><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 smooth-transition text-sm" jsaction="click:;"> Ver detalles </button><!--container--><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 smooth-transition text-sm" jsaction="click:;"> Repetir pedido </button><!--container--></div></div></div><div _ngcontent-ng-c249627429="" class="order-card bg-white rounded-2xl shadow-sm p-6 hover-lift smooth-transition fade-in"><div _ngcontent-ng-c249627429="" class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"><div _ngcontent-ng-c249627429="" class="flex-1"><div _ngcontent-ng-c249627429="" class="flex items-center space-x-4 mb-3"><h3 _ngcontent-ng-c249627429="" class="text-lg font-semibold text-gray-900">Pedido #1013</h3><span _ngcontent-ng-c249627429="" class="px-3 py-1 rounded-full text-white text-sm font-medium status-cancelled"> Cancelado </span></div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-2"> 📅 03/01/2024, 01:45 p.&nbsp;m. • 📍 Retiro en local - Av. Corrientes 1234, CABA </div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-3"> 2 productos: <!--ngtns--> Pollo al Spiedo Entero (1),  <!--ngtns--> Ensalada Rusa (1) <!--container--><!--container--></div><div _ngcontent-ng-c249627429="" class="text-2xl font-bold text-red-500">$4500</div></div><div _ngcontent-ng-c249627429="" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3"><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 smooth-transition text-sm" jsaction="click:;"> Ver detalles </button><!--container--><!--container--></div></div></div><div _ngcontent-ng-c249627429="" class="order-card bg-white rounded-2xl shadow-sm p-6 hover-lift smooth-transition fade-in"><div _ngcontent-ng-c249627429="" class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"><div _ngcontent-ng-c249627429="" class="flex-1"><div _ngcontent-ng-c249627429="" class="flex items-center space-x-4 mb-3"><h3 _ngcontent-ng-c249627429="" class="text-lg font-semibold text-gray-900">Pedido #1014</h3><span _ngcontent-ng-c249627429="" class="px-3 py-1 rounded-full text-white text-sm font-medium status-delivered"> Entregado </span></div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-2"> 📅 02/01/2024, 06:00 p.&nbsp;m. • 📍 Retiro en local - Av. Corrientes 1234, CABA </div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-3"> 3 productos: <!--ngtns--> Milanesas de Pollo (4 unidades) (1),  <!--ngtns--> Milanesas de Carne (4 unidades) (1) <!--container--> y 1 más... <!--container--></div><div _ngcontent-ng-c249627429="" class="text-2xl font-bold text-red-500">$6700</div></div><div _ngcontent-ng-c249627429="" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3"><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 smooth-transition text-sm" jsaction="click:;"> Ver detalles </button><!--container--><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 smooth-transition text-sm" jsaction="click:;"> Repetir pedido </button><!--container--></div></div></div><div _ngcontent-ng-c249627429="" class="order-card bg-white rounded-2xl shadow-sm p-6 hover-lift smooth-transition fade-in"><div _ngcontent-ng-c249627429="" class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"><div _ngcontent-ng-c249627429="" class="flex-1"><div _ngcontent-ng-c249627429="" class="flex items-center space-x-4 mb-3"><h3 _ngcontent-ng-c249627429="" class="text-lg font-semibold text-gray-900">Pedido #1015</h3><span _ngcontent-ng-c249627429="" class="px-3 py-1 rounded-full text-white text-sm font-medium status-delivered"> Entregado </span></div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-2"> 📅 01/01/2024, 08:30 p.&nbsp;m. • 📍 Retiro en local - Av. Corrientes 1234, CABA </div><div _ngcontent-ng-c249627429="" class="text-sm text-gray-700 mb-3"> 6 productos: <!--ngtns--> Pollo al Spiedo Entero (3),  <!--ngtns--> Empanadas de Carne (6 unidades) (2) <!--container--> y 4 más... <!--container--></div><div _ngcontent-ng-c249627429="" class="text-2xl font-bold text-red-500">$18.900</div></div><div _ngcontent-ng-c249627429="" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3"><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 smooth-transition text-sm" jsaction="click:;"> Ver detalles </button><!--container--><button _ngcontent-ng-c249627429="" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 smooth-transition text-sm" jsaction="click:;"> Repetir pedido </button><!--container--></div></div></div><!--container--></div><!--container--></div><!--container--><app-footer _ngcontent-ng-c249627429="" _nghost-ng-c1913404311="" ngh="1"><footer _ngcontent-ng-c1913404311="" id="contacto" class="bg-gray-800 text-white py-12"><div _ngcontent-ng-c1913404311="" class="max-w-6xl mx-auto px-6"><div _ngcontent-ng-c1913404311="" class="grid md:grid-cols-3 gap-8"><div _ngcontent-ng-c1913404311=""><div _ngcontent-ng-c1913404311="" class="flex items-center space-x-3 mb-4"><div _ngcontent-ng-c1913404311="" class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center text-white font-bold"> RC </div><h3 _ngcontent-ng-c1913404311="" class="text-xl font-bold">Rotisería Cacho</h3></div><p _ngcontent-ng-c1913404311="" class="text-gray-300 mb-4"> Más de 35 años llevando el auténtico sabor argentino a tu mesa. </p><div _ngcontent-ng-c1913404311="" class="flex space-x-4"><a _ngcontent-ng-c1913404311="" class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-700 smooth-transition text-white" href="https://facebook.com" title="Facebook"><span _ngcontent-ng-c1913404311="">f</span></a><a _ngcontent-ng-c1913404311="" class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-700 smooth-transition text-white" href="https://instagram.com" title="Instagram"><span _ngcontent-ng-c1913404311="">📷</span></a><a _ngcontent-ng-c1913404311="" class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-700 smooth-transition text-white" href="https://twitter.com" title="Twitter"><span _ngcontent-ng-c1913404311="">🐦</span></a><!--container--></div></div><div _ngcontent-ng-c1913404311=""><h4 _ngcontent-ng-c1913404311="" class="text-lg font-bold mb-4">Contacto</h4><div _ngcontent-ng-c1913404311="" class="space-y-2 text-gray-300"><p _ngcontent-ng-c1913404311="">📞 (011) 4567-8900</p><p _ngcontent-ng-c1913404311="">📍 Av. Principal 123, Ciudad</p><p _ngcontent-ng-c1913404311="">✉️ info@rotiseriasabor.com</p></div></div><div _ngcontent-ng-c1913404311=""><h4 _ngcontent-ng-c1913404311="" class="text-lg font-bold mb-4">Horarios de Atención</h4><div _ngcontent-ng-c1913404311="" class="space-y-2 text-gray-300"><p _ngcontent-ng-c1913404311="">Lun - Vie: 11:00 - 22:00</p><p _ngcontent-ng-c1913404311="">Sábados: 11:00 - 23:00</p><p _ngcontent-ng-c1913404311="">Domingos: 12:00 - 22:00</p></div></div></div><div _ngcontent-ng-c1913404311="" class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400"><div _ngcontent-ng-c1913404311="" class="flex flex-col md:flex-row justify-center items-center"><p _ngcontent-ng-c1913404311="" class="mb-2 md:mb-0"> © 2025 Rotisería El Buen Sabor. Todos los derechos reservados. </p></div></div></div></footer></app-footer></div></app-orders><!--container--></app-root>
+<script src="main.js" type="module"></script>
+
+<script id="ng-state" type="application/json">{"__nghData__":[{"t":{"15":"t0","16":"t3","21":"t4","29":"t5","32":"t6","33":"t7","34":"t8","41":"t9","42":"t12"},"c":{"15":[{"i":"t0","r":1,"t":{"17":"t1","22":"t2"},"c":{"17":[{"i":"t1","r":1}],"22":[{"i":"t2","r":1}]}}],"16":[],"21":[],"29":[],"32":[{"i":"t6","r":1}],"33":[],"34":[],"41":[{"i":"t9","r":1,"t":{"17":"t10","22":"t11"},"c":{"17":[{"i":"t10","r":1}],"22":[{"i":"t11","r":1}]}}],"42":[]}},{"t":{"12":"t23"},"c":{"12":[{"i":"t23","r":1,"x":3}]}},{"t":{"92":"t30","103":"t31","104":"t36","105":"t37"},"c":{"92":[],"103":[{"i":"t31","r":1,"t":{"13":"t32","14":"t33","20":"t34","21":"t35"},"c":{"13":[{"i":"t32","r":1,"x":2}],"14":[],"20":[],"21":[{"i":"t35","r":1}]}},{"i":"t31","r":1,"t":{"13":"t32","14":"t33","20":"t34","21":"t35"},"c":{"13":[{"i":"t32","r":1}],"14":[],"20":[],"21":[]}},{"i":"t31","r":1,"t":{"13":"t32","14":"t33","20":"t34","21":"t35"},"c":{"13":[{"i":"t32","r":1,"x":2}],"14":[{"i":"t33","r":1}],"20":[],"21":[]},"x":2},{"i":"t31","r":1,"t":{"13":"t32","14":"t33","20":"t34","21":"t35"},"c":{"13":[{"i":"t32","r":1,"x":2}],"14":[],"20":[{"i":"t34","r":1}],"21":[]}},{"i":"t31","r":1,"t":{"13":"t32","14":"t33","20":"t34","21":"t35"},"c":{"13":[{"i":"t32","r":1,"x":2}],"14":[{"i":"t33","r":1}],"20":[],"21":[{"i":"t35","r":1}]},"x":6},{"i":"t31","r":1,"t":{"13":"t32","14":"t33","20":"t34","21":"t35"},"c":{"13":[{"i":"t32","r":1,"x":2}],"14":[],"20":[],"21":[{"i":"t35","r":1}]}},{"i":"t31","r":1,"t":{"13":"t32","14":"t33","20":"t34","21":"t35"},"c":{"13":[{"i":"t32","r":1,"x":2}],"14":[],"20":[],"21":[]}},{"i":"t31","r":1,"t":{"13":"t32","14":"t33","20":"t34","21":"t35"},"c":{"13":[{"i":"t32","r":1,"x":2}],"14":[{"i":"t33","r":1}],"20":[],"21":[{"i":"t35","r":1}]},"x":2}],"104":[],"105":[]}},{"c":{"0":[{"i":"c249627429","r":1}]}}]}</script></body></html>
