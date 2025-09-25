@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
+import { UserService } from '../../services/user.service';
 
 interface UserProfile {
   fullName: string;
@@ -33,6 +34,7 @@ interface UserStats {
 export class UserComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private userService = inject(UserService);
 
   // Signals para el estado del componente
   isEditing = signal(false);
@@ -41,17 +43,22 @@ export class UserComponent {
   showNewPassword = signal(false);
   showConfirmPassword = signal(false);
 
-  // Usuario hardcodeado - en el futuro vendrá de un servicio
-  userProfile = signal<UserProfile>({
-    fullName: 'Juan Díaz',
-    email: 'juan.diaz@email.com',
-    initials: 'JD',
-    role: 'Cliente Premium',
-    status: 'Activa',
-    memberSince: '15 Mar',
-    lastAccess: 'Hoy',
-    ordersCount: 47,
-    isHighlighted: true
+  // Usuario desde el servicio - las iniciales se generan automáticamente
+  userProfile = computed(() => {
+    const user = this.userService.user();
+    if (!user) return null;
+    
+    return {
+      fullName: user.fullName,
+      email: user.email,
+      initials: user.initials,
+      role: user.role,
+      status: user.status,
+      memberSince: '15 de Noviembre, 2023',
+      lastAccess: 'Hace 2 horas',
+      ordersCount: 12,
+      isHighlighted: true
+    };
   });
 
   // Formulario reactivo
@@ -62,8 +69,8 @@ export class UserComponent {
     const user = this.userProfile();
     
     this.profileForm = this.fb.group({
-      fullName: [user.fullName, [Validators.required, Validators.minLength(2)]],
-      email: [user.email, [Validators.required, Validators.email]]
+      fullName: [user?.fullName || '', [Validators.required, Validators.minLength(2)]],
+      email: [user?.email || '', [Validators.required, Validators.email]]
     });
 
     this.passwordForm = this.fb.group({
@@ -166,6 +173,8 @@ export class UserComponent {
     if (!this.isEditing()) return false;
     
     const currentUser = this.userProfile();
+    if (!currentUser) return false;
+    
     const formValues = this.profileForm.value;
     
     return (
@@ -215,10 +224,12 @@ export class UserComponent {
     
     // Restaurar valores originales
     const user = this.userProfile();
-    this.profileForm.patchValue({
-      fullName: user.fullName,
-      email: user.email
-    });
+    if (user) {
+      this.profileForm.patchValue({
+        fullName: user.fullName,
+        email: user.email
+      });
+    }
 
     // Limpiar formulario de contraseña
     this.passwordForm.reset();
@@ -244,13 +255,11 @@ export class UserComponent {
     setTimeout(() => {
       const formValues = this.profileForm.value;
       
-      // Actualizar usuario
-      this.userProfile.update(user => ({
-        ...user,
+      // Actualizar usuario a través del servicio
+      this.userService.updateUser({
         fullName: formValues.fullName,
-        email: formValues.email,
-        initials: this.generateInitials(formValues.fullName)
-      }));
+        email: formValues.email
+      });
 
       this.isLoading.set(false);
       this.isEditing.set(false);
@@ -268,24 +277,65 @@ export class UserComponent {
     }
 
     const user = this.userProfile();
-    this.profileForm.patchValue({
-      fullName: user.fullName,
-      email: user.email
-    });
+    if (user) {
+      this.profileForm.patchValue({
+        fullName: user.fullName,
+        email: user.email
+      });
+    }
     this.passwordForm.reset();
-  }
-
-  // Método para generar iniciales
-  generateInitials(fullName: string): string {
-    return fullName
-      .split(' ')
-      .map(name => name.charAt(0).toUpperCase())
-      .slice(0, 2)
-      .join('');
   }
 
   // Método para cambiar foto de perfil
   changeProfilePicture() {
     alert('Funcionalidad para cambiar foto de perfil. En una app real, esto abriría un selector de archivos.');
+  }
+
+  // Métodos para probar el cambio dinámico de iniciales (solo para demostración)
+  switchToUser1() {
+    this.userService.switchToUser({
+      id: 1,
+      fullName: 'María García Fernández',
+      email: 'maria.garcia@email.com',
+      role: 'Cliente',
+      status: 'Activo'
+    });
+  }
+
+  switchToUser2() {
+    this.userService.switchToUser({
+      id: 2,
+      fullName: 'Carlos Eduardo López',
+      email: 'carlos.lopez@email.com',
+      role: 'Cliente',
+      status: 'Activo'
+    });
+  }
+
+  switchToUser3() {
+    this.userService.switchToUser({
+      id: 3,
+      fullName: 'Ana Sofía',
+      email: 'ana.sofia@email.com',
+      role: 'Cliente',
+      status: 'Activo'
+    });
+  }
+
+  // Nuevos métodos para cambiar entre tipos de usuarios
+  loginAsAdmin() {
+    this.userService.loginAsAdmin();
+  }
+
+  loginAsEmployee() {
+    this.userService.loginAsEmployee();
+  }
+
+  loginAsClient() {
+    this.userService.loginAsClient();
+  }
+
+  logout() {
+    this.userService.logout();
   }
 }

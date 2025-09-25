@@ -219,6 +219,10 @@ export class ComidasComponent {
     }
   ]);
 
+  // Signals para el pop-up del carrito
+  showCartPopup = signal(false);
+  addedProduct = signal<ExtendedProduct | null>(null);
+
   // Signals para filtros
   searchTerm = signal('');
   selectedCategory = signal('all');
@@ -418,7 +422,29 @@ export class ComidasComponent {
       };
       
       this.cartService.addToCart(baseProduct, 1);
+      
+      // Mostrar el pop-up
+      this.addedProduct.set(product);
+      this.showCartPopup.set(true);
+      
+      // Ocultar el pop-up después de 3 segundos
+      setTimeout(() => {
+        this.hideCartPopup();
+      }, 3000);
+      
       console.log('Producto agregado al carrito:', product.name);
     }
+  }
+
+  // Método para ocultar el pop-up manualmente
+  hideCartPopup() {
+    this.showCartPopup.set(false);
+    this.addedProduct.set(null);
+  }
+
+  // Método para ir al carrito
+  goToCart() {
+    this.hideCartPopup();
+    this.router.navigate(['/cart']);
   }
 }
