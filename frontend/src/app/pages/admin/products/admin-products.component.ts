@@ -4,14 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { AdminSidebarComponent } from '../../../components/admin/sidebar/admin-sidebar.component';
 import { AdminHeaderComponent } from '../../../components/admin/header/admin-header.component';
 
-interface ProductStats {
-  label: string;
-  value: string | number;
-  icon: string;
-  bgColor: string;
-  textColor: string;
-}
-
 interface Product {
   id: number;
   name: string;
@@ -21,6 +13,11 @@ interface Product {
   stock: number;
   status: 'active' | 'inactive' | 'low-stock';
   emoji: string;
+  available: boolean;
+  popular: boolean;
+  new: boolean;
+  prepTime: string;
+  portions: string;
 }
 
 @Component({
@@ -32,68 +29,219 @@ interface Product {
 })
 export class AdminProductsComponent implements OnInit {
   showAddProductModal = false;
-
-  stats: ProductStats[] = [
-    {
-      label: 'Total Productos',
-      value: 24,
-      icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
-      bgColor: 'bg-blue-100',
-      textColor: 'text-blue-600'
-    },
-    {
-      label: 'Stock Bajo',
-      value: 3,
-      icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z',
-      bgColor: 'bg-orange-100',
-      textColor: 'text-orange-600'
-    },
-    {
-      label: 'Ventas Hoy',
-      value: '$45.200',
-      icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1',
-      bgColor: 'bg-green-100',
-      textColor: 'text-green-600'
-    },
-    {
-      label: 'Categorías',
-      value: 6,
-      icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10',
-      bgColor: 'bg-purple-100',
-      textColor: 'text-purple-600'
-    }
-  ];
+  showEditProductModal = false;
+  selectedProduct: Product | null = null;
 
   products: Product[] = [
     {
       id: 1,
-      name: 'Pollo al Spiedo Entero',
-      description: 'Pollo entero cocido al spiedo',
-      category: 'Pollos',
+      name: "Pollo al Spiedo Entero",
+      description: "Pollo entero dorado al spiedo con especias secretas",
+      category: "Pollos",
       price: 3500,
+      emoji: "🍗",
       stock: 15,
       status: 'active',
-      emoji: '🍗'
+      available: true,
+      popular: true,
+      new: false,
+      prepTime: "45-60 min",
+      portions: "4-6 personas"
     },
     {
       id: 2,
-      name: 'Milanesas de Pollo',
-      description: '4 unidades por porción',
-      category: 'Milanesas',
-      price: 2800,
-      stock: 3,
-      status: 'low-stock',
-      emoji: '🍖'
+      name: "Medio Pollo al Spiedo",
+      description: "Media porción de nuestro famoso pollo al spiedo",
+      category: "Pollos",
+      price: 1800,
+      emoji: "🍗",
+      stock: 12,
+      status: 'active',
+      available: true,
+      popular: true,
+      new: false,
+      prepTime: "30-45 min",
+      portions: "2-3 personas"
     },
     {
       id: 3,
-      name: 'Empanadas de Carne',
-      description: '6 unidades por docena',
-      category: 'Empanadas',
+      name: "Cuarto de Pollo",
+      description: "Cuarto de pollo jugoso con piel dorada",
+      category: "Pollos",
+      price: 950,
+      emoji: "🍗",
+      stock: 20,
+      status: 'active',
+      available: true,
+      popular: false,
+      new: false,
+      prepTime: "20-30 min",
+      portions: "1-2 personas"
+    },
+    {
+      id: 4,
+      name: "Milanesas de Pollo",
+      description: "Milanesas de pollo caseras, tiernas y doradas",
+      category: "Milanesas",
+      price: 2800,
+      emoji: "🍖",
+      stock: 8,
+      status: 'active',
+      available: true,
+      popular: true,
+      new: false,
+      prepTime: "25-35 min",
+      portions: "3-4 personas"
+    },
+    {
+      id: 5,
+      name: "Milanesas de Carne",
+      description: "Milanesas de carne vacuna, jugosas y sabrosas",
+      category: "Milanesas",
+      price: 3200,
+      emoji: "🥩",
+      stock: 6,
+      status: 'active',
+      available: true,
+      popular: true,
+      new: false,
+      prepTime: "30-40 min",
+      portions: "3-4 personas"
+    },
+    {
+      id: 6,
+      name: "Milanesas Napolitanas",
+      description: "Milanesas con jamón, queso y salsa de tomate",
+      category: "Milanesas",
+      price: 3800,
+      emoji: "🍕",
+      stock: 0,
+      status: 'inactive',
+      available: false,
+      popular: true,
+      new: false,
+      prepTime: "35-45 min",
+      portions: "3-4 personas"
+    },
+    {
+      id: 7,
+      name: "Empanadas de Carne (6 unidades)",
+      description: "Empanadas caseras rellenas de carne cortada a cuchillo",
+      category: "Empanadas",
       price: 2700,
+      emoji: "🥟",
       stock: 25,
       status: 'active',
-      emoji: '🥟'
+      available: true,
+      popular: true,
+      new: false,
+      prepTime: "20-30 min",
+      portions: "2-3 personas"
+    },
+    {
+      id: 8,
+      name: "Empanadas de Pollo (6 unidades)",
+      description: "Empanadas de pollo desmenuzado con verduras",
+      category: "Empanadas",
+      price: 2500,
+      emoji: "🥟",
+      stock: 18,
+      status: 'active',
+      available: true,
+      popular: false,
+      new: false,
+      prepTime: "20-30 min",
+      portions: "2-3 personas"
+    },
+    {
+      id: 9,
+      name: "Empanadas de Jamón y Queso (6 unidades)",
+      description: "Empanadas clásicas de jamón cocido y queso",
+      category: "Empanadas",
+      price: 2400,
+      emoji: "🥟",
+      stock: 22,
+      status: 'active',
+      available: true,
+      popular: false,
+      new: false,
+      prepTime: "20-30 min",
+      portions: "2-3 personas"
+    },
+    {
+      id: 10,
+      name: "Empanadas de Verdura (6 unidades)",
+      description: "Empanadas vegetarianas con acelga, cebolla y queso",
+      category: "Empanadas",
+      price: 2200,
+      emoji: "🥟",
+      stock: 15,
+      status: 'active',
+      available: true,
+      popular: false,
+      new: true,
+      prepTime: "20-30 min",
+      portions: "2-3 personas"
+    },
+    {
+      id: 11,
+      name: "Bife de Chorizo",
+      description: "Bife de chorizo jugoso a la parrilla",
+      category: "Carnes",
+      price: 4500,
+      emoji: "🥩",
+      stock: 5,
+      status: 'low-stock',
+      available: true,
+      popular: true,
+      new: false,
+      prepTime: "15-25 min",
+      portions: "1 persona"
+    },
+    {
+      id: 12,
+      name: "Asado de Tira",
+      description: "Asado de tira tierno con hueso",
+      category: "Carnes",
+      price: 3800,
+      emoji: "🥩",
+      stock: 8,
+      status: 'active',
+      available: true,
+      popular: false,
+      new: false,
+      prepTime: "40-60 min",
+      portions: "2-3 personas"
+    },
+    {
+      id: 13,
+      name: "Matambre a la Pizza",
+      description: "Matambre relleno con jamón, queso y salsa",
+      category: "Carnes",
+      price: 5200,
+      emoji: "🍕",
+      stock: 0,
+      status: 'inactive',
+      available: false,
+      popular: true,
+      new: false,
+      prepTime: "60-90 min",
+      portions: "4-6 personas"
+    },
+    {
+      id: 14,
+      name: "Pollo Grillé",
+      description: "Pollo marinado y grillado con hierbas",
+      category: "Pollos",
+      price: 2800,
+      emoji: "🍗",
+      stock: 10,
+      status: 'active',
+      available: true,
+      popular: false,
+      new: true,
+      prepTime: "35-45 min",
+      portions: "2-3 personas"
     }
   ];
 
@@ -110,8 +258,23 @@ export class AdminProductsComponent implements OnInit {
   }
 
   editProduct(product: Product) {
-    console.log('Editing product:', product);
-    // Implementar lógica de edición
+    this.selectedProduct = { ...product }; // Crear una copia del producto
+    this.showEditProductModal = true;
+  }
+
+  saveEditedProduct() {
+    if (this.selectedProduct) {
+      const index = this.products.findIndex(p => p.id === this.selectedProduct!.id);
+      if (index !== -1) {
+        this.products[index] = { ...this.selectedProduct };
+      }
+      this.closeEditProductModal();
+    }
+  }
+
+  closeEditProductModal() {
+    this.showEditProductModal = false;
+    this.selectedProduct = null;
   }
 
   deleteProduct(product: Product) {

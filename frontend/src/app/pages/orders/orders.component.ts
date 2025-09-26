@@ -278,6 +278,14 @@ export class OrdersComponent implements OnInit {
     return colors[status as keyof typeof colors] || 'bg-gray-500';
   }
 
+  getFilterButtonClass(status: string): string {
+    const baseClasses = 'px-4 py-2 rounded-lg text-sm font-medium smooth-transition';
+    if (this.currentStatus() === status) {
+      return `${baseClasses} filter-active`;
+    }
+    return `${baseClasses} bg-gray-200 text-gray-700 hover:bg-gray-300`;
+  }
+
   formatDate(date: Date): string {
     return date.toLocaleDateString('es-AR', {
       day: '2-digit',

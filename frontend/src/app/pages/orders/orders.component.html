@@ -47,49 +47,43 @@
         <div class="flex flex-wrap gap-2">
           <button
             (click)="selectStatus('all')"
-            [class.filter-active]="currentStatus() === 'all'"
-            class="filter-btn px-4 py-2 rounded-lg text-sm font-medium smooth-transition"
-            [class]="currentStatus() === 'all' ? 'filter-active' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
+            [class]="getFilterButtonClass('all')"
+            class="px-4 py-2 rounded-lg text-sm font-medium smooth-transition"
           >
             Todos ({{ statistics().statusCounts.all }})
           </button>
           <button
             (click)="selectStatus('pending')"
-            [class.filter-active]="currentStatus() === 'pending'"
-            class="filter-btn px-4 py-2 rounded-lg text-sm font-medium smooth-transition"
-            [class]="currentStatus() === 'pending' ? 'filter-active' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
+            [class]="getFilterButtonClass('pending')"
+            class="px-4 py-2 rounded-lg text-sm font-medium smooth-transition"
           >
             Pendientes ({{ statistics().statusCounts.pending }})
           </button>
           <button
             (click)="selectStatus('preparing')"
-            [class.filter-active]="currentStatus() === 'preparing'"
-            class="filter-btn px-4 py-2 rounded-lg text-sm font-medium smooth-transition"
-            [class]="currentStatus() === 'preparing' ? 'filter-active' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
+            [class]="getFilterButtonClass('preparing')"
+            class="px-4 py-2 rounded-lg text-sm font-medium smooth-transition"
           >
             En preparación ({{ statistics().statusCounts.preparing }})
           </button>
           <button
             (click)="selectStatus('ready')"
-            [class.filter-active]="currentStatus() === 'ready'"
-            class="filter-btn px-4 py-2 rounded-lg text-sm font-medium smooth-transition"
-            [class]="currentStatus() === 'ready' ? 'filter-active' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
+            [class]="getFilterButtonClass('ready')"
+            class="px-4 py-2 rounded-lg text-sm font-medium smooth-transition"
           >
             Listos ({{ statistics().statusCounts.ready }})
           </button>
           <button
             (click)="selectStatus('delivered')"
-            [class.filter-active]="currentStatus() === 'delivered'"
-            class="filter-btn px-4 py-2 rounded-lg text-sm font-medium smooth-transition"
-            [class]="currentStatus() === 'delivered' ? 'filter-active' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
+            [class]="getFilterButtonClass('delivered')"
+            class="px-4 py-2 rounded-lg text-sm font-medium smooth-transition"
           >
             Entregados ({{ statistics().statusCounts.delivered }})
           </button>
           <button
             (click)="selectStatus('cancelled')"
-            [class.filter-active]="currentStatus() === 'cancelled'"
-            class="filter-btn px-4 py-2 rounded-lg text-sm font-medium smooth-transition"
-            [class]="currentStatus() === 'cancelled' ? 'filter-active' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
+            [class]="getFilterButtonClass('cancelled')"
+            class="px-4 py-2 rounded-lg text-sm font-medium smooth-transition"
           >
             Cancelados ({{ statistics().statusCounts.cancelled }})
           </button>

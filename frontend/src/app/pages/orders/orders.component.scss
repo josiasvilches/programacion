@@ -111,29 +111,17 @@ select.input-focus {
   }
 }
 
+// Filter button styles - matching comidas component
 .filter-btn {
   transition: all 0.3s ease;
-  color: #374151; // Texto gris por defecto
-  background-color: #e5e7eb; // gray-200
-  
-  &:hover:not(.filter-active) {
-    background-color: #d1d5db; // gray-300
-    color: #111827; // gray-900
-  }
 }
 
 .filter-active {
   background-color: #ef4444 !important;
-  color: #ffffff !important;
-
+  color: white !important;
+  
   &:hover {
     background-color: #dc2626 !important;
-    color: #ffffff !important;
-  }
-  
-  // Forzar color blanco en todos los elementos hijos
-  * {
-    color: #ffffff !important;
   }
 }
 

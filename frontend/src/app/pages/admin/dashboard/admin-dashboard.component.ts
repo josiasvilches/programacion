@@ -147,7 +147,7 @@ export class AdminDashboardComponent implements OnInit {
     },
     {
       title: 'Ver Usuarios',
-      icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z',
+      icon: 'M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75M13 7a4 4 0 11-8 0 4 4 0 018 0z',
       bgColor: 'bg-purple-50 hover:bg-purple-100',
       textColor: 'text-purple-600',
       route: '/admin/users'

@@ -46,7 +46,7 @@ export class CartComponent implements OnInit {
   });
 
   total = computed(() => {
-    return this.subtotal() + this.shippingCost();
+    return this.subtotal();
   });
 
   formattedSubtotal = computed(() => {

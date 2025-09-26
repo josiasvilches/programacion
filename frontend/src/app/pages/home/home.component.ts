@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { Schedule, ContactInfo, Testimonial } from '../../models/product.interface';
@@ -20,7 +20,10 @@ import { RecommendedProductsCarrouselComponent } from '../../components/carrouse
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
+  errorMessage: string = '';
+  showError: boolean = false;
+  
   schedules: Schedule[] = [
     { day: 'Lun - Vie', hours: '11:00 - 23:00' },
     { day: 'Sábados', hours: '11:00 - 24:00' },
@@ -64,7 +67,29 @@ export class HomeComponent {
 
   isOpen = true; // This could be calculated based on current time
   
-  constructor(private router: Router) {}
+  constructor(private router: Router, private route: ActivatedRoute) {}
+  
+  ngOnInit() {
+    // Verificar si hay parámetros de error por acceso denegado
+    this.route.queryParams.subscribe(params => {
+      if (params['error'] === 'access_denied') {
+        this.errorMessage = params['message'] || 'Acceso denegado';
+        this.showError = true;
+        
+        // Ocultar mensaje después de 5 segundos
+        setTimeout(() => {
+          this.showError = false;
+        }, 5000);
+        
+        // Limpiar los query params
+        this.router.navigate(['/'], { replaceUrl: true });
+      }
+    });
+  }
+
+  dismissError() {
+    this.showError = false;
+  }
 
   onViewMenu() {
     this.router.navigate(['/comidas']);

@@ -1,8 +1,9 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminHeaderComponent } from '../../../components/admin/header/admin-header.component';
 import { AdminSidebarComponent } from '../../../components/admin/sidebar/admin-sidebar.component';
+import { UserService } from '../../../services/user.service';
 
 export interface ProfileData {
   name: string;
@@ -36,6 +37,12 @@ export interface QuickStats {
   styleUrls: ['./admin-profile.component.scss']
 })
 export class AdminProfileComponent implements OnInit {
+  private userService = inject(UserService);
+  
+  // Computed para obtener información del usuario actual
+  currentUser = computed(() => {
+    return this.userService.user();
+  });
   
   isEditModalOpen = false;
   isLoading = false;
@@ -58,6 +65,11 @@ export class AdminProfileComponent implements OnInit {
 
   editProfileData: ProfileData = { ...this.profileData };
 
+  passwordData = {
+    currentPassword: '',
+    newPassword: ''
+  };
+
   quickStats: QuickStats = {
     activeProducts: 24,
     registeredClients: 1247,
@@ -79,12 +91,10 @@ export class AdminProfileComponent implements OnInit {
 
   // Get user initials for avatar
   getUserInitials(): string {
-    return this.profileData.name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
-      .toUpperCase()
-      .substring(0, 2);
+    const user = this.currentUser();
+    if (!user) return 'U';
+    
+    return user.initials || 'U';
   }
 
   // Format opening date
@@ -96,6 +106,7 @@ export class AdminProfileComponent implements OnInit {
   // Open edit modal
   openEditModal(): void {
     this.editProfileData = { ...this.profileData };
+    this.passwordData = { currentPassword: '', newPassword: '' };
     this.isEditModalOpen = true;
     document.body.style.overflow = 'hidden';
   }
@@ -112,10 +123,24 @@ export class AdminProfileComponent implements OnInit {
 
     // Simulate API call
     setTimeout(() => {
+      // Update profile data
       this.profileData = { ...this.editProfileData };
+      
+      // Handle password change if provided
+      if (this.passwordData.currentPassword && this.passwordData.newPassword) {
+        console.log('Password change requested');
+        // Aquí se haría la llamada al backend para cambiar la contraseña
+      }
+      
       this.isLoading = false;
       this.closeEditModal();
-      this.showSuccessMessage('¡Perfil actualizado exitosamente!');
+      
+      // Show success message based on what was updated
+      let message = '¡Perfil actualizado exitosamente!';
+      if (this.passwordData.currentPassword && this.passwordData.newPassword) {
+        message = '¡Perfil y contraseña actualizados exitosamente!';
+      }
+      this.showSuccessMessage(message);
     }, 1500);
   }
 
@@ -144,10 +169,6 @@ export class AdminProfileComponent implements OnInit {
   }
 
   // Security actions
-  changePassword(): void {
-    alert('Función de cambio de contraseña en desarrollo');
-  }
-
   setup2FA(): void {
     alert('Configuración de 2FA en desarrollo');
   }
