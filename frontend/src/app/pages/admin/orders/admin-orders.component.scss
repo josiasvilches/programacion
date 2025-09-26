@@ -56,26 +56,6 @@
   &.status-cancelled {
     border-left: 4px solid #ef4444;
   }
-  
-  // Urgent orders
-  &.urgent-order {
-    border: 2px solid #ef4444;
-    background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
-    
-    &::before {
-      content: '';
-      position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      background: linear-gradient(45deg, #ef4444, #dc2626, #ef4444, #dc2626);
-      background-size: 400% 400%;
-      border-radius: 0.75rem;
-      z-index: -1;
-      animation: urgentPulse 2s ease-in-out infinite;
-    }
-  }
 }
 
 // Status badges
