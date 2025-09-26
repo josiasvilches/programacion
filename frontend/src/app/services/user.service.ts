@@ -4,6 +4,7 @@ export interface User {
   id: number;
   fullName: string;
   email: string;
+  phone?: string;
   role: string;
   status: string;
   initials?: string;
@@ -19,6 +20,7 @@ export class UserService {
       id: 1,
       fullName: 'Juan Carlos Pérez',
       email: 'juan.perez@email.com',
+      phone: '+54 11 1234-5678',
       role: 'Cliente',
       status: 'Activo'
     },
@@ -26,20 +28,23 @@ export class UserService {
       id: 2,
       fullName: 'María García López',
       email: 'maria.garcia@admin.com',
-      role: 'admin',
+      phone: '+54 11 2345-6789',
+      role: 'Admin',
       status: 'Activo'
     },
     {
       id: 3,
       fullName: 'Carlos Rodríguez',
       email: 'carlos.rodriguez@empleado.com',
-      role: 'empleado',
+      phone: '+54 11 3456-7890',
+      role: 'Empleado',
       status: 'Activo'
     },
     {
       id: 4,
       fullName: 'Ana Sofía Martínez',
       email: 'ana.martinez@cliente.com',
+      phone: '+54 11 4567-8901',
       role: 'Cliente',
       status: 'Activo'
     }
@@ -106,7 +111,7 @@ export class UserService {
 
   // Métodos específicos para cambiar a diferentes tipos de usuarios
   loginAsAdmin() {
-    const admin = this.testUsers.find(u => u.role === 'admin');
+    const admin = this.testUsers.find(u => u.role === 'Admin');
     if (admin) {
       this.currentUser.set(admin);
       console.log('Cambiado a usuario administrador:', admin.fullName);
@@ -114,7 +119,7 @@ export class UserService {
   }
 
   loginAsEmployee() {
-    const employee = this.testUsers.find(u => u.role === 'empleado');
+    const employee = this.testUsers.find(u => u.role === 'Empleado');
     if (employee) {
       this.currentUser.set(employee);
       console.log('Cambiado a usuario empleado:', employee.fullName);

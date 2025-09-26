@@ -9,6 +9,7 @@ import { UserService } from '../../services/user.service';
 interface UserProfile {
   fullName: string;
   email: string;
+  phone?: string;
   initials: string;
   role: string;
   status: string;
@@ -51,6 +52,7 @@ export class UserComponent {
     return {
       fullName: user.fullName,
       email: user.email,
+      phone: user.phone,
       initials: user.initials,
       role: user.role,
       status: user.status,
@@ -70,12 +72,13 @@ export class UserComponent {
     
     this.profileForm = this.fb.group({
       fullName: [user?.fullName || '', [Validators.required, Validators.minLength(2)]],
-      email: [user?.email || '', [Validators.required, Validators.email]]
+      email: [user?.email || '', [Validators.required, Validators.email]],
+      phone: [user?.phone || '', [Validators.required, Validators.pattern(/^[\+]?[0-9\s\-\(\)]{10,15}$/)]]
     });
 
     this.passwordForm = this.fb.group({
       currentPassword: ['', [Validators.required]],
-      newPassword: ['', [Validators.required, Validators.minLength(8)]],
+      newPassword: ['', [Validators.required]],
       confirmPassword: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
 
@@ -115,6 +118,15 @@ export class UserComponent {
     return null;
   });
 
+  phoneError = computed(() => {
+    const control = this.profileForm.get('phone');
+    if (control?.touched && control?.errors) {
+      if (control.errors['required']) return 'El teléfono es requerido';
+      if (control.errors['pattern']) return 'Por favor ingresá un número de teléfono válido';
+    }
+    return null;
+  });
+
   currentPasswordError = computed(() => {
     const control = this.passwordForm.get('currentPassword');
     if (control?.touched && control?.errors?.['required']) {
@@ -127,7 +139,6 @@ export class UserComponent {
     const control = this.passwordForm.get('newPassword');
     if (control?.touched && control?.errors) {
       if (control.errors['required']) return 'La nueva contraseña es requerida';
-      if (control.errors['minlength']) return 'La contraseña debe tener al menos 8 caracteres';
     }
     return null;
   });
@@ -139,33 +150,6 @@ export class UserComponent {
       if (control.errors['passwordMismatch']) return 'Las contraseñas no coinciden';
     }
     return null;
-  });
-
-  // Computed para fuerza de contraseña
-  passwordStrength = computed(() => {
-    const password = this.passwordForm.get('newPassword')?.value || '';
-    let strength = 0;
-    
-    if (password.length >= 8) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
-
-    const levels = [
-      { text: 'Muy débil - Agregá más caracteres', color: 'bg-red-500' },
-      { text: 'Débil - Agregá mayúsculas y números', color: 'bg-red-500' },
-      { text: 'Buena - Considerá agregar símbolos', color: 'bg-yellow-500' },
-      { text: 'Excelente - Contraseña muy segura', color: 'bg-green-500' }
-    ];
-
-    return {
-      strength,
-      level: levels[Math.max(0, strength - 1)] || levels[0],
-      bars: Array.from({ length: 4 }, (_, i) => ({
-        active: i < strength,
-        color: strength > 0 ? levels[strength - 1].color : 'bg-gray-200'
-      }))
-    };
   });
 
   // Computed para verificar si hay cambios sin guardar
@@ -227,7 +211,8 @@ export class UserComponent {
     if (user) {
       this.profileForm.patchValue({
         fullName: user.fullName,
-        email: user.email
+        email: user.email,
+        phone: user.phone
       });
     }
 
@@ -280,7 +265,8 @@ export class UserComponent {
     if (user) {
       this.profileForm.patchValue({
         fullName: user.fullName,
-        email: user.email
+        email: user.email,
+        phone: user.phone
       });
     }
     this.passwordForm.reset();
