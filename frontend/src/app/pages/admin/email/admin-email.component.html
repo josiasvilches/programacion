@@ -19,14 +19,6 @@
         </div>
         <div class="flex items-center space-x-3">
           <button 
-            (click)="openTemplatesModal()"
-            class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 smooth-transition flex items-center space-x-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
-            </svg>
-            <span>Plantillas</span>
-          </button>
-          <button 
             (click)="openNewCampaignModal()"
             class="gradient-bg text-white px-6 py-3 rounded-lg font-medium hover-lift smooth-transition flex items-center space-x-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,37 +39,17 @@
           <div class="flex-1">
             <div class="flex items-center space-x-3 mb-2">
               <h3 class="text-lg font-bold text-gray-900">{{ campaign.name }}</h3>
-              <span class="text-white text-xs px-3 py-1 rounded-full font-medium" 
-                    [ngClass]="getStatusClass(campaign.status)">
-                {{ getStatusName(campaign.status) }}
+              <span class="text-white text-xs px-3 py-1 rounded-full font-medium bg-green-500">
+                Enviado
               </span>
             </div>
             <p class="text-gray-600 mb-2">{{ campaign.subject }}</p>
           </div>
           <div class="flex items-center space-x-2">
             <button 
-              *ngIf="campaign.status === 'draft'"
-              (click)="openEditCampaignModal(campaign)" 
-              class="bg-yellow-500 text-white px-3 py-1 rounded-lg text-sm font-medium hover-lift smooth-transition">
-              Editar
-            </button>
-            <button 
-              *ngIf="campaign.status === 'draft'"
               (click)="deleteCampaign(campaign.id)" 
               class="bg-red-500 text-white px-3 py-1 rounded-lg text-sm font-medium hover-lift smooth-transition">
               Eliminar
-            </button>
-            <button 
-              *ngIf="campaign.status === 'scheduled'"
-              (click)="cancelScheduled(campaign.id)" 
-              class="bg-gray-500 text-white px-3 py-1 rounded-lg text-sm font-medium hover-lift smooth-transition">
-              Cancelar
-            </button>
-            <button 
-              *ngIf="campaign.status === 'sent'"
-              (click)="duplicateCampaign(campaign)" 
-              class="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm font-medium hover-lift smooth-transition">
-              Duplicar
             </button>
           </div>
         </div>
@@ -138,28 +110,42 @@
               
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Plantilla</label>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-3 gap-3">
+                  <!-- Opción en blanco -->
                   <div 
-                    *ngFor="let template of templates.slice(0, 2)"
                     class="template-card border-2 border-gray-200 rounded-lg p-4 text-center cursor-pointer" 
-                    [ngClass]="{'selected border-red-500': selectedTemplate === template.id}"
-                    (click)="selectTemplate(template.id)">
-                    <div class="w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-2"
-                         [ngClass]="'bg-' + template.color + '-100'">
-                      <svg class="w-6 h-6" [ngClass]="'text-' + template.color + '-600'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path 
-                          *ngIf="template.id === 'promo'"
-                          stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z">
-                        </path>
-                        <path 
-                          *ngIf="template.id === 'news'"
-                          stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                          d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z">
-                        </path>
+                    [ngClass]="{'selected border-red-500': selectedTemplate === 'blank'}"
+                    (click)="selectTemplate('blank')">
+                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                      <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                       </svg>
                     </div>
-                    <p class="text-sm font-medium">{{ template.name.split(' ')[1] }}</p>
+                    <p class="text-sm font-medium">En Blanco</p>
+                  </div>
+                  <!-- Plantilla Promocional -->
+                  <div 
+                    class="template-card border-2 border-gray-200 rounded-lg p-4 text-center cursor-pointer" 
+                    [ngClass]="{'selected border-red-500': selectedTemplate === 'promo'}"
+                    (click)="selectTemplate('promo')">
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                      <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                      </svg>
+                    </div>
+                    <p class="text-sm font-medium">Promocional</p>
+                  </div>
+                  <!-- Plantilla Newsletter -->
+                  <div 
+                    class="template-card border-2 border-gray-200 rounded-lg p-4 text-center cursor-pointer" 
+                    [ngClass]="{'selected border-red-500': selectedTemplate === 'news'}"
+                    (click)="selectTemplate('news')">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                      <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                      </svg>
+                    </div>
+                    <p class="text-sm font-medium">Noticias</p>
                   </div>
                 </div>
               </div>
@@ -172,33 +158,6 @@
                   rows="6" 
                   class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus smooth-transition" 
                   placeholder="Escribe aquí el contenido de tu promoción..."></textarea>
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Llamada a la Acción</label>
-                <input 
-                  type="text" 
-                  [(ngModel)]="campaignForm.cta"
-                  name="campaignCTA"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus smooth-transition" 
-                  placeholder="¡Pedir Ahora!">
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Programar Envío</label>
-                <div class="grid grid-cols-2 gap-3">
-                  <input 
-                    type="date" 
-                    [(ngModel)]="campaignForm.date"
-                    name="campaignDate"
-                    class="px-4 py-3 border border-gray-300 rounded-lg input-focus smooth-transition">
-                  <input 
-                    type="time" 
-                    [(ngModel)]="campaignForm.time"
-                    name="campaignTime"
-                    class="px-4 py-3 border border-gray-300 rounded-lg input-focus smooth-transition">
-                </div>
-                <p class="text-xs text-gray-500 mt-1">Dejar vacío para envío inmediato</p>
               </div>
             </div>
           </form>
@@ -266,15 +225,9 @@
           <div class="flex justify-end space-x-4">
             <button 
               type="button" 
-              (click)="saveDraft()"
-              class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 smooth-transition">
-              Guardar Borrador
-            </button>
-            <button 
-              type="button" 
               (click)="sendCampaign()"
               class="gradient-bg text-white px-6 py-3 rounded-lg font-medium hover-lift smooth-transition">
-              {{ campaignForm.date && campaignForm.time ? 'Programar Campaña' : 'Enviar Campaña' }}
+              Enviar Campaña
             </button>
           </div>
         </div>
