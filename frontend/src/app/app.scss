@@ -1,0 +1,12 @@
+// Main application styles
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+// Global layout container
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}

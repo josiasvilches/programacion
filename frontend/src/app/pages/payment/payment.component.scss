@@ -1,0 +1,154 @@
+.smooth-transition {
+  transition: all 0.3s ease;
+}
+
+.input-focus:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.step-active {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.step-completed {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.step-inactive {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.payment-method {
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+  }
+
+  &.selected {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { 
+    transform: translateX(100%); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateX(0); 
+    opacity: 1; 
+  }
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    transform: scale(1); 
+  }
+  50% { 
+    transform: scale(1.02); 
+  }
+}
+
+.checkout-btn {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+    transform: translateY(-2px);
+  }
+}
+
+.security-badge {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.error-input {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.success-input {
+  border-color: #10b981;
+  background-color: #f0fdf4;
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { 
+    transform: rotate(0deg); 
+  }
+  to { 
+    transform: rotate(360deg); 
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .payment-method {
+    padding: 0.75rem;
+  }
+  
+  .checkout-btn {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+}
+
+// Accessibility improvements
+.payment-method:focus {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+}
+
+.checkout-btn:focus {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+}
+
+// Dark mode support (if needed)
+@media (prefers-color-scheme: dark) {
+  .step-inactive {
+    background: #374151;
+    color: #9ca3af;
+  }
+}

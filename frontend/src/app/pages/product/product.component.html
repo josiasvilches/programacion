@@ -1,0 +1,272 @@
+<div class="product-layout">
+  <!-- Header Navigation -->
+  <app-header></app-header>
+
+  <!-- Main Content -->
+  <main class="main-content bg-gray-50 min-h-screen">
+    @if (isLoading()) {
+      <!-- Loading State -->
+      <div class="max-w-6xl mx-auto px-6 py-12">
+        <div class="animate-pulse">
+          <div class="h-8 bg-gray-200 rounded mb-6"></div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div class="space-y-4">
+              <div class="h-80 bg-gray-200 rounded-3xl"></div>
+              <div class="flex space-x-4">
+                <div class="w-16 h-16 bg-gray-200 rounded-lg"></div>
+                <div class="w-16 h-16 bg-gray-200 rounded-lg"></div>
+                <div class="w-16 h-16 bg-gray-200 rounded-lg"></div>
+              </div>
+            </div>
+            <div class="space-y-6">
+              <div class="h-10 bg-gray-200 rounded"></div>
+              <div class="h-6 bg-gray-200 rounded w-3/4"></div>
+              <div class="h-32 bg-gray-200 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    } @else if (currentProduct()) {
+      <!-- Breadcrumb -->
+      <div class="max-w-6xl mx-auto px-6 py-4">
+        <nav class="flex items-center space-x-2 text-sm text-gray-600">
+          <button (click)="goToHome()" class="hover:text-red-500 smooth-transition">Inicio</button>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+          <button (click)="goToProducts()" class="hover:text-red-500 smooth-transition">Productos</button>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+          <span class="text-gray-800 font-medium">{{ breadcrumbName() }}</span>
+        </nav>
+      </div>
+
+      <div class="max-w-6xl mx-auto px-6 pb-12">
+        <!-- Product Details -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+          <!-- Product Image -->
+          <div class="fade-in">
+            <div class="product-image rounded-3xl p-12 flex items-center justify-center mb-6">
+              <span class="text-9xl">{{ currentProduct()?.emoji }}</span>
+            </div>
+            
+            <!-- Product Gallery (thumbnails) -->
+            <div class="flex justify-center space-x-4">
+              <button class="w-16 h-16 bg-red-100 rounded-lg flex items-center justify-center text-2xl hover:bg-red-200 smooth-transition">
+                {{ currentProduct()?.emoji }}
+              </button>
+              <button class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-2xl hover:bg-gray-200 smooth-transition">
+                📸
+              </button>
+              <button class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-2xl hover:bg-gray-200 smooth-transition">
+                🔥
+              </button>
+            </div>
+          </div>
+
+          <!-- Product Info -->
+          <div class="fade-in">
+            <!-- Product Header -->
+            <div class="mb-6">
+              <div class="flex items-center space-x-3 mb-3">
+                <span class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm font-medium">
+                  {{ currentProduct()?.category }}
+                </span>
+                <span class="px-3 py-1 rounded-full text-sm font-medium"
+                      [class]="availabilityStatus().class">
+                  {{ availabilityStatus().text }}
+                </span>
+              </div>
+              
+              <h1 class="text-3xl font-bold text-gray-800 mb-4">{{ currentProduct()?.name }}</h1>
+              
+              @if (currentProduct()?.rating && currentProduct()?.reviews) {
+                <div class="flex items-center space-x-4 mb-4">
+                  <div class="flex items-center space-x-1">
+                    <span class="text-yellow-400">
+                      @for (star of generateStars(currentProduct()!.rating!); track $index) {
+                        {{ star }}
+                      }
+                    </span>
+                    <span class="text-gray-600 text-sm">
+                      ({{ currentProduct()?.rating }}) • {{ currentProduct()?.reviews }} reseñas
+                    </span>
+                  </div>
+                </div>
+              }
+              
+              <div class="text-4xl font-bold text-red-500 mb-6">
+                {{ formattedPrice() }}
+              </div>
+            </div>
+
+            <!-- Product Description -->
+            <div class="mb-8">
+              <h3 class="text-lg font-semibold text-gray-800 mb-3">Descripción</h3>
+              <p class="text-gray-600 leading-relaxed mb-4">
+                {{ currentProduct()?.description }}
+              </p>
+              
+            </div>
+
+
+            <!-- Quantity Selector -->
+            <div class="mb-8">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Cantidad</h3>
+              <div class="flex items-center space-x-4 mb-4">
+                <div class="flex items-center border border-gray-300 rounded-lg">
+                  <button (click)="decreaseQuantity()" 
+                          class="quantity-btn p-3 text-gray-600 hover:text-red-500 hover:bg-red-50 rounded-l-lg smooth-transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                    </svg>
+                  </button>
+                  <input type="number" 
+                         [value]="quantity()" 
+                         (input)="updateQuantity($event)"
+                         min="1" 
+                         max="10" 
+                         class="w-16 text-center py-3 border-0 focus:outline-none text-lg font-semibold">
+                  <button (click)="increaseQuantity()" 
+                          class="quantity-btn p-3 text-gray-600 hover:text-red-500 hover:bg-red-50 rounded-r-lg smooth-transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                  </button>
+                </div>
+                
+                <div class="text-sm text-gray-600">
+                  <span>Total: </span>
+                  <span class="text-2xl font-bold text-red-500">{{ formattedTotalPrice() }}</span>
+                </div>
+              </div>
+              
+             </div>
+
+            <!-- Add to Cart Button -->
+            <div class="space-y-4">
+              <button (click)="addToCart()" 
+                      [disabled]="isAddToCartDisabled()"
+                      class="w-full py-4 rounded-xl text-lg font-semibold smooth-transition flex items-center justify-center space-x-3"
+                      [class.bg-red-500]="!isAddToCartDisabled()"
+                      [class.text-white]="!isAddToCartDisabled()"
+                      [class.hover:bg-red-600]="!isAddToCartDisabled()"
+                      [class.bg-gray-400]="isAddToCartDisabled()"
+                      [class.text-gray-600]="isAddToCartDisabled()"
+                      [class.cursor-not-allowed]="isAddToCartDisabled()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 7a2 2 0 01-2 2H8a2 2 0 01-2-2L5 9z"></path>
+                </svg>
+                <span>{{ isAddToCartDisabled() ? 'Producto no disponible' : 'Agregar al carrito' }}</span>
+              </button>
+              
+              <div class="flex space-x-3">
+                <button (click)="buyNow()" 
+                        [disabled]="isAddToCartDisabled()"
+                        class="flex-1 py-3 rounded-xl font-semibold smooth-transition"
+                        [class.bg-gray-800]="!isAddToCartDisabled()"
+                        [class.text-white]="!isAddToCartDisabled()"
+                        [class.hover:bg-gray-900]="!isAddToCartDisabled()"
+                        [class.bg-gray-400]="isAddToCartDisabled()"
+                        [class.text-gray-600]="isAddToCartDisabled()"
+                        [class.cursor-not-allowed]="isAddToCartDisabled()">
+                  Comprar ahora
+                </button>
+              </div>
+            </div>
+
+            <!-- Additional Info -->
+            <div class="mt-8 p-4 bg-blue-50 rounded-xl">
+              <div class="flex items-start space-x-3">
+                <svg class="w-6 h-6 text-blue-500 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <div>
+                  <h4 class="font-semibold text-blue-800 mb-1">Información importante</h4>
+                  <ul class="text-sm text-blue-700 space-y-1">
+                    <li>• Tiempo de preparación: {{ currentProduct()?.prepTime || '30-45 minutos' }}</li>
+                    <li>• Se entrega caliente y listo para servir</li>
+                    <li>• Incluye salsas complementarias</li>
+                    <li>• Producto fresco, no congelado</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Related Products -->
+        @if (relatedProducts().length > 0) {
+          <div class="fade-in">
+            <h2 class="text-2xl font-bold text-gray-800 mb-8">Productos relacionados</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              @for (product of relatedProducts(); track product.id) {
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden hover-lift smooth-transition">
+                  <div class="h-40 bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center">
+                    <span class="text-4xl">{{ product.emoji }}</span>
+                  </div>
+                  <div class="p-4">
+                    <h3 class="font-semibold text-gray-800 mb-2">{{ product.name }}</h3>
+                    <div class="text-xl font-bold text-red-500 mb-3">${{ product.price.toLocaleString() }}</div>
+                    <button (click)="viewProduct(product.id)" 
+                            class="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 smooth-transition">
+                      Ver producto
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Success Modal -->
+      @if (showSuccessModal()) {
+        <div class="fixed inset-0 bg-black bg-opacity-50 z-50">
+          <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl p-8 max-w-md w-full bounce-in">
+              <div class="text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">¡Agregado al carrito!</h3>
+                <p class="text-gray-600 mb-6">
+                  {{ quantity() }} x {{ currentProduct()?.name }} - Total: {{ formattedTotalPrice() }}
+                </p>
+                <div class="flex space-x-3">
+                  <button (click)="closeSuccessModal()" 
+                          class="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg hover:bg-gray-300 smooth-transition">
+                    Seguir comprando
+                  </button>
+                  <button (click)="viewCart()" 
+                          class="flex-1 bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 smooth-transition">
+                    Ver carrito
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    } @else {
+      <!-- Product Not Found -->
+      <div class="max-w-4xl mx-auto px-6 py-12 text-center">
+        <div class="text-6xl mb-6">😞</div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Producto no encontrado</h2>
+        <p class="text-gray-600 mb-8">El producto que buscás no existe o ya no está disponible.</p>
+        <button (click)="goToProducts()" 
+                class="bg-red-500 text-white px-8 py-3 rounded-lg hover:bg-red-600 smooth-transition">
+          Ver todos los productos
+        </button>
+      </div>
+    }
+  </main>
+
+  <!-- Footer -->
+  <app-footer></app-footer>
+</div>

@@ -10,8 +10,10 @@ class Pedido(db.Model):
     metodo_pago = db.Column(db.String(50), nullable=False)
     total = db.Column(db.Numeric(10, 2), nullable=False)
 
-    productos = db.relationship('PedidoProducto', backref='pedido', lazy=True)
+    productos = db.relationship('PedidoProducto', backref='pedido', lazy=True, cascade="all, delete-orphan")
+    cliente = db.relationship('Usuario', back_populates='pedidos')
 
+    
     def to_json(self):
         return {
             'pedido_id': self.pedido_id,
@@ -19,5 +21,6 @@ class Pedido(db.Model):
             'fecha_pedido': self.fecha_pedido.isoformat(),
             'estado_pedido': self.estado_pedido,
             'metodo_pago': self.metodo_pago,
-            'total': float(self.total)
+            'total': float(self.total),
+            'producto': [producto.to_json() for producto in self.productos]
         }

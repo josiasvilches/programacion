@@ -1,0 +1,4 @@
+¡BIENVEND@ {{ usuario.nombre }}!
+Estamos muy contentos de que seas parte de la familia Grupo F' Rotiseria
+
+Tu rol es: {{ usuario.rol }}. ¡Ya sabes qué hacer!

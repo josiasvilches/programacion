@@ -1,40 +1,68 @@
 from flask_restful import Resource
-from flask import request
+from flask import request, jsonify
 from .. import db
-from main.models import PedidoModel, PedidoProductoModel
 from datetime import datetime
+from main.models import PedidoModel, PedidoProductoModel, UsuarioModel
 
 class Pedidos(Resource):
     def get(self):
-        try:
-            pedidos = PedidoModel.query.all()
-            return [pedido.to_json() for pedido in pedidos], 200
-        except Exception as e:
-            print("ERROR:", str(e))
-            return {'error': str(e)}, 500
+        # PAGINADO
+        # Página inicial por defecto
+        page = 1
+        # Cantidad de elementos por página
+        per_page = 10
+
+        # Defino pedidos
+        pedidos = db.session.query(PedidoModel)
+
+        # Tomo la paginación del request si está especificada
+        if request.args.get('page'):
+            page = int(request.args.get('page'))
+        if request.args.get('per_page'):
+            per_page = int(request.args.get('per_page'))
+
+        # Filtrar por fecha del pedido
+        if request.args.get('fecha'):
+            pedidos = pedidos.filter(PedidoModel.fecha_pedido.like("%"+request.args.get('fecha')+"%"))
+        # Filtrar por estado del pedido
+        if request.args.get('estado'):
+            pedidos = pedidos.filter(PedidoModel.estado_pedido == request.args.get('estado'))
+        # Filtrar por el método de pago
+        if request.args.get('metodo_pago'):
+            pedidos = pedidos.filter(PedidoModel.metodo_pago == request.args.get('metodo_pago'))
+        # Filtrar por el cliente
+        if request.args.get('usuario'):
+            pedidos = pedidos.outerjoin(PedidoModel.cliente).filter(UsuarioModel.nombre == request.args.get('usuario'))
+
+        #pedidos = PedidoModel.query.all()
+        pedidos = pedidos.paginate(page=page, per_page=per_page, error_out=True)
+        return jsonify({'pedidos:': [pedido.to_json() for pedido in pedidos],
+                        'total:': pedidos.total,
+                        'pages': pedidos.pages,
+                        'page':page})
 
     def post(self):
+        data = request.get_json() or {}
+
+        if not all(key in data for key in ['id_cliente', 'estado_pedido', 'metodo_pago', 'productos']):
+            return {"mensaje": "Faltan campos requeridos: 'id_cliente', 'estado_pedido', 'metodo_pago', 'productos'"}, 400
+
+        productos = data['productos']
+        if not isinstance(productos, list) or not productos:
+            return {"mensaje": "El campo 'productos' debe ser una lista con al menos un producto"}, 400
+
         try:
-            data = request.get_json() or {}
-
-            if not all(key in data for key in ('id_cliente', 'estado_pedido', 'metodo_pago', 'productos')):
-                return {"mensaje": "Faltan campos requeridos: 'id_cliente', 'estado_pedido', 'metodo_pago', 'productos'"}, 400
-
-            productos = data['productos']
-            if not isinstance(productos, list) or not productos:
-                return {"mensaje": "El campo 'productos' debe ser una lista con al menos un producto"}, 400
-
             total = sum(p['subtotal'] for p in productos)
 
             nuevo_pedido = PedidoModel(
                 id_cliente=data['id_cliente'],
-                fecha_pedido=datetime.now(), 
+                fecha_pedido=datetime.now(),
                 estado_pedido=data['estado_pedido'],
                 metodo_pago=data['metodo_pago'],
                 total=total
             )
             db.session.add(nuevo_pedido)
-            db.session.flush()
+            db.session.flush()  # Obtener el ID del pedido antes del commit
 
             for p in productos:
                 pedido_producto = PedidoProductoModel(
@@ -47,65 +75,24 @@ class Pedidos(Resource):
                 db.session.add(pedido_producto)
 
             db.session.commit()
-            return nuevo_pedido.to_json(), 201
-
         except Exception as e:
             db.session.rollback()
-            print("ERROR:", str(e))
             return {"mensaje": f"Error al crear el pedido: {str(e)}"}, 500
 
+        return nuevo_pedido.to_json(), 201
+
+
 class Pedido(Resource):
-    def put(self, id):
-        try:
-            # Buscar el pedido por ID
-            pedido = PedidoModel.query.get(id)
-            if pedido is None:
-                return {"mensaje": "Pedido no encontrado"}, 404
-
-            # Obtener los datos enviados en la solicitud
-            data = request.get_json() or {}
-
-            # Actualizar los campos si están presentes en los datos
-            if 'estado_pedido' in data:
-                pedido.estado_pedido = data['estado_pedido']
-            if 'metodo_pago' in data:
-                pedido.metodo_pago = data['metodo_pago']
-
-            # Guardar los cambios en la base de datos
-            db.session.commit()
-            return pedido.to_json(), 200
-        except Exception as e:
-            db.session.rollback()
-            print("ERROR:", str(e))
-            return {"mensaje": f"Error al actualizar el pedido: {str(e)}"}, 500
     def get(self, id):
-        try:
-            pedido = PedidoModel.query.get(id)
-            if pedido is None:
-                return {"mensaje": "Pedido no encontrado"}, 404
-
-            return pedido.to_json(), 200
-
-        except Exception as e:
-            print("ERROR:", str(e))
-            return {'error': str(e)}, 500
+        pedido = PedidoModel.query.get_or_404(id)
+        return pedido.to_json(), 200
 
     def delete(self, id):
+        pedido = PedidoModel.query.get_or_404(id)
         try:
-            pedido = PedidoModel.query.get(id)
-            if pedido is None:
-                return {"mensaje": "Pedido no encontrado"}, 404
-
-            # Primero borrar los productos asociados
-            db.session.query(PedidoProductoModel).filter_by(id_pedido=pedido.pedido_id).delete()
-
-            # Luego borrar el pedido
             db.session.delete(pedido)
             db.session.commit()
-
-            return {"mensaje": "Pedido eliminado con éxito"}, 200
-
         except Exception as e:
             db.session.rollback()
-            print("ERROR:", str(e))
             return {"mensaje": f"Error al eliminar el pedido: {str(e)}"}, 500
+        return {"mensaje": "Pedido eliminado con éxito"}, 200

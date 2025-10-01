@@ -1,0 +1,184 @@
+<div class="home-layout">
+  <!-- Header Navigation -->
+  <app-header [showUserMenu]="false" [showCart]="false"></app-header>
+  
+  <!-- Error Message -->
+  <div *ngIf="showError" class="fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg z-50 max-w-md">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="text-sm font-medium">{{ errorMessage }}</span>
+      </div>
+      <button (click)="dismissError()" class="ml-4 text-red-400 hover:text-red-600">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Hero Section -->
+    <section id="inicio" class="bg-white py-20">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 class="text-5xl font-bold text-gray-800 mb-6">Comida casera de toda la vida</h2>
+            <p class="text-xl text-gray-600 mb-8 leading-relaxed">
+              Desde 1985 preparamos los mejores platos con el sabor auténtico que recordás de la
+              mesa familiar.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 mb-8">
+              <button
+                (click)="onViewMenu()"
+                class="bg-red-500 text-white px-8 py-3 rounded-lg hover:bg-red-600 smooth-transition"
+              >
+                Ver Menú
+              </button>
+              <button
+                (click)="onCallNow()"
+                class="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg hover:bg-gray-50 smooth-transition"
+              >
+                Llamar: (011) 4567-8900
+              </button>
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="w-80 h-80 bg-red-50 rounded-full mx-auto flex items-center justify-center">
+              <span class="text-8xl">🍗</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Favorites Section -->
+    <app-favorite-products-carrousel></app-favorite-products-carrousel>
+    <!-- Recommended Products Section -->
+    <app-recommended-products-carrousel></app-recommended-products-carrousel>
+    <!-- Info Section -->
+    <section class="py-20 bg-white">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="grid lg:grid-cols-2 gap-12">
+          <!-- Horarios -->
+          <div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">Horarios de Atención</h3>
+            <div class="space-y-4">
+              <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                <span class="font-medium text-gray-700">Lunes a Viernes</span>
+                <span class="text-gray-600">11:00 - 23:00</span>
+              </div>
+              <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                <span class="font-medium text-gray-700">Sábados</span>
+                <span class="text-gray-600">11:00 - 24:00</span>
+              </div>
+              <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                <span class="font-medium text-gray-700">Domingos</span>
+                <span class="text-gray-600">12:00 - 23:00</span>
+              </div>
+            </div>
+          </div>
+          <!-- Contacto -->
+          <div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">Contacto</h3>
+            <div class="space-y-6">
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-red-500 text-xl">📞</span>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-800">Teléfono</h4>
+                  <p class="text-gray-600">(011) 4567-8900</p>
+                  <p class="text-sm text-gray-500">Pedidos y consultas</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-red-500 text-xl">📍</span>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-800">Dirección</h4>
+                  <p class="text-gray-600">Av. Corrientes 1234</p>
+                  <p class="text-sm text-gray-500">Ciudad Autónoma de Buenos Aires</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-red-500 text-xl">💬</span>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-800">WhatsApp</h4>
+                  <p class="text-gray-600">+54 9 11 1234-5678</p>
+                  <p class="text-sm text-gray-500">Pedidos por WhatsApp</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Testimonials Section -->
+    <section class="py-20 bg-gray-50">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl font-bold text-gray-800 mb-4">Lo que dicen nuestros clientes</h2>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="bg-white rounded-xl p-8 shadow-sm">
+            <div class="flex text-yellow-500 text-lg mb-4">★★★★★</div>
+            <p class="text-gray-600 mb-6">
+              "El mejor pollo del barrio. Hace años que vengo y siempre la misma calidad."
+            </p>
+            <div class="flex items-center">
+              <div
+                class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-3"
+              >
+                M
+              </div>
+              <div>
+                <div class="font-semibold text-gray-800">María</div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl p-8 shadow-sm">
+            <div class="flex text-yellow-500 text-lg mb-4">★★★★★</div>
+            <p class="text-gray-600 mb-6">
+              "Las empanadas son increíbles y el delivery siempre llega rápido."
+            </p>
+            <div class="flex items-center">
+              <div
+                class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold mr-3"
+              >
+                C
+              </div>
+              <div>
+                <div class="font-semibold text-gray-800">Carlos</div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl p-8 shadow-sm">
+            <div class="flex text-yellow-500 text-lg mb-4">★★★★★</div>
+            <p class="text-gray-600 mb-6">
+              "Tradición familiar que se nota en cada plato. Muy recomendable."
+            </p>
+            <div class="flex items-center">
+              <div
+                class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold mr-3"
+              >
+                A
+              </div>
+              <div>
+                <div class="font-semibold text-gray-800">Ana</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <app-footer></app-footer>
+</div>

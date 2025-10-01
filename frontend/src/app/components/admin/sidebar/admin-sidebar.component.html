@@ -1,0 +1,37 @@
+<!-- Sidebar -->
+<div class="fixed left-0 top-0 h-full w-16 bg-white shadow-lg z-50">
+  <div class="flex flex-col h-full">
+    <!-- Logo -->
+    <div class="flex items-center justify-center h-16 border-b border-gray-200">
+      <div
+        routerLink="/"
+        class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center text-white font-bold text-sm"
+      >
+        RC
+      </div>
+    </div>
+
+    <!-- Navigation Items -->
+    <nav class="flex-1 py-4">
+      <div class="space-y-2 px-2">
+        <div
+          *ngFor="let item of sidebarItems"
+          class="sidebar-item rounded-lg p-3 cursor-pointer smooth-transition"
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="item.id === 'dashboard' ? { exact: true } : { exact: false }"
+        >
+          <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              [attr.d]="item.icon"
+            ></path>
+          </svg>
+          <div class="tooltip">{{ item.tooltip }}</div>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>

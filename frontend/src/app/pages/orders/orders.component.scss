@@ -1,0 +1,312 @@
+.smooth-transition {
+  transition: all 0.3s ease;
+}
+
+// Transición suave para todos los elementos
+.smooth-transition {
+  transition: all 0.3s ease;
+}
+
+.bgCustom{
+    background-color: #ffffff54;
+}
+
+// Estilos generales para asegurar texto visible en fondos blancos
+.bg-white {
+  color: #111827; // Texto negro por defecto en fondos blancos
+  
+  .text-sm {
+    color: #374151 !important; // gray-700
+  }
+  
+  .text-gray-600 {
+    color: #4b5563 !important;
+  }
+  
+  .text-gray-700 {
+    color: #374151 !important;
+  }
+  
+  .text-gray-800 {
+    color: #1f2937 !important;
+  }
+  
+  .text-gray-900 {
+    color: #111827 !important;
+  }
+}
+
+.input-focus:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  outline: none;
+}
+
+// Estilos para inputs para asegurar texto visible
+input.input-focus {
+  color: #111827; // Texto negro en inputs
+  background-color: white;
+  
+  &::placeholder {
+    color: #9ca3af; // gray-400 para placeholders
+  }
+}
+
+// Select styles específicos
+select.input-focus {
+  background-color: white;
+  color: #111827; // Texto negro en selects
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  option {
+    color: #111827; // Texto negro en opciones
+    background-color: white;
+  }
+  
+  &:focus {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ef4444' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  }
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.order-card {
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  // Asegurar que los textos sean visibles en fondo blanco
+  h3, .text-lg {
+    color: #111827 !important; // gray-900
+  }
+  
+  .text-sm {
+    color: #374151 !important; // gray-700
+  }
+  
+  .text-gray-700 {
+    color: #374151 !important;
+  }
+  
+  .text-gray-900 {
+    color: #111827 !important;
+  }
+  
+  .text-gray-800 {
+    color: #1f2937 !important;
+  }
+}
+
+// Filter button styles - matching comidas component
+.filter-btn {
+  transition: all 0.3s ease;
+}
+
+.filter-active {
+  background-color: #ef4444 !important;
+  color: white !important;
+  
+  &:hover {
+    background-color: #dc2626 !important;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+// Status color classes
+.status-pending {
+  background-color: #fbbf24;
+}
+
+.status-preparing {
+  background-color: #3b82f6;
+}
+
+.status-ready {
+  background-color: #10b981;
+}
+
+.status-delivered {
+  background-color: #6b7280;
+}
+
+.status-cancelled {
+  background-color: #ef4444;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .order-card {
+    padding: 1rem;
+  }
+  
+  .filter-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .gradient-bg {
+    padding: 2rem 0;
+    
+    .text-4xl {
+      font-size: 2rem;
+    }
+    
+    .text-xl {
+      font-size: 1.125rem;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .bg-white.bg-opacity-20 {
+    flex-direction: column;
+    
+    .text-center {
+      margin-bottom: 1rem;
+    }
+    
+    .h-8.w-px {
+      display: none;
+    }
+  }
+}
+
+// Accessibility improvements
+.filter-btn:focus {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+}
+
+.order-card:focus-within {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+}
+
+button:focus {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+}
+
+// Modal styles
+.fixed.inset-0 {
+  backdrop-filter: blur(4px);
+}
+
+// Custom scrollbar for modal
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+// Empty state improvements
+.text-center.py-16 {
+  .w-24.h-24 {
+    transition: transform 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+}
+
+// Loading states (for future implementation)
+.loading-state {
+  .order-card {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+// Search input improvements
+input[type="text"]:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+select:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+// Animation for status changes
+.status-pending,
+.status-preparing,
+.status-ready,
+.status-delivered,
+.status-cancelled {
+  transition: all 0.3s ease;
+}
+
+// Dark mode support (future enhancement)
+@media (prefers-color-scheme: dark) {
+  .bg-white {
+    background-color: #ffffff;
+    color: #f9fafb;
+  }
+  
+  .text-gray-800 {
+    color: #f9fafb;
+  }
+  
+  .text-gray-600 {
+    color: #d1d5db;
+  }
+  
+  .border-gray-200 {
+    border-color: #374151;
+  }
+}
