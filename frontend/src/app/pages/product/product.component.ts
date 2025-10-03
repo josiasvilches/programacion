@@ -67,12 +67,24 @@ export class ProductComponent implements OnInit {
       : { text: 'Agotado', class: 'bg-red-100 text-red-600' };
   });
 
+  // Método para scroll suave al top
+  private scrollToTop(): void {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+  }
+
   isAddToCartDisabled = computed(() => {
     const product = this.currentProduct();
     return !product || !product.available || this.isLoading();
   });
 
   ngOnInit() {
+    // Scroll al top cuando el componente se inicializa
+    this.scrollToTop();
+    
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -83,6 +95,9 @@ export class ProductComponent implements OnInit {
 
   private loadProduct(id: number) {
     this.isLoading.set(true);
+    
+    // Scroll al top cada vez que se carga un producto
+    this.scrollToTop();
     
     // Simular carga de producto desde el servicio
     setTimeout(() => {
@@ -511,6 +526,8 @@ export class ProductComponent implements OnInit {
   }
 
   viewProduct(productId: number) {
+    // Scroll al top antes de navegar al nuevo producto
+    this.scrollToTop();
     this.router.navigate(['/product', productId]);
   }
 

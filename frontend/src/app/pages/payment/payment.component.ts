@@ -110,6 +110,13 @@ export class PaymentComponent implements OnInit {
   constructor(private cartService: CartService, private orderService: OrderService, private router: Router) {}
 
   ngOnInit() {
+    // Scroll al top cuando se inicializa el componente de pago
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'instant'
+    });
+    
     // Subscribe to cart items
     this.cartService.cartItems$.subscribe(items => {
       this.cartItems.set(items);

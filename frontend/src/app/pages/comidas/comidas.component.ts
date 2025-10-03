@@ -406,6 +406,12 @@ export class ComidasComponent {
 
   // Métodos para acciones
   viewProduct(product: ExtendedProduct) {
+    // Scroll al top antes de navegar al detalle del producto
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
     this.router.navigate(['/product', product.id]);
   }
 

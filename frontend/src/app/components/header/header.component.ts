@@ -14,6 +14,7 @@ import { UserService } from '../../services/user.service';
 export class HeaderComponent implements OnInit {
   @Input() showUserMenu: boolean = true;
   @Input() showCart: boolean = true;
+  @Input() showMobileMenu: boolean = true;
   
   private userService = inject(UserService);
   
@@ -61,18 +62,39 @@ export class HeaderComponent implements OnInit {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
 
-  closeMobileMenu() {
+  openMobileMenu(event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    console.log('Opening mobile menu');
+    this.isMobileMenuOpen = true;
+  }
+
+  closeMobileMenu(event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    console.log('Closing mobile menu');
     this.isMobileMenuOpen = false;
   }
 
   @HostListener('document:click', ['$event'])
+  @HostListener('document:touchstart', ['$event'])
   onDocumentClick(event: Event) {
     const target = event.target as HTMLElement;
+    
+    // Cerrar dropdown de usuario
     if (!target.closest('.user-dropdown')) {
       this.isDropdownOpen = false;
     }
-    if (!target.closest('.mobile-menu-container')) {
-      this.isMobileMenuOpen = false;
+    
+    // Cerrar menú móvil solo si se hace clic fuera del contenedor del menú
+    if (this.isMobileMenuOpen && 
+        !target.closest('.mobile-menu-container') && 
+        !target.closest('.mobile-menu-dropdown')) {
+      this.closeMobileMenu();
     }
   }
 
