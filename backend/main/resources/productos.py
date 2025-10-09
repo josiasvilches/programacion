@@ -113,11 +113,11 @@ class Producto(Resource):
                 if usuario.rol == 'ADMIN':
                     return producto.to_json_complete(), 200
                 elif usuario.rol == 'cliente':
-                    return producto.to_json(), 200
+                    return producto.to_json_complete(), 200
                 else:
-                    return producto.to_json_short(), 200
+                    return producto.to_json_complete(), 200
             else:
-                return producto.to_json_short(), 200
+                return producto.to_json_complete(), 200
         except Exception as e:
             print("ERROR:", str(e))
             return {'error': str(e)}, 500

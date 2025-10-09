@@ -76,26 +76,59 @@ export class ProductComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
-        this.loadProduct(parseInt(id, 10));
+        this.loadProductFromAPI(parseInt(id, 10));
       }
     });
   }
 
-  private loadProduct(id: number) {
+  private async loadProductFromAPI(id: number) {
     this.isLoading.set(true);
     
-    // Simular carga de producto desde el servicio
-    setTimeout(() => {
-      const product = this.getProductDetails(id);
-      if (product) {
-        this.currentProduct.set(product);
-        this.loadRelatedProducts(product.category);
+    try {
+      // Llamar a la API para obtener el producto
+      const apiProduct = await this.productService.fetchProductById(id);
+      
+      if (apiProduct) {
+        // Convertir el producto de la API a ProductDetails con información adicional
+        const productDetails: ProductDetails = {
+          ...apiProduct,
+          cookingTime: "30-45 min",
+          servings: "2-3 personas",
+          prepTime: "25-35 min",
+          weight: "500-700 gr",
+          ingredients: ["Ingredientes frescos", "Preparación casera"],
+          rating: 4.5,
+          reviews: 50,
+          available: true,
+          popular: false
+        };
+        
+        this.currentProduct.set(productDetails);
+        this.loadRelatedProducts(productDetails.category);
       } else {
-        // Producto no encontrado, redirigir a comidas
-        this.router.navigate(['/comidas']);
+        console.error('Producto no encontrado en API');
+        // Si no se encuentra en API, usar método fallback
+        this.loadProductFallback(id);
       }
-      this.isLoading.set(false);
-    }, 500);
+    } catch (error) {
+      console.error('Error cargando producto desde API:', error);
+      // En caso de error, usar método fallback
+      this.loadProductFallback(id);
+    }
+    
+    this.isLoading.set(false);
+  }
+
+  private loadProductFallback(id: number) {
+    // Método fallback que usa los datos hardcodeados
+    const product = this.getProductDetails(id);
+    if (product) {
+      this.currentProduct.set(product);
+      this.loadRelatedProducts(product.category);
+    } else {
+      // Producto no encontrado, redirigir a comidas
+      this.router.navigate(['/comidas']);
+    }
   }
 
   private getProductDetails(id: number): ProductDetails | null {

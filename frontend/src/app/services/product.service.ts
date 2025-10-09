@@ -126,15 +126,18 @@ export class ProductService {
       
       // Transformar los datos de la API al formato que espera el frontend
       if (data.productos && Array.isArray(data.productos)) {
-        const transformedProducts: Product[] = data.productos.map((apiProduct: any) => ({
-          id: apiProduct.producto_id,
-          name: apiProduct.nombre,
-          description: apiProduct.descripcion || 'Producto delicioso',
-          price: apiProduct.precio,
-          category: 'Comidas',
-          emoji: '🍽️',
-          unit: 'porción'
-        }));
+        const transformedProducts: Product[] = data.productos.map((apiProduct: any, index: number) => {
+          console.log('Producto API:', apiProduct);
+          return {
+            id: apiProduct.producto_id || apiProduct.id || (index + 1),
+            name: apiProduct.nombre || 'Producto sin nombre',
+            description: apiProduct.descripcion || 'Producto delicioso',
+            price: apiProduct.precio || 0,
+            category: 'Comidas',
+            emoji: '🍽️',
+            unit: 'porción'
+          };
+        });
         
         // Actualizar el BehaviorSubject con los nuevos productos
         this.apiProductsSubject.next(transformedProducts);
@@ -150,5 +153,35 @@ export class ProductService {
   // Método para obtener los productos actuales
   getCurrentApiProducts(): Product[] {
     return this.apiProductsSubject.getValue();
+  }
+
+  // Fetch un producto específico por ID desde el backend
+  async fetchProductById(id: number): Promise<Product | null> {
+    try {
+      const response = await fetch(`http://localhost:5001/producto/${id}`);
+      const data = await response.json();
+      console.log('Respuesta del API para producto individual:', data);
+      
+      // La API devuelve directamente el objeto del producto (no envuelto en "productos")
+      if (data && data.producto_id) {
+        const transformedProduct: Product = {
+          id: data.producto_id,
+          name: data.nombre || 'Producto sin nombre',
+          description: data.descripcion || 'Producto delicioso',
+          price: data.precio || 0,
+          category: 'Comidas',
+          emoji: '🍽️',
+          unit: 'porción'
+        };
+        
+        console.log('Producto individual transformado:', transformedProduct);
+        return transformedProduct;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Error al obtener producto individual:', error);
+      return null;
+    }
   }
 }

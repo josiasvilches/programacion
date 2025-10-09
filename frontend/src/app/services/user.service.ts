@@ -10,11 +10,32 @@ export interface User {
   initials?: string;
 }
 
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  access_token: string;
+  mensaje: string;
+  refresh_token: string;
+  rol: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  // Usuarios predefinidos para testing
+  // Signal para el usuario actual
+  private currentUser = signal<User | null>(null);
+  
+  // Signal para el estado de autenticación
+  private isAuthenticated = signal<boolean>(false);
+  
+  // Signal para el estado de carga
+  private isLoading = signal<boolean>(false);
+
+  // Usuarios predefinidos para testing/fallback
   private testUsers: User[] = [
     {
       id: 1,
@@ -50,8 +71,17 @@ export class UserService {
     }
   ];
 
-  // Signal para el usuario actual - empezamos con el cliente
-  private currentUser = signal<User | null>(this.testUsers[0]);
+  constructor() {
+    // Verificar si hay un token almacenado al inicializar
+    if (this.isBrowser()) {
+      this.checkStoredToken();
+    }
+  }
+
+  // Verificar si estamos en el navegador (no en SSR)
+  private isBrowser(): boolean {
+    return typeof window !== 'undefined' && typeof localStorage !== 'undefined';
+  }
 
   // Computed para generar las iniciales automáticamente
   userInitials = computed(() => {
@@ -72,6 +102,10 @@ export class UserService {
     };
   });
 
+  // Getters para los signal
+  isLoggedIn = computed(() => this.isAuthenticated());
+  loginLoading = computed(() => this.isLoading());
+
   // Método para generar iniciales desde el nombre completo
   private generateInitials(fullName: string): string {
     const names = fullName.trim().split(' ');
@@ -86,6 +120,166 @@ export class UserService {
     const lastName = names[names.length - 1];
     
     return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
+  }
+
+  // Métodos de autenticación con API
+  async login(credentials: LoginRequest): Promise<{ success: boolean; message: string }> {
+    this.isLoading.set(true);
+    
+    try {
+      const response = await fetch('http://localhost:5001/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error de login:', errorData);
+        return { 
+          success: false, 
+          message: errorData.mensaje || 'Error de autenticación'
+        };
+      }
+
+      const data: LoginResponse = await response.json();
+      console.log('Respuesta de login:', data);
+
+      // Guardar tokens
+      this.storeTokens(data.access_token, data.refresh_token);
+      
+      // Crear objeto de usuario a partir de la respuesta
+      const userData = this.extractUserFromToken(data);
+      this.currentUser.set(userData);
+      this.isAuthenticated.set(true);
+
+      return { 
+        success: true, 
+        message: data.mensaje || 'Login exitoso'
+      };
+
+    } catch (error) {
+      console.error('Error en login:', error);
+      return { 
+        success: false, 
+        message: 'Error de conexión con el servidor'
+      };
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  // Métodos para manejo de tokens
+  private storeTokens(accessToken: string, refreshToken: string) {
+    if (this.isBrowser()) {
+      localStorage.setItem('access_token', accessToken);
+      localStorage.setItem('refresh_token', refreshToken);
+    }
+  }
+
+  private clearTokens() {
+    if (this.isBrowser()) {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+    }
+  }
+
+  private getAccessToken(): string | null {
+    if (this.isBrowser()) {
+      return localStorage.getItem('access_token');
+    }
+    return null;
+  }
+
+  private getRefreshToken(): string | null {
+    if (this.isBrowser()) {
+      return localStorage.getItem('refresh_token');
+    }
+    return null;
+  }
+
+  // Extraer información del usuario desde el token de respuesta
+  private extractUserFromToken(loginResponse: LoginResponse): User {
+    // Decodificar el JWT payload para obtener la información del usuario
+    try {
+      const payload = JSON.parse(atob(loginResponse.access_token.split('.')[1]));
+      
+      return {
+        id: parseInt(payload.sub) || 0,
+        fullName: payload.nombre || 'Usuario',
+        email: payload.email || '',
+        role: loginResponse.rol || 'USER',
+        status: 'Activo'
+      };
+    } catch (error) {
+      console.error('Error decodificando token:', error);
+      return {
+        id: 0,
+        fullName: 'Usuario',
+        email: '',
+        role: loginResponse.rol || 'USER',
+        status: 'Activo'
+      };
+    }
+  }
+
+  // Verificar si hay un token almacenado al inicializar
+  private checkStoredToken() {
+    if (!this.isBrowser()) {
+      return; // No hacer nada en SSR
+    }
+
+    const token = this.getAccessToken();
+    if (token) {
+      // Verificar si el token no está expirado
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const currentTime = Math.floor(Date.now() / 1000);
+        
+        if (payload.exp > currentTime) {
+          // Token válido, restaurar usuario
+          const userData: User = {
+            id: parseInt(payload.sub) || 0,
+            fullName: payload.nombre || 'Usuario',
+            email: payload.email || '',
+            role: payload.rol || 'USER',
+            status: 'Activo'
+          };
+          
+          this.currentUser.set(userData);
+          this.isAuthenticated.set(true);
+          console.log('Usuario restaurado desde token:', userData.fullName);
+        } else {
+          // Token expirado
+          this.clearTokens();
+        }
+      } catch (error) {
+        console.error('Error verificando token almacenado:', error);
+        this.clearTokens();
+      }
+    }
+  }
+
+  // Método para obtener el token de autorización para las llamadas API
+  getAuthToken(): string | null {
+    return this.getAccessToken();
+  }
+
+  // Método para hacer llamadas autenticadas
+  async authenticatedFetch(url: string, options: RequestInit = {}): Promise<Response> {
+    const token = this.getAccessToken();
+    
+    const authOptions: RequestInit = {
+      ...options,
+      headers: {
+        ...options.headers,
+        ...(token && { 'Authorization': `Bearer ${token}` })
+      }
+    };
+
+    return fetch(url, authOptions);
   }
 
   // Método para actualizar el usuario (simula login/cambio de usuario)
@@ -109,11 +303,12 @@ export class UserService {
     return this.currentUser();
   }
 
-  // Métodos específicos para cambiar a diferentes tipos de usuarios
+  // Métodos específicos para cambiar a diferentes tipos de usuarios (para testing)
   loginAsAdmin() {
     const admin = this.testUsers.find(u => u.role === 'Admin');
     if (admin) {
       this.currentUser.set(admin);
+      this.isAuthenticated.set(true);
       console.log('Cambiado a usuario administrador:', admin.fullName);
     }
   }
@@ -122,6 +317,7 @@ export class UserService {
     const employee = this.testUsers.find(u => u.role === 'Empleado');
     if (employee) {
       this.currentUser.set(employee);
+      this.isAuthenticated.set(true);
       console.log('Cambiado a usuario empleado:', employee.fullName);
     }
   }
@@ -130,6 +326,7 @@ export class UserService {
     const client = this.testUsers.find(u => u.role === 'Cliente');
     if (client) {
       this.currentUser.set(client);
+      this.isAuthenticated.set(true);
       console.log('Cambiado a usuario cliente:', client.fullName);
     }
   }
@@ -139,18 +336,21 @@ export class UserService {
     return this.testUsers;
   }
 
-  // Método para hacer login por ID
+  // Método para hacer login por ID (testing)
   loginAsUser(userId: number) {
     const user = this.testUsers.find(u => u.id === userId);
     if (user) {
       this.currentUser.set(user);
+      this.isAuthenticated.set(true);
       console.log('Cambiado a usuario:', user.fullName, '- Rol:', user.role);
     }
   }
 
-  // Método para logout
+  // Método para hacer logout
   logout() {
     this.currentUser.set(null);
+    this.isAuthenticated.set(false);
+    this.clearTokens();
     console.log('Usuario deslogueado');
   }
 }

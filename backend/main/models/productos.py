@@ -30,6 +30,7 @@ class Producto(db.Model):
     # clientes
     def to_json(self):
         prod_json = {
+            'producto_id': self.producto_id,
             'nombre': self.nombre,
             'precio': float(self.precio),
             'id_categoria': self.id_categoria,

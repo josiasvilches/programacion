@@ -15,6 +15,7 @@ export class LoginComponent {
   // Signals para el estado del componente
   isLoading = signal(false);
   showPassword = signal(false);
+  formTouched = signal(false);
   
   // Formulario reactivo
   loginForm: FormGroup;
@@ -27,6 +28,11 @@ export class LoginComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       remember: [false]
+    });
+
+    // Escuchar cambios en el formulario para actualizar el signal
+    this.loginForm.valueChanges.subscribe(() => {
+      this.formTouched.set(true);
     });
   }
 
@@ -57,7 +63,11 @@ export class LoginComponent {
     return null;
   });
 
-  isFormValid = computed(() => this.loginForm.valid);
+  isFormValid = computed(() => {
+    // Forzar re-evaluación cuando formTouched cambia
+    this.formTouched();
+    return this.loginForm.valid;
+  });
 
   // Métodos del componente
   togglePassword() {
@@ -70,7 +80,7 @@ export class LoginComponent {
       
       const { email, password, remember } = this.loginForm.value;
       
-      // Simular proceso de login
+      // Simular proceso de login con setTimeout como solicitaste
       setTimeout(() => {
         console.log('Login exitoso:', { email, remember });
         this.isLoading.set(false);
@@ -83,6 +93,7 @@ export class LoginComponent {
       Object.keys(this.loginForm.controls).forEach(key => {
         this.loginForm.get(key)?.markAsTouched();
       });
+      this.formTouched.set(true);
     }
   }
 

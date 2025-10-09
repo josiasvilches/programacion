@@ -425,7 +425,13 @@ export class ComidasComponent {
 
   // Métodos para acciones
   viewProduct(product: ExtendedProduct) {
-    this.router.navigate(['/comidas', product.id]);
+    console.log('Navegando a producto:', product);
+    console.log('ID del producto:', product.id);
+    if (product.id) {
+      this.router.navigate(['/comidas', product.id]);
+    } else {
+      console.error('Producto sin ID válido:', product);
+    }
   }
 
   addToCart(product: ExtendedProduct) {
@@ -465,5 +471,10 @@ export class ComidasComponent {
   goToCart() {
     this.hideCartPopup();
     this.router.navigate(['/cart']);
+  }
+
+  // TrackBy function para el ngFor
+  trackByProductId(index: number, product: ExtendedProduct): any {
+    return product.id || index;
   }
 }

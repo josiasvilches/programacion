@@ -137,7 +137,7 @@
       <!-- Products Grid -->
       @if (filteredProducts().length > 0) {
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        @for (product of filteredProducts(); track product.id) {
+        @for (product of filteredProducts(); track trackByProductId($index, product)) {
         <div
           [class]="getProductCardClass(product)"
           class="product-card bg-white rounded-2xl shadow-sm overflow-hidden hover-lift smooth-transition fade-in"
