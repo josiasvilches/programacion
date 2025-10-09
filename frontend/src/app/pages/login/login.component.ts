@@ -1,7 +1,8 @@
-import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -19,6 +20,9 @@ export class LoginComponent {
   
   // Formulario reactivo
   loginForm: FormGroup;
+
+  // Inyectar servicios
+  private userService = inject(UserService);
 
   constructor(
     private fb: FormBuilder,
@@ -80,14 +84,24 @@ export class LoginComponent {
       
       const { email, password, remember } = this.loginForm.value;
       
-      // Simular proceso de login con setTimeout como solicitaste
-      setTimeout(() => {
-        console.log('Login exitoso:', { email, remember });
-        this.isLoading.set(false);
+      // Llamar al backend real
+      this.userService.login({ email, password }).then((result) => {
+        console.log('Resultado del login:', result);
         
-        // Redirigir a la página principal
-        this.router.navigate(['/']);
-      }, 2000);
+        if (result.success) {
+          console.log('Login exitoso:', result.message);
+          // Redirigir a la página principal
+          this.router.navigate(['/']);
+        } else {
+          console.error('Error en login:', result.message);
+          // Aquí podrías mostrar un mensaje de error al usuario
+        }
+        
+        this.isLoading.set(false);
+      }).catch((error) => {
+        console.error('Error en login:', error);
+        this.isLoading.set(false);
+      });
     } else {
       // Marcar todos los campos como touched para mostrar errores
       Object.keys(this.loginForm.controls).forEach(key => {

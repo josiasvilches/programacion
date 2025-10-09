@@ -152,8 +152,15 @@ export class UserService {
       
       // Crear objeto de usuario a partir de la respuesta
       const userData = this.extractUserFromToken(data);
+      
+      // Guardar datos adicionales del login en localStorage
+      this.storeUserData(data);
+      
+      // Actualizar los signals
       this.currentUser.set(userData);
       this.isAuthenticated.set(true);
+
+      console.log('Usuario logueado y datos guardados:', userData);
 
       return { 
         success: true, 
@@ -179,10 +186,33 @@ export class UserService {
     }
   }
 
+  // Guardar datos adicionales del usuario en localStorage
+  private storeUserData(loginData: LoginResponse) {
+    if (this.isBrowser()) {
+      const userInfo = {
+        rol: loginData.rol,
+        mensaje: loginData.mensaje,
+        loginTime: new Date().toISOString()
+      };
+      localStorage.setItem('user_info', JSON.stringify(userInfo));
+      console.log('Datos del usuario guardados en localStorage:', userInfo);
+    }
+  }
+
+  // Recuperar datos del usuario desde localStorage
+  private getUserData(): any {
+    if (this.isBrowser()) {
+      const userData = localStorage.getItem('user_info');
+      return userData ? JSON.parse(userData) : null;
+    }
+    return null;
+  }
+
   private clearTokens() {
     if (this.isBrowser()) {
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user_info');
     }
   }
 
@@ -232,6 +262,8 @@ export class UserService {
     }
 
     const token = this.getAccessToken();
+    const userInfo = this.getUserData();
+    
     if (token) {
       // Verificar si el token no está expirado
       try {
@@ -244,16 +276,18 @@ export class UserService {
             id: parseInt(payload.sub) || 0,
             fullName: payload.nombre || 'Usuario',
             email: payload.email || '',
-            role: payload.rol || 'USER',
+            role: payload.rol || userInfo?.rol || 'USER',
             status: 'Activo'
           };
           
           this.currentUser.set(userData);
           this.isAuthenticated.set(true);
-          console.log('Usuario restaurado desde token:', userData.fullName);
+          console.log('Usuario restaurado desde localStorage:', userData);
+          console.log('Información adicional del usuario:', userInfo);
         } else {
           // Token expirado
           this.clearTokens();
+          console.log('Token expirado, sesión limpiada');
         }
       } catch (error) {
         console.error('Error verificando token almacenado:', error);
@@ -265,6 +299,26 @@ export class UserService {
   // Método para obtener el token de autorización para las llamadas API
   getAuthToken(): string | null {
     return this.getAccessToken();
+  }
+
+  // Método para obtener información adicional del usuario
+  getUserInfo(): any {
+    return this.getUserData();
+  }
+
+  // Método para verificar si el usuario tiene un rol específico
+  hasRole(role: string): boolean {
+    const currentUser = this.getCurrentUser();
+    return currentUser?.role === role;
+  }
+
+  // Método para obtener todos los datos almacenados del usuario
+  getStoredUserData(): { user: User | null; userInfo: any; token: string | null } {
+    return {
+      user: this.getCurrentUser(),
+      userInfo: this.getUserInfo(),
+      token: this.getAuthToken()
+    };
   }
 
   // Método para hacer llamadas autenticadas
