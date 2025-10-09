@@ -30,12 +30,29 @@ def register():
             nuevo_usuario = UsuarioModel(nombre=nombre, email=email, plain_password=password, numero=numero, rol=rol)
             db.session.add(nuevo_usuario)
             db.session.commit()
-            send = sendMail([nuevo_usuario.email], "¡Bienvenid@ a Grupo F' Rotiseria!", "register", nuevo_usuario=nuevo_usuario)
-
+            # Intentar enviar correo de bienvenida, pero no fallar el registro si el envío falla
+            try:
+                send = sendMail([nuevo_usuario.email], "¡Bienvenid@ a Grupo F' Rotiseria!", "register", nuevo_usuario=nuevo_usuario)
+            except Exception as mail_err:
+                # Loguear el error pero no propagarlo al cliente
+                print(f"Warning: fallo al enviar correo de bienvenida: {mail_err}")
+                send = None
     except Exception as e:
         print("ERROR:", str(e))
         return {'error': str(e)}, 500
-    return {'mensaje': f'Usuario {nombre} registrado exitosamente'}, 201
+
+    # Responder con los datos del usuario creado y un mensaje de éxito
+    try:
+        usuario_json = nuevo_usuario.to_json()
+    except Exception:
+        usuario_json = {
+            'usuario_id': getattr(nuevo_usuario, 'usuario_id', None),
+            'nombre': nombre,
+            'email': email,
+            'rol': rol
+        }
+
+    return {'mensaje': f'Usuario {nombre} registrado exitosamente', 'usuario': usuario_json}, 201
 
 # Método de login
 @auth.route('/login', methods=['POST'])

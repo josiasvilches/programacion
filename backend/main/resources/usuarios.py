@@ -138,6 +138,8 @@ class Usuario(Resource):
                 # identity puede ser sólo el id
                 identity_user_id = identity
 
+            print(f"Rol del usuario actual: {rol}, ID: {identity_user_id}")
+
             # Verificar si el usuario tiene permisos para eliminar
             if rol != 'ADMIN' and (identity_user_id is None or int(usuario.usuario_id) != int(identity_user_id)):
                 return {'mensaje': 'No tiene permisos para eliminar este usuario'}, 403
