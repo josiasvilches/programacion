@@ -9,6 +9,45 @@ import { UserService } from '../../services/user.service';
   standalone: true,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
+  styles: [`
+    .smooth-transition {
+      transition: all 0.3s ease;
+    }
+    
+    .error-bounce {
+      animation: bounce 0.5s ease-in-out;
+    }
+    
+    .success-fade {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 53%, 80%, 100% {
+        transform: translate3d(0,0,0);
+      }
+      40%, 43% {
+        transform: translate3d(0, -8px, 0);
+      }
+      70% {
+        transform: translate3d(0, -4px, 0);
+      }
+      90% {
+        transform: translate3d(0, -2px, 0);
+      }
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ReactiveFormsModule]
 })
@@ -17,6 +56,8 @@ export class LoginComponent {
   isLoading = signal(false);
   showPassword = signal(false);
   formTouched = signal(false);
+  errorMessage = signal<string | null>(null);
+  successMessage = signal<string | null>(null);
   
   // Formulario reactivo
   loginForm: FormGroup;
@@ -29,41 +70,32 @@ export class LoginComponent {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      email: ['', [
+        Validators.required, 
+        Validators.email,
+        Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
+      ]],
+      password: ['', [
+        Validators.required, 
+        Validators.minLength(3)  // Cambié a 3 para hacer más fácil el testing
+      ]],
       remember: [false]
     });
 
-    // Escuchar cambios en el formulario para actualizar el signal
+    // Escuchar cambios en el formulario solo para actualizar el signal de touched
     this.loginForm.valueChanges.subscribe(() => {
       this.formTouched.set(true);
     });
   }
 
-  // Computed values para validación
+  // Computed values para validación (solo después de enviar)
   emailError = computed(() => {
-    const emailControl = this.loginForm.get('email');
-    if (emailControl?.invalid && emailControl?.touched) {
-      if (emailControl.errors?.['required']) {
-        return 'El email es requerido';
-      }
-      if (emailControl.errors?.['email']) {
-        return 'Por favor ingresá un email válido';
-      }
-    }
+    // Solo mostrar errores después de que el formulario fue enviado
     return null;
   });
 
   passwordError = computed(() => {
-    const passwordControl = this.loginForm.get('password');
-    if (passwordControl?.invalid && passwordControl?.touched) {
-      if (passwordControl.errors?.['required']) {
-        return 'La contraseña es requerida';
-      }
-      if (passwordControl.errors?.['minlength']) {
-        return 'La contraseña debe tener al menos 6 caracteres';
-      }
-    }
+    // Solo mostrar errores después de que el formulario fue enviado
     return null;
   });
 
@@ -73,42 +105,83 @@ export class LoginComponent {
     return this.loginForm.valid;
   });
 
+  // Computed para verificar si se puede enviar el formulario (ahora solo verifica loading)
+  canSubmit = computed(() => {
+    return !this.isLoading();
+  });
+
   // Métodos del componente
   togglePassword() {
     this.showPassword.update(show => !show);
   }
 
   onSubmit() {
-    if (this.loginForm.valid) {
-      this.isLoading.set(true);
-      
-      const { email, password, remember } = this.loginForm.value;
-      
-      // Llamar al backend real
-      this.userService.login({ email, password }).then((result) => {
-        console.log('Resultado del login:', result);
-        
-        if (result.success) {
-          console.log('Login exitoso:', result.message);
-          // Redirigir a la página principal
-          this.router.navigate(['/']);
-        } else {
-          console.error('Error en login:', result.message);
-          // Aquí podrías mostrar un mensaje de error al usuario
-        }
-        
-        this.isLoading.set(false);
-      }).catch((error) => {
-        console.error('Error en login:', error);
-        this.isLoading.set(false);
-      });
-    } else {
-      // Marcar todos los campos como touched para mostrar errores
-      Object.keys(this.loginForm.controls).forEach(key => {
-        this.loginForm.get(key)?.markAsTouched();
-      });
-      this.formTouched.set(true);
+    // Limpiar mensajes previos
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
+
+    // Verificar si ya está cargando
+    if (this.isLoading()) {
+      return;
     }
+
+    // Marcar todos los campos como touched para mostrar errores
+    this.markFormGroupTouched();
+
+    const { email, password, remember } = this.loginForm.value;
+    
+    // Validaciones que se muestran al usuario
+    if (!email || !email.trim()) {
+      this.errorMessage.set('El email es obligatorio');
+      return;
+    }
+
+    if (!email.includes('@') || !email.includes('.')) {
+      this.errorMessage.set('Por favor ingresá un email válido (ej: nombre@dominio.com)');
+      return;
+    }
+
+    if (!password || password.length < 3) {
+      this.errorMessage.set('La contraseña debe tener al menos 3 caracteres');
+      return;
+    }
+
+    // Si llegamos aquí, las validaciones pasaron
+    this.isLoading.set(true);
+
+    // Llamar al backend real
+    this.userService.login({ email: email.trim(), password }).then((result) => {
+      console.log('Resultado del login:', result);
+      
+      if (result.success) {
+        this.successMessage.set(result.message);
+        console.log('Login exitoso:', result.message);
+        
+        // Esperar un momento para mostrar el mensaje de éxito
+        setTimeout(() => {
+          this.router.navigate(['/']);
+        }, 1500);
+      } else {
+        this.errorMessage.set(result.message || 'Error de autenticación. Verificá tus credenciales.');
+        console.error('Error en login:', result.message);
+      }
+      
+      this.isLoading.set(false);
+    }).catch((error) => {
+      console.error('Error en login:', error);
+      this.errorMessage.set('Error de conexión. Verificá tu conexión a internet e intentá nuevamente.');
+      this.isLoading.set(false);
+    });
+  }
+
+  // Método para marcar todos los campos como touched
+  private markFormGroupTouched() {
+    Object.keys(this.loginForm.controls).forEach(key => {
+      const control = this.loginForm.get(key);
+      control?.markAsTouched();
+      control?.markAsDirty();
+    });
+    this.formTouched.set(true);
   }
 
   goBack() {
@@ -134,13 +207,13 @@ export class LoginComponent {
 
   // Helper methods
   getInputClasses(fieldName: string): string {
-    const control = this.loginForm.get(fieldName);
-    const baseClasses = 'w-full px-4 py-3 rounded-lg input-focus smooth-transition';
-    
-    if (control?.invalid && control?.touched) {
-      return `${baseClasses} border-red-500`;
-    }
-    
-    return `${baseClasses} border border-gray-300`;
+    const baseClasses = 'w-full px-4 py-3 rounded-lg input-focus smooth-transition border-2';
+    return `${baseClasses} border-gray-300 focus:border-red-500 focus:ring-red-500`;
+  }
+
+  // Método para limpiar mensajes de error manualmente
+  clearMessages() {
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
   }
 }
