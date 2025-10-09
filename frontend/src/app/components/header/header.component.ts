@@ -21,7 +21,7 @@ export class HeaderComponent implements OnInit {
   isMobileMenuOpen = false;
   cartItemsCount = 0;
 
-<<<<<<< HEAD
+
   // Usuario hardcodeado - cambiar a null para simular usuario no logueado
   user = {
     name: 'Juan Díaz',
@@ -31,24 +31,11 @@ export class HeaderComponent implements OnInit {
     role: 'empleado' // Puede ser 'admin', 'empleado', 'cliente'
   };
   // Para probar sin usuario logueado, cambiar a: user = null;
-=======
-  // Usuario desde el servicio
-  user = computed(() => {
-    const userData = this.userService.user();
-    if (!userData) return null;
-    
-    return {
-      name: userData.fullName,
-      initials: userData.initials,
-      notifications: 3,
-      role: userData.role // Usar el rol real del usuario, no siempre 'cliente'
-    };
-  });
->>>>>>> 1b2a851c4bd461673dbb636889abf9759d21b803
 
   // Getter para verificar si hay usuario logueado
   get isUserLoggedIn(): boolean {
-    return this.user() !== null;
+    return this.user !== null;
+    // return false;
   }
 
     // Getter para verificar si el usuario puede acceder al panel de administración
