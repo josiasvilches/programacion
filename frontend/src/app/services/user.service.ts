@@ -128,6 +128,17 @@ export class UserService {
   async login(credentials: LoginRequest): Promise<{ success: boolean; message: string }> {
     this.isLoading.set(true);
     
+    // Mostrar en consola el valor de NG_APP_API_URL (intentando varias fuentes comunes)
+    try {
+      const apiUrl = (typeof window !== 'undefined' && (window as any).NG_APP_API_URL)
+        || (typeof process !== 'undefined' && (process as any).env && (process as any).env.NG_APP_API_URL)
+        || (typeof import.meta !== 'undefined' && (import.meta as any).env && (import.meta as any).env.NG_APP_API_URL)
+        || null;
+      console.log('NG_APP_API_URL =', apiUrl);
+    } catch (e) {
+      console.log('NG_APP_API_URL = <unavailable>');
+    }
+
     try {
       const response = await fetch('http://localhost:5001/auth/login', {
         method: 'POST',
