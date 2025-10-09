@@ -402,7 +402,7 @@ export class ComidasComponent {
 
   // Métodos para acciones
   viewProduct(product: ExtendedProduct) {
-    this.router.navigate(['/product', product.id]);
+    this.router.navigate(['/comidas', product.id]);
   }
 
   addToCart(product: ExtendedProduct) {

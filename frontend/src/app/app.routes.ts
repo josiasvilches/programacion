@@ -17,11 +17,11 @@ import { AdminProfileComponent } from './pages/admin/profile/admin-profile.compo
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
+  { path: 'comidas/:id', component: ProductComponent },
   { path: 'comidas', component: ComidasComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'user', component: UserComponent },
-  { path: 'product/:id', component: ProductComponent },
   { path: 'cart', component: CartComponent },
   { path: 'payment', component: PaymentComponent },
   { path: 'orders', component: OrdersComponent },

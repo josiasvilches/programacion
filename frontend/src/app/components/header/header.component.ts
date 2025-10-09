@@ -20,6 +20,7 @@ export class HeaderComponent implements OnInit {
     name: 'Juan Díaz',
     initials: 'JD',
     notifications: 3,
+    // role: 'cliente' // Puede ser 'admin', 'empleado', 'cliente'
     role: 'empleado' // Puede ser 'admin', 'empleado', 'cliente'
   };
   // Para probar sin usuario logueado, cambiar a: user = null;
