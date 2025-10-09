@@ -2,7 +2,7 @@ from flask_restful import Resource
 from flask import request, jsonify
 from main.models import UsuarioModel
 from .. import db
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from main.auth.decorators import role_required
 
 # Recurso para lista de usuarios
@@ -129,18 +129,31 @@ class Usuario(Resource):
 
             # Obtener el rol y la identidad del usuario actual
             identity = get_jwt_identity()
-            rol = None
+            claims = get_jwt()
+            rol = claims.get('rol') if isinstance(claims, dict) else None
+
+            # identity puede ser dict (antiguo) o el id (sub) como string
             identity_user_id = None
             if isinstance(identity, dict):
-                rol = identity.get('rol')
                 identity_user_id = identity.get('usuario_id') or identity.get('id')
+                # si rol no vino en los claims, intentar extraerlo también desde la identidad dict
+                if not rol:
+                    rol = identity.get('rol')
             else:
-                # identity puede ser sólo el id
                 identity_user_id = identity
 
             print(f"Rol del usuario actual: {rol}, ID: {identity_user_id}")
 
             # Verificar si el usuario tiene permisos para eliminar
+            # Si no viene el rol en los claims, intentar obtenerlo desde la BD usando el identity_user_id
+            if not rol and identity_user_id:
+                try:
+                    acting_user = UsuarioModel.query.get(int(identity_user_id))
+                    if acting_user:
+                        rol = acting_user.rol
+                except Exception:
+                    rol = None
+
             if rol != 'ADMIN' and (identity_user_id is None or int(usuario.usuario_id) != int(identity_user_id)):
                 return {'mensaje': 'No tiene permisos para eliminar este usuario'}, 403
 

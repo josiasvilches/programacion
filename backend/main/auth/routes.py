@@ -9,35 +9,43 @@ auth = Blueprint('auth', __name__, url_prefix='/auth')
 # Método de registro
 @auth.route('/register', methods=['POST'])
 def register():
+    datos = request.get_json() or {}
+    nombre = datos.get('nombre')
+    email = datos.get('email')
+    password = datos.get('password')
+    numero = datos.get('numero')
+    rol = datos.get('rol', 'USER')  # Por defecto, el rol será 'USER'
+
+    if not nombre or not password:
+        return {'mensaje': 'Nombre y password son requeridos'}, 400
+
     try:
-        datos = request.get_json() or {}
-        nombre = datos.get('nombre')
-        email = datos.get('email')
-        password = datos.get('password')
-        numero = datos.get('numero')
-        rol = datos.get('rol', 'cliente')  # Por defecto, el rol será 'cliente'
-
-        if not nombre or not password:
-            return {'mensaje': 'Nombre y password son requeridos'}, 400
-
         # Verificar si el usuario ya existe
         usuario_existente = UsuarioModel.query.filter_by(email=email).first()
         if usuario_existente:
             return {'mensaje': 'El email ya pertenece a un usuario'}, 409
 
-        else:
-            # Crear nuevo usuario
-            nuevo_usuario = UsuarioModel(nombre=nombre, email=email, plain_password=password, numero=numero, rol=rol)
-            db.session.add(nuevo_usuario)
-            db.session.commit()
-            # Intentar enviar correo de bienvenida, pero no fallar el registro si el envío falla
-            try:
-                send = sendMail([nuevo_usuario.email], "¡Bienvenid@ a Grupo F' Rotiseria!", "register", nuevo_usuario=nuevo_usuario)
-            except Exception as mail_err:
-                # Loguear el error pero no propagarlo al cliente
-                print(f"Warning: fallo al enviar correo de bienvenida: {mail_err}")
-                send = None
+        # Crear nuevo usuario
+        nuevo_usuario = UsuarioModel(nombre=nombre, email=email, plain_password=password, numero=numero, rol=rol)
+        db.session.add(nuevo_usuario)
+        db.session.commit()
+
+        # Intentar enviar correo de bienvenida, pero no fallar el registro si el envío falla
+        mail_sent = False
+        try:
+            send = sendMail([nuevo_usuario.email], "¡Bienvenid@ a Grupo F' Rotiseria!", "register", nuevo_usuario=nuevo_usuario)
+            mail_sent = True
+        except Exception as mail_err:
+            # Loguear el error pero no propagarlo al cliente
+            print(f"Warning: fallo al enviar correo de bienvenida: {mail_err}")
+            mail_sent = False
+
     except Exception as e:
+        # Si algo falla antes del commit, revertir la transacción
+        try:
+            db.session.rollback()
+        except Exception:
+            pass
         print("ERROR:", str(e))
         return {'error': str(e)}, 500
 
@@ -52,7 +60,7 @@ def register():
             'rol': rol
         }
 
-    return {'mensaje': f'Usuario {nombre} registrado exitosamente', 'usuario': usuario_json}, 201
+    return {'mensaje': f'Usuario {nombre} registrado exitosamente', 'usuario': usuario_json, 'mail_sent': mail_sent}, 201
 
 # Método de login
 @auth.route('/login', methods=['POST'])

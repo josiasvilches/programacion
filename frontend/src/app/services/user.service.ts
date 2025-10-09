@@ -347,6 +347,30 @@ export class UserService {
     };
   }
 
+  // Método para registrar un nuevo usuario contra el backend
+  async register(payload: { nombre: string; email: string; password: string; numero?: string }): Promise<{ success: boolean; data?: any; message?: string }> {
+    this.isLoading.set(true);
+    try {
+      const res = await fetch('http://localhost:5001/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        return { success: false, message: data.mensaje || data.error || 'Error en el registro' };
+      }
+
+      return { success: true, data, message: data.mensaje || 'Registro exitoso' };
+    } catch (error) {
+      console.error('Error en register:', error);
+      return { success: false, message: 'Error de conexión' };
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
   // Método para hacer llamadas autenticadas
   async authenticatedFetch(url: string, options: RequestInit = {}): Promise<Response> {
     const token = this.getAccessToken();

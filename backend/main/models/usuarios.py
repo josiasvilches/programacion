@@ -6,7 +6,7 @@ class Usuario(db.Model):
     __tablename__ = 'usuarios'
     usuario_id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
-    rol = db.Column(db.String(50), nullable=False, default='cliente')
+    rol = db.Column(db.String(50), nullable=False, default='USER')
     estado = db.Column(db.String(50), nullable=False, default='en espera')
 
     email = db.Column(db.String(120), unique=True, index=True, nullable=False)
