@@ -1,4 +1,5 @@
 import { Component, OnInit, HostListener, computed, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminHeaderComponent } from '../../../components/admin/header/admin-header.component';
@@ -38,6 +39,7 @@ export interface QuickStats {
 })
 export class AdminProfileComponent implements OnInit {
   private userService = inject(UserService);
+  private router = inject(Router);
   
   // Computed para obtener información del usuario actual
   currentUser = computed(() => {
@@ -86,7 +88,55 @@ export class AdminProfileComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    // Initialize component
+    // Si no hay usuario logueado, redirigir al login
+    const currentUser = this.userService.getCurrentUser();
+    if (!currentUser) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    // Cargar datos completos del backend y parchar la vista
+    this.loadFullProfile();
+  }
+
+  private async loadFullProfile() {
+    const currentUser = this.userService.getCurrentUser();
+    if (!currentUser) return;
+
+    const token = this.userService.getAuthToken();
+    const userId = ((currentUser as any).usuario_id) ?? currentUser.id;
+    const url = `http://localhost:5001/usuario/${userId}`;
+
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        }
+      });
+
+      if (!res.ok) {
+        console.warn('No se pudieron obtener datos completos del usuario (admin):', res.status);
+        return;
+      }
+
+      const data = await res.json();
+      // Mapear campos básicos recibidos a profileData
+      if (data.nombre) this.profileData.name = data.nombre;
+      if (data.email) this.profileData.email = data.email;
+      if (data.numero !== undefined && data.numero !== null) this.profileData.phone = String(data.numero);
+
+      // Actualizar el servicio de usuario para sincronizar la app
+      const updatedFields: any = {};
+      if (data.nombre) updatedFields.fullName = data.nombre;
+      if (data.email) updatedFields.email = data.email;
+      if (data.numero !== undefined && data.numero !== null) updatedFields.phone = String(data.numero);
+      this.userService.updateUser(updatedFields);
+
+    } catch (error) {
+      console.error('Error cargando perfil admin completo:', error);
+    }
   }
 
   // Get user initials for avatar
@@ -121,27 +171,72 @@ export class AdminProfileComponent implements OnInit {
   onSaveProfile(): void {
     this.isLoading = true;
 
-    // Simulate API call
-    setTimeout(() => {
-      // Update profile data
-      this.profileData = { ...this.editProfileData };
-      
-      // Handle password change if provided
-      if (this.passwordData.currentPassword && this.passwordData.newPassword) {
-        console.log('Password change requested');
-        // Aquí se haría la llamada al backend para cambiar la contraseña
+    (async () => {
+      const currentUser = this.userService.getCurrentUser();
+      if (!currentUser) {
+        alert('No hay usuario logueado');
+        this.isLoading = false;
+        return;
       }
-      
-      this.isLoading = false;
-      this.closeEditModal();
-      
-      // Show success message based on what was updated
-      let message = '¡Perfil actualizado exitosamente!';
-      if (this.passwordData.currentPassword && this.passwordData.newPassword) {
-        message = '¡Perfil y contraseña actualizados exitosamente!';
+
+      const token = this.userService.getAuthToken();
+      const userId = ((currentUser as any).usuario_id) ?? currentUser.id;
+      const url = `http://localhost:5001/usuario/${userId}`;
+
+      // Construir payload mapeando campos a lo que espera el backend
+      const payload: any = {};
+      if (this.editProfileData.name !== this.profileData.name) payload.nombre = this.editProfileData.name;
+      if (this.editProfileData.email !== this.profileData.email) payload.email = this.editProfileData.email;
+      if (this.editProfileData.phone !== this.profileData.phone) payload.numero = this.editProfileData.phone;
+      if (this.passwordData.newPassword) payload.password = this.passwordData.newPassword;
+
+      if (Object.keys(payload).length === 0) {
+        this.isLoading = false;
+        this.closeEditModal();
+        return;
       }
-      this.showSuccessMessage(message);
-    }, 1500);
+
+      try {
+        const res = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          let errorMsg = 'Error al actualizar el perfil';
+          try { const err = await res.json(); errorMsg = err.message || err.mensaje || errorMsg; } catch(_) {}
+          alert(errorMsg);
+          this.isLoading = false;
+          return;
+        }
+
+        const data = await res.json();
+
+        // Actualizar UI y servicio local
+        if (payload.nombre) this.profileData.name = payload.nombre;
+        if (payload.email) this.profileData.email = payload.email;
+        if (payload.numero) this.profileData.phone = payload.numero;
+
+        const updatedFields: any = {};
+        if (payload.nombre) updatedFields.fullName = payload.nombre;
+        if (payload.email) updatedFields.email = payload.email;
+        if (payload.numero) updatedFields.phone = payload.numero;
+        this.userService.updateUser(updatedFields);
+
+        this.isLoading = false;
+        this.closeEditModal();
+        this.showSuccessMessage(data.message || data.mensaje || 'Perfil actualizado correctamente');
+
+      } catch (error) {
+        console.error('Error guardando perfil admin:', error);
+        alert('Error de conexión. Verificá tu red y volvé a intentar.');
+        this.isLoading = false;
+      }
+    })();
   }
 
   // Show success message
