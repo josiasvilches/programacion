@@ -7,6 +7,10 @@ import { Product } from '../models/product.interface';
 })
 export class ProductService {
   
+  // BehaviorSubject para manejar los productos de la API
+  private apiProductsSubject = new BehaviorSubject<Product[]>([]);
+  public apiProducts$ = this.apiProductsSubject.asObservable();
+
   private featuredProducts: Product[] = [
     {
       id: 1,
@@ -119,8 +123,32 @@ export class ProductService {
       const response = await fetch('http://localhost:5001/productos');
       const data = await response.json();
       console.log('Respuesta del API:', data);
+      
+      // Transformar los datos de la API al formato que espera el frontend
+      if (data.productos && Array.isArray(data.productos)) {
+        const transformedProducts: Product[] = data.productos.map((apiProduct: any) => ({
+          id: apiProduct.producto_id,
+          name: apiProduct.nombre,
+          description: apiProduct.descripcion || 'Producto delicioso',
+          price: apiProduct.precio,
+          category: 'Comidas',
+          emoji: '🍽️',
+          unit: 'porción'
+        }));
+        
+        // Actualizar el BehaviorSubject con los nuevos productos
+        this.apiProductsSubject.next(transformedProducts);
+        console.log('Productos transformados:', transformedProducts);
+      }
     } catch (error) {
       console.error('Error al obtener productos:', error);
+      // En caso de error, mantener un array vacío
+      this.apiProductsSubject.next([]);
     }
+  }
+
+  // Método para obtener los productos actuales
+  getCurrentApiProducts(): Product[] {
+    return this.apiProductsSubject.getValue();
   }
 }

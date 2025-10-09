@@ -38,6 +38,25 @@ export class ComidasComponent {
   constructor() {
     // Llamar a la función para obtener productos de la API
     this.productService.fetchProductsFromAPI();
+    
+    // Suscribirse a los productos de la API
+    this.productService.apiProducts$.subscribe(apiProducts => {
+      if (apiProducts.length > 0) {
+        // Transformar productos de la API al formato ExtendedProduct
+        const extendedApiProducts: ExtendedProduct[] = apiProducts.map(product => ({
+          ...product,
+          available: true,
+          popular: false,
+          new: true,
+          prepTime: "30-45 min",
+          portions: "2-3 personas"
+        }));
+        
+        // Actualizar los productos con los de la API
+        this.products.set(extendedApiProducts);
+        console.log('Productos actualizados desde API:', extendedApiProducts);
+      }
+    });
   }
 
   // Signals para el estado del componente
@@ -243,32 +262,23 @@ export class ComidasComponent {
 
   categories = computed((): CategoryInfo[] => {
     const allProducts = this.products();
+    
+    // Obtener categorías únicas dinámicamente
+    const uniqueCategories = [...new Set(allProducts.map(p => p.category))];
+    
+    const dynamicCategories = uniqueCategories.map(category => ({
+      key: category.toLowerCase(),
+      label: category,
+      count: allProducts.filter(p => p.category === category).length
+    }));
+
     return [
       {
         key: 'all',
         label: 'Todas',
         count: allProducts.length
       },
-      {
-        key: 'pollos',
-        label: 'Pollos',
-        count: allProducts.filter(p => p.category === 'pollos').length
-      },
-      {
-        key: 'milanesas',
-        label: 'Milanesas',
-        count: allProducts.filter(p => p.category === 'milanesas').length
-      },
-      {
-        key: 'empanadas',
-        label: 'Empanadas',
-        count: allProducts.filter(p => p.category === 'empanadas').length
-      },
-      {
-        key: 'carnes',
-        label: 'Carnes',
-        count: allProducts.filter(p => p.category === 'carnes').length
-      }
+      ...dynamicCategories
     ];
   });
 
@@ -284,7 +294,9 @@ export class ComidasComponent {
 
     // Filtro por categoría
     if (this.selectedCategory() !== 'all') {
-      filtered = filtered.filter(product => product.category === this.selectedCategory());
+      filtered = filtered.filter(product => 
+        product.category.toLowerCase() === this.selectedCategory()
+      );
     }
 
     // Filtro por precio
