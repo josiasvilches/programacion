@@ -4,10 +4,12 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
+import { UserService } from '../../services/user.service';
 
 interface UserProfile {
   fullName: string;
   email: string;
+  phone?: string;
   initials: string;
   role: string;
   status: string;
@@ -33,6 +35,7 @@ interface UserStats {
 export class UserComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private userService = inject(UserService);
 
   // Signals para el estado del componente
   isEditing = signal(false);
@@ -41,17 +44,23 @@ export class UserComponent {
   showNewPassword = signal(false);
   showConfirmPassword = signal(false);
 
-  // Usuario hardcodeado - en el futuro vendrá de un servicio
-  userProfile = signal<UserProfile>({
-    fullName: 'Juan Díaz',
-    email: 'juan.diaz@email.com',
-    initials: 'JD',
-    role: 'Cliente Premium',
-    status: 'Activa',
-    memberSince: '15 Mar',
-    lastAccess: 'Hoy',
-    ordersCount: 47,
-    isHighlighted: true
+  // Usuario desde el servicio - las iniciales se generan automáticamente
+  userProfile = computed(() => {
+    const user = this.userService.user();
+    if (!user) return null;
+    
+    return {
+      fullName: user.fullName,
+      email: user.email,
+      phone: user.phone,
+      initials: user.initials,
+      role: user.role,
+      status: user.status,
+      memberSince: '15 de Noviembre, 2023',
+      lastAccess: 'Hace 2 horas',
+      ordersCount: 12,
+      isHighlighted: true
+    };
   });
 
   // Formulario reactivo
@@ -62,13 +71,14 @@ export class UserComponent {
     const user = this.userProfile();
     
     this.profileForm = this.fb.group({
-      fullName: [user.fullName, [Validators.required, Validators.minLength(2)]],
-      email: [user.email, [Validators.required, Validators.email]]
+      fullName: [user?.fullName || '', [Validators.required, Validators.minLength(2)]],
+      email: [user?.email || '', [Validators.required, Validators.email]],
+      phone: [user?.phone || '', [Validators.required, Validators.pattern(/^[\+]?[0-9\s\-\(\)]{10,15}$/)]]
     });
 
     this.passwordForm = this.fb.group({
       currentPassword: ['', [Validators.required]],
-      newPassword: ['', [Validators.required, Validators.minLength(8)]],
+      newPassword: ['', [Validators.required]],
       confirmPassword: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
 
@@ -108,6 +118,15 @@ export class UserComponent {
     return null;
   });
 
+  phoneError = computed(() => {
+    const control = this.profileForm.get('phone');
+    if (control?.touched && control?.errors) {
+      if (control.errors['required']) return 'El teléfono es requerido';
+      if (control.errors['pattern']) return 'Por favor ingresá un número de teléfono válido';
+    }
+    return null;
+  });
+
   currentPasswordError = computed(() => {
     const control = this.passwordForm.get('currentPassword');
     if (control?.touched && control?.errors?.['required']) {
@@ -120,7 +139,6 @@ export class UserComponent {
     const control = this.passwordForm.get('newPassword');
     if (control?.touched && control?.errors) {
       if (control.errors['required']) return 'La nueva contraseña es requerida';
-      if (control.errors['minlength']) return 'La contraseña debe tener al menos 8 caracteres';
     }
     return null;
   });
@@ -134,38 +152,13 @@ export class UserComponent {
     return null;
   });
 
-  // Computed para fuerza de contraseña
-  passwordStrength = computed(() => {
-    const password = this.passwordForm.get('newPassword')?.value || '';
-    let strength = 0;
-    
-    if (password.length >= 8) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
-
-    const levels = [
-      { text: 'Muy débil - Agregá más caracteres', color: 'bg-red-500' },
-      { text: 'Débil - Agregá mayúsculas y números', color: 'bg-red-500' },
-      { text: 'Buena - Considerá agregar símbolos', color: 'bg-yellow-500' },
-      { text: 'Excelente - Contraseña muy segura', color: 'bg-green-500' }
-    ];
-
-    return {
-      strength,
-      level: levels[Math.max(0, strength - 1)] || levels[0],
-      bars: Array.from({ length: 4 }, (_, i) => ({
-        active: i < strength,
-        color: strength > 0 ? levels[strength - 1].color : 'bg-gray-200'
-      }))
-    };
-  });
-
   // Computed para verificar si hay cambios sin guardar
   hasUnsavedChanges = computed(() => {
     if (!this.isEditing()) return false;
     
     const currentUser = this.userProfile();
+    if (!currentUser) return false;
+    
     const formValues = this.profileForm.value;
     
     return (
@@ -215,10 +208,13 @@ export class UserComponent {
     
     // Restaurar valores originales
     const user = this.userProfile();
-    this.profileForm.patchValue({
-      fullName: user.fullName,
-      email: user.email
-    });
+    if (user) {
+      this.profileForm.patchValue({
+        fullName: user.fullName,
+        email: user.email,
+        phone: user.phone
+      });
+    }
 
     // Limpiar formulario de contraseña
     this.passwordForm.reset();
@@ -244,13 +240,11 @@ export class UserComponent {
     setTimeout(() => {
       const formValues = this.profileForm.value;
       
-      // Actualizar usuario
-      this.userProfile.update(user => ({
-        ...user,
+      // Actualizar usuario a través del servicio
+      this.userService.updateUser({
         fullName: formValues.fullName,
-        email: formValues.email,
-        initials: this.generateInitials(formValues.fullName)
-      }));
+        email: formValues.email
+      });
 
       this.isLoading.set(false);
       this.isEditing.set(false);
@@ -268,24 +262,66 @@ export class UserComponent {
     }
 
     const user = this.userProfile();
-    this.profileForm.patchValue({
-      fullName: user.fullName,
-      email: user.email
-    });
+    if (user) {
+      this.profileForm.patchValue({
+        fullName: user.fullName,
+        email: user.email,
+        phone: user.phone
+      });
+    }
     this.passwordForm.reset();
-  }
-
-  // Método para generar iniciales
-  generateInitials(fullName: string): string {
-    return fullName
-      .split(' ')
-      .map(name => name.charAt(0).toUpperCase())
-      .slice(0, 2)
-      .join('');
   }
 
   // Método para cambiar foto de perfil
   changeProfilePicture() {
     alert('Funcionalidad para cambiar foto de perfil. En una app real, esto abriría un selector de archivos.');
+  }
+
+  // Métodos para probar el cambio dinámico de iniciales (solo para demostración)
+  switchToUser1() {
+    this.userService.switchToUser({
+      id: 1,
+      fullName: 'María García Fernández',
+      email: 'maria.garcia@email.com',
+      role: 'Cliente',
+      status: 'Activo'
+    });
+  }
+
+  switchToUser2() {
+    this.userService.switchToUser({
+      id: 2,
+      fullName: 'Carlos Eduardo López',
+      email: 'carlos.lopez@email.com',
+      role: 'Cliente',
+      status: 'Activo'
+    });
+  }
+
+  switchToUser3() {
+    this.userService.switchToUser({
+      id: 3,
+      fullName: 'Ana Sofía',
+      email: 'ana.sofia@email.com',
+      role: 'Cliente',
+      status: 'Activo'
+    });
+  }
+
+  // Nuevos métodos para cambiar entre tipos de usuarios
+  loginAsAdmin() {
+    this.userService.loginAsAdmin();
+  }
+
+  loginAsEmployee() {
+    this.userService.loginAsEmployee();
+  }
+
+  loginAsClient() {
+    this.userService.loginAsClient();
+  }
+
+  logout() {
+    this.userService.logout();
   }
 }

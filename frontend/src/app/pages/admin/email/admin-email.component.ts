@@ -231,11 +231,18 @@ export class AdminEmailComponent implements OnInit {
     this.selectedTemplate = templateId;
     this.campaignForm.template = templateId;
     
-    // Pre-fill content based on template
-    const templateContent = this.getTemplateContent(templateId);
-    this.campaignForm.subject = templateContent.subject;
-    this.campaignForm.content = templateContent.content;
-    this.campaignForm.cta = templateContent.cta;
+    // Pre-fill content based on template, except for blank template
+    if (templateId !== 'blank') {
+      const templateContent = this.getTemplateContent(templateId);
+      this.campaignForm.subject = templateContent.subject;
+      this.campaignForm.content = templateContent.content;
+      this.campaignForm.cta = templateContent.cta;
+    } else {
+      // Clear content for blank template
+      this.campaignForm.subject = '';
+      this.campaignForm.content = '';
+      this.campaignForm.cta = '';
+    }
   }
 
   useTemplate(templateId: string) {
@@ -249,12 +256,12 @@ export class AdminEmailComponent implements OnInit {
       'promo': {
         subject: '¡Oferta especial solo para ti!',
         content: '¡Hola!\n\nTenemos una promoción increíble que no te puedes perder. Disfruta de descuentos especiales en todos nuestros platos favoritos.\n\n¡No dejes pasar esta oportunidad única!',
-        cta: '¡Ver Ofertas!'
+        cta: ''
       },
       'news': {
         subject: 'Novedades en Rotisería Cacho',
         content: '¡Hola!\n\nQueremos contarte todas las novedades que tenemos preparadas para ti. Nuevos platos, horarios especiales y mucho más.\n\n¡Mantente al día con nosotros!',
-        cta: 'Leer Más'
+        cta: ''
       },
       'event': {
         subject: 'Te invitamos a nuestro evento especial',
@@ -466,14 +473,35 @@ export class AdminEmailComponent implements OnInit {
   // Email preview
   getEmailPreview(): string {
     const template = this.getTemplateById(this.selectedTemplate);
-    if (!template) return '';
-
+    
     const name = this.campaignForm.name || 'Tu Campaña';
     const subject = this.campaignForm.subject || 'Asunto del email';
     const content = this.campaignForm.content || 'Contenido de tu promoción...';
     const cta = this.campaignForm.cta || 'Botón de Acción';
 
-    if (this.selectedTemplate === 'promo') {
+    if (this.selectedTemplate === 'blank') {
+      return `
+        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div class="bg-gradient-to-r from-gray-500 to-gray-600 text-white p-6 text-center">
+            <h1 class="text-2xl font-bold mb-2">✉️ Rotisería Cacho</h1>
+            <h2 class="text-xl">${subject || 'Asunto del email'}</h2>
+          </div>
+          <div class="p-6">
+            <div class="text-gray-700 mb-6 leading-relaxed">
+              ${content ? content.replace(/\n/g, '<br>') : '<p class="text-gray-400 italic">Escribe aquí tu contenido personalizado...</p>'}
+            </div>
+            ${cta && cta !== 'Botón de Acción' ? `<div class="text-center">
+              <button class="bg-gray-500 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-gray-600">
+                ${cta}
+              </button>
+            </div>` : ''}
+          </div>
+          <div class="bg-gray-50 p-4 text-center text-sm text-gray-500">
+            <p>Rotisería Cacho - Tu mensaje personalizado</p>
+          </div>
+        </div>
+      `;
+    } else if (this.selectedTemplate === 'promo') {
       return `
         <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
           <div class="bg-gradient-to-r from-red-500 to-red-600 text-white p-6 text-center">
@@ -483,11 +511,6 @@ export class AdminEmailComponent implements OnInit {
           <div class="p-6">
             <div class="text-gray-700 mb-6 leading-relaxed">
               ${content.replace(/\n/g, '<br>')}
-            </div>
-            <div class="text-center">
-              <button class="bg-red-500 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-red-600">
-                ${cta}
-              </button>
             </div>
           </div>
           <div class="bg-gray-50 p-4 text-center text-sm text-gray-500">
@@ -505,11 +528,6 @@ export class AdminEmailComponent implements OnInit {
           <div class="p-6">
             <div class="text-gray-700 mb-6 leading-relaxed">
               ${content.replace(/\n/g, '<br>')}
-            </div>
-            <div class="text-center">
-              <button class="bg-blue-500 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-600">
-                ${cta}
-              </button>
             </div>
           </div>
           <div class="bg-gray-50 p-4 text-center text-sm text-gray-500">

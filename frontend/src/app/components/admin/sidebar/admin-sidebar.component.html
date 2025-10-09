@@ -19,6 +19,7 @@
           class="sidebar-item rounded-lg p-3 cursor-pointer smooth-transition"
           [routerLink]="item.route"
           routerLinkActive="active"
+          [routerLinkActiveOptions]="item.id === 'dashboard' ? { exact: true } : { exact: false }"
         >
           <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path

@@ -4,14 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { AdminSidebarComponent } from '../../../components/admin/sidebar/admin-sidebar.component';
 import { AdminHeaderComponent } from '../../../components/admin/header/admin-header.component';
 
-interface OrderStats {
-  label: string;
-  value: string | number;
-  icon: string;
-  bgColor: string;
-  textColor: string;
-}
-
 interface OrderItem {
   name: string;
   quantity: number;
@@ -63,44 +55,6 @@ export class AdminOrdersComponent implements OnInit {
     reason: '',
     comments: ''
   };
-
-  stats: OrderStats[] = [
-    {
-      label: 'Pedidos Hoy',
-      value: 47,
-      icon: 'M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',
-      bgColor: 'bg-blue-100',
-      textColor: 'text-blue-600'
-    },
-    {
-      label: 'Ingresos Hoy',
-      value: '$28,450',
-      icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1',
-      bgColor: 'bg-green-100',
-      textColor: 'text-green-600'
-    },
-    {
-      label: 'Tiempo Promedio',
-      value: '23 min',
-      icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
-      bgColor: 'bg-purple-100',
-      textColor: 'text-purple-600'
-    },
-    {
-      label: 'En Preparación',
-      value: 8,
-      icon: 'M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z',
-      bgColor: 'bg-blue-100',
-      textColor: 'text-blue-600'
-    },
-    {
-      label: 'Listos',
-      value: 3,
-      icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
-      bgColor: 'bg-yellow-100',
-      textColor: 'text-yellow-600'
-    }
-  ];
 
   orders: Order[] = [
     {
@@ -439,7 +393,6 @@ export class AdminOrdersComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.updateStats();
   }
 
   // Filter and search methods
@@ -535,7 +488,6 @@ export class AdminOrdersComponent implements OnInit {
         user: 'Admin'
       });
       
-      this.updateStats();
       alert(`Pedido #${orderId} actualizado a: ${this.getStatusName(nextStatus)}`);
     }
   }
@@ -570,7 +522,6 @@ export class AdminOrdersComponent implements OnInit {
         comments: this.cancelOrderData.comments
       });
       
-      this.updateStats();
       this.closeCancelModal();
       alert(`Pedido #${this.currentOrderId} cancelado exitosamente.`);
     }
@@ -595,32 +546,6 @@ export class AdminOrdersComponent implements OnInit {
   }
 
   // Utility methods
-  updateStats() {
-    const today = new Date();
-    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    
-    const todayOrders = this.orders.filter(order => new Date(order.orderDate) >= todayStart);
-    this.stats[0].value = todayOrders.length;
-    
-    const todayRevenue = todayOrders.reduce((sum, order) => 
-      order.status !== 'cancelled' ? sum + order.total : sum, 0
-    );
-    this.stats[1].value = `$${todayRevenue.toLocaleString()}`;
-    
-    const preparingOrders = this.orders.filter(order => order.status === 'preparing');
-    this.stats[3].value = preparingOrders.length;
-    
-    const readyOrders = this.orders.filter(order => order.status === 'ready');
-    this.stats[4].value = readyOrders.length;
-    
-    // Calculate average time
-    const completedOrders = this.orders.filter(order => order.status === 'delivered');
-    const avgTime = completedOrders.length > 0 
-      ? Math.round(completedOrders.reduce((sum, order) => sum + order.estimatedTime, 0) / completedOrders.length)
-      : 0;
-    this.stats[2].value = `${avgTime} min`;
-  }
-
   getStatusName(status: string): string {
     const names = {
       'pending': 'Pendiente',
@@ -666,27 +591,13 @@ export class AdminOrdersComponent implements OnInit {
     return Math.floor((now.getTime() - order.getTime()) / (1000 * 60));
   }
 
-  isUrgentOrder(order: Order): boolean {
-    return order.status === 'ready' || 
-           (order.status === 'preparing' && this.getMinutesSinceOrder(order.orderDate) > order.estimatedTime);
-  }
-
   getFilterClass(filter: string): string {
     return this.currentFilter === filter 
       ? 'filter-btn active px-4 py-2 rounded-lg font-medium transition-all duration-200'
       : 'filter-btn px-4 py-2 rounded-lg font-medium transition-all duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200';
   }
 
-  getUrgentOrdersCount(): number {
-    return this.orders.filter(order => this.isUrgentOrder(order)).length;
-  }
-
-  exportOrders() {
-    alert('Exportando historial de pedidos...\n\nEn una implementación real, esto generaría un archivo Excel con todos los datos.');
-  }
-
   refreshOrders() {
-    this.updateStats();
     alert('Datos actualizados exitosamente.');
   }
 

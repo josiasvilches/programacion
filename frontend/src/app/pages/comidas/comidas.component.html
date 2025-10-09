@@ -1,7 +1,6 @@
 <div class="comidas-layout">
   <!-- Header Navigation -->
   <app-header></app-header>
-
   <!-- Main Content -->
   <main class="main-content bg-gray-50 min-h-screen">
     <!-- Hero Section -->
@@ -11,29 +10,8 @@
         <p class="text-xl text-red-100 mb-8">
           Platos principales preparados con amor y los mejores ingredientes
         </p>
-        <div class="flex justify-center">
-          <div
-            class="rounded-lg p-4 flex items-center space-x-6 statsBack"
-          >
-            <div class="text-center">
-              <div id="total-products" class="text-2xl font-bold">{{ totalProducts() }}</div>
-              <div class="text-sm text-red-100">Productos</div>
-            </div>
-            <div class="h-8 w-px bg-white bg-opacity-30"></div>
-            <div class="text-center">
-              <div id="available-products" class="text-2xl font-bold">{{ availableProducts() }}</div>
-              <div class="text-sm text-red-100">Disponibles</div>
-            </div>
-            <div class="h-8 w-px bg-white bg-opacity-30"></div>
-            <div class="text-center">
-              <div class="text-2xl font-bold">🔥</div>
-              <div class="text-sm text-red-100">Especialidades</div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
-
     <div class="max-w-6xl mx-auto px-6 py-8">
       <!-- Filters Section -->
       <div class="bg-white rounded-2xl shadow-sm p-6 mb-8">
@@ -80,7 +58,6 @@
               }
             </div>
           </div>
-
           <!-- Category Filters -->
           <div>
             <h3 class="text-sm font-semibold text-gray-700 mb-3">Categorías</h3>
@@ -96,7 +73,6 @@
               }
             </div>
           </div>
-
           <!-- Price and Sort Filters -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -113,7 +89,6 @@
                 <option value="6000+">Más de $6.000</option>
               </select>
             </div>
-
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Disponibilidad</label>
               <select
@@ -126,7 +101,6 @@
                 <option value="unavailable">No disponibles</option>
               </select>
             </div>
-
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Ordenar por</label>
               <select
@@ -142,7 +116,6 @@
               </select>
             </div>
           </div>
-
           <!-- Results Info and Clear Filters -->
           <div class="flex justify-between items-center pt-4 border-t border-gray-200">
             <p class="text-gray-600">
@@ -161,7 +134,6 @@
           </div>
         </div>
       </div>
-
       <!-- Products Grid -->
       @if (filteredProducts().length > 0) {
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -172,21 +144,7 @@
         >
           <div class="product-image-bg h-48 flex items-center justify-center relative">
             <span class="text-6xl">{{ product.emoji }}</span>
-            @if (product.popular) {
-            <div
-              class="absolute top-3 left-3 popular-badge text-white px-2 py-1 rounded-full text-xs font-bold"
-            >
-              🔥 POPULAR
-            </div>
-            } @if (product.new) {
-            <div
-              class="absolute top-3 right-3 new-badge text-white px-2 py-1 rounded-full text-xs font-bold"
-            >
-              ✨ NUEVO
-            </div>
-            }
           </div>
-
           <div class="p-6">
             <div class="mb-3">
               <h3 class="text-lg font-semibold text-gray-800 mb-1">{{ product.name }}</h3>
@@ -196,7 +154,6 @@
                 <span>👥 {{ product.portions }}</span>
               </div>
             </div>
-
             <div class="flex items-center justify-between mb-4">
               <div class="text-2xl font-bold text-red-500">${{ formatPrice(product.price) }}</div>
               <span
@@ -205,7 +162,6 @@
                 {{ getCategoryLabel(product.category) }}
               </span>
             </div>
-
             <div class="flex space-x-2">
               <button
                 (click)="viewProduct(product)"
@@ -216,9 +172,13 @@
               @if (product.available) {
               <button
                 (click)="addToCart(product)"
-                class="flex-1 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 smooth-transition text-sm font-medium"
+                class="flex-1 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 smooth-transition text-sm font-medium flex items-center justify-center space-x-1"
               >
-                Agregar
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 7a2 2 0 01-2 2H8a2 2 0 01-2-2L5 9z"></path>
+                </svg>
+                <span>Agregar</span>
               </button>
               } @else {
               <button
@@ -265,7 +225,34 @@
       }
     </div>
   </main>
-
-  <!-- Footer -->
+  
+    <!-- Cart Popup -->
+    @if (showCartPopup()) {
+      <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full cart-popup-animation">
+          <div class="text-center">
+            <div class="bg-green-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center pulse-animation">
+              <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">¡Producto agregado!</h3>
+            <p class="text-gray-600 mb-6">{{ addedProduct()?.name || '' }} se ha agregado a tu carrito correctamente.</p>
+            <div class="flex space-x-4">
+              <button 
+                (click)="hideCartPopup()"
+                class="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                Seguir comprando
+              </button>
+              <button 
+                (click)="goToCart()"
+                class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                Ver carrito
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }  <!-- Footer -->
   <app-footer></app-footer>
 </div>

@@ -122,10 +122,6 @@
 
 // Hero section responsive adjustments
 @media (max-width: 768px) {
-  .comidas-layout {
-
-  }
-  
   .gradient-bg {
     h1 {
       font-size: 2.5rem;
@@ -175,5 +171,55 @@
     button {
       align-self: center;
     }
+  }
+}
+
+// Cart Popup Animations
+.cart-popup-animation {
+  animation: popupSlideIn 0.4s ease-out;
+}
+
+@keyframes popupSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// Pulse animation para el ícono de éxito
+.pulse-animation {
+  animation: successPulse 0.6s ease-out;
+}
+
+@keyframes successPulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// Backdrop animation
+.fixed.inset-0.bg-black {
+  animation: backdropFadeIn 0.3s ease-out;
+}
+
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

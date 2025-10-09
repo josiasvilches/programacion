@@ -73,9 +73,6 @@
                 <span class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm font-medium">
                   {{ currentProduct()?.category }}
                 </span>
-                @if (currentProduct()?.popular) {
-                  <span class="px-3 py-1 bg-yellow-100 text-yellow-600 rounded-full text-sm font-medium">Popular</span>
-                }
                 <span class="px-3 py-1 rounded-full text-sm font-medium"
                       [class]="availabilityStatus().class">
                   {{ availabilityStatus().text }}
@@ -160,7 +157,7 @@
                       [class.cursor-not-allowed]="isAddToCartDisabled()">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5-6M20 13v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6m16 0V9a2 2 0 00-2-2H6a2 2 0 00-2 2v4.01"></path>
+                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 7a2 2 0 01-2 2H8a2 2 0 01-2-2L5 9z"></path>
                 </svg>
                 <span>{{ isAddToCartDisabled() ? 'Producto no disponible' : 'Agregar al carrito' }}</span>
               </button>
@@ -176,13 +173,6 @@
                         [class.text-gray-600]="isAddToCartDisabled()"
                         [class.cursor-not-allowed]="isAddToCartDisabled()">
                   Comprar ahora
-                </button>
-                <button (click)="addToFavorites()" 
-                        class="px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 smooth-transition">
-                  <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.682l-1.318-1.364a4.5 4.5 0 00-6.364 0z"></path>
-                  </svg>
                 </button>
               </div>
             </div>

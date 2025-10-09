@@ -12,26 +12,6 @@
 
     <!-- Dashboard Content -->
     <div class="fade-in">
-      <!-- Quick Stats -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div 
-          *ngFor="let stat of stats" 
-          class="stats-card rounded-xl p-6 border border-gray-200">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-600">{{ stat.label }}</p>
-              <p class="text-3xl font-bold text-gray-900">{{ stat.value }}</p>
-              <p class="text-sm mt-1" [ngClass]="getChangeClass(stat.changeType)">{{ stat.change }}</p>
-            </div>
-            <div class="w-12 h-12 rounded-lg flex items-center justify-center" [ngClass]="stat.bgColor">
-              <svg class="w-6 h-6" [ngClass]="stat.textColor" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="stat.icon"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-      
       <!-- Quick Actions and Recent Orders -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <!-- Quick Actions -->
@@ -93,7 +73,6 @@
             </div>
             <div class="flex-1">
               <p class="text-sm font-medium text-gray-900">{{ activity.message }}</p>
-              <p class="text-xs text-gray-500">{{ activity.time }}</p>
             </div>
           </div>
         </div>

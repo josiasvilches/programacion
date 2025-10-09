@@ -10,41 +10,6 @@
       subtitle="Gestión y Seguimiento">
     </app-admin-header>
 
-    <!-- Urgent Orders Alert -->
-    <div *ngIf="getUrgentOrdersCount() > 0" class="bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-6 rounded-lg">
-      <div class="flex items-center">
-        <div class="flex-shrink-0">
-          <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-        </div>
-        <div class="ml-3">
-          <p class="text-sm text-yellow-800">
-            <span class="font-medium">{{ getUrgentOrdersCount() }} pedidos urgentes</span> requieren atención inmediata.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-      <div 
-        *ngFor="let stat of stats" 
-        class="stats-card rounded-xl p-6 border border-gray-200">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600">{{ stat.label }}</p>
-            <p class="text-2xl font-bold" [ngClass]="stat.textColor">{{ stat.value }}</p>
-          </div>
-          <div class="w-12 h-12 rounded-lg flex items-center justify-center" [ngClass]="stat.bgColor">
-            <svg class="w-6 h-6" [ngClass]="stat.textColor" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="stat.icon"></path>
-            </svg>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Filters and Search -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
       <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0 mb-6">
@@ -52,68 +17,20 @@
           <h2 class="text-xl font-bold text-gray-900">Gestión de Pedidos</h2>
           <p class="text-gray-600">Administra y supervisa todos los pedidos del sistema</p>
         </div>
-        <div class="flex items-center space-x-3">
-          <button 
-            (click)="exportOrders()"
-            class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center space-x-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
-            <span>Exportar</span>
-          </button>
-          <button 
-            (click)="refreshOrders()"
-            class="gradient-bg text-white px-4 py-2 rounded-lg font-medium hover-lift transition-all duration-200 flex items-center space-x-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-            </svg>
-            <span>Actualizar</span>
-          </button>
-        </div>
       </div>
       
-      <!-- Search and Filters -->
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
-        <div class="lg:col-span-2">
-          <input 
-            type="text" 
-            [(ngModel)]="searchTerm"
-            (input)="onSearch()"
-            placeholder="Buscar por número, cliente o teléfono..." 
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-red-500 transition-colors">
-        </div>
-        <div>
-          <select 
-            [(ngModel)]="dateFilter"
-            (change)="onDateFilterChange()"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-red-500 transition-colors">
-            <option value="today">Hoy</option>
-            <option value="yesterday">Ayer</option>
-            <option value="week">Esta Semana</option>
-            <option value="month">Este Mes</option>
-            <option value="all">Todos</option>
-          </select>
-        </div>
-        <div>
-          <select 
-            [(ngModel)]="paymentFilter"
-            (change)="onPaymentFilterChange()"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-red-500 transition-colors">
-            <option value="all">Todos los Pagos</option>
-            <option value="cash">Efectivo</option>
-            <option value="card">Tarjeta</option>
-            <option value="transfer">Transferencia</option>
-          </select>
-        </div>
+            <!-- Search and Filters -->
+      <div class="mb-6">
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          placeholder="Buscar por número, cliente o teléfono..." 
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-red-500 transition-colors">
       </div>
       
       <!-- Status Filters -->
       <div class="flex flex-wrap gap-3">
-        <button 
-          (click)="filterByStatus('all')"
-          [ngClass]="getFilterClass('all')">
-          Todos
-        </button>
         <button 
           (click)="filterByStatus('pending')"
           [ngClass]="getFilterClass('pending')">
@@ -147,7 +64,7 @@
       <div 
         *ngFor="let order of getFilteredOrders()" 
         class="order-card bg-white rounded-xl shadow-sm p-6 fade-in cursor-pointer"
-        [ngClass]="'status-' + order.status + (isUrgentOrder(order) ? ' urgent-order' : '')"
+        [ngClass]="'status-' + order.status"
         (click)="openOrderModal(order.id)">
         
         <div class="flex items-start justify-between mb-4">
@@ -157,10 +74,6 @@
               <span class="status-badge text-white text-xs px-3 py-1 rounded-full font-medium" 
                     [ngClass]="'status-' + order.status">
                 {{ getStatusName(order.status) }}
-              </span>
-              <span *ngIf="isUrgentOrder(order)" 
-                    class="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium">
-                URGENTE
               </span>
             </div>
             <p class="text-gray-600 font-medium">{{ order.customer }}</p>

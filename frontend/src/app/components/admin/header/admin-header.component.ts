@@ -1,6 +1,7 @@
-import { Component, Input, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, HostListener, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-admin-header',
@@ -13,12 +14,28 @@ export class AdminHeaderComponent implements OnInit {
   @Input() title: string = 'Panel Administrativo';
   @Input() subtitle: string = 'Gestiona tu rotisería';
   
+  private userService = inject(UserService);
+  
   currentTime: string = '';
   isUserDropdownOpen = false;
-  adminUser = {
-    name: 'Admin',
-    initials: 'A'
-  };
+  
+  // Computed para obtener información del usuario actual
+  adminUser = computed(() => {
+    const user = this.userService.user();
+    if (!user) {
+      return {
+        name: 'Usuario',
+        initials: 'U',
+        role: 'Usuario'
+      };
+    }
+    
+    return {
+      name: user.role, // Mostrar el rol como nombre
+      initials: user.initials || 'U',
+      role: user.role
+    };
+  });
 
   constructor(private router: Router) {}
 

@@ -11,41 +11,6 @@
     >
     </app-admin-header>
 
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-      <div
-        *ngFor="let stat of stats"
-        class="stats-card rounded-xl p-6 border border-gray-200"
-        [ngClass]="stat.bgColor"
-      >
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600">{{ stat.label }}</p>
-            <p class="text-2xl font-bold" [ngClass]="stat.textColor">{{ stat.value }}</p>
-          </div>
-          <div
-            class="w-12 h-12 rounded-lg flex items-center justify-center"
-            [ngClass]="stat.bgColor"
-          >
-            <svg
-              class="w-6 h-6"
-              [ngClass]="stat.textColor"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                [attr.d]="stat.icon"
-              ></path>
-            </svg>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Action Bar -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
       <div
@@ -56,20 +21,6 @@
           <p class="text-gray-600">Administra usuarios, roles y permisos del sistema</p>
         </div>
         <div class="flex items-center space-x-3">
-          <button
-            (click)="exportUsers()"
-            class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-all duration-200 flex items-center space-x-2"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              ></path>
-            </svg>
-            <span>Exportar</span>
-          </button>
           <button
             (click)="openAddUserModal()"
             class="gradient-bg text-white px-6 py-3 rounded-lg font-medium hover-lift transition-all duration-200 flex items-center space-x-2"
@@ -142,10 +93,6 @@
             <span class="text-sm font-medium text-gray-600">Rol:</span>
             <span class="text-sm text-gray-700">{{ getRoleName(user.role) }}</span>
           </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm font-medium text-gray-600">Registro:</span>
-            <span class="text-sm text-gray-700">{{ formatDate(user.registrationDate) }}</span>
-          </div>
         </div>
 
         <div class="flex flex-wrap gap-2">
@@ -165,24 +112,6 @@
               ></path>
             </svg>
             Validar
-          </button>
-
-          <!-- Promote button for regular users -->
-          <button
-            *ngIf="user.role === 'user'"
-            (click)="promoteToAdmin(user.id)"
-            class="action-button bg-purple-500 text-white px-3 py-1 rounded-lg text-sm font-medium hover-lift transition-all duration-200"
-            title="Hacer Administrador"
-          >
-            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 10V3L4 14h7v7l9-11h-7z"
-              ></path>
-            </svg>
-            Promover
           </button>
 
           <!-- Admin badge for admin users -->
@@ -339,30 +268,18 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
-            <select
-              [(ngModel)]="userForm.status"
-              name="status"
-              required
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-red-500 transition-colors"
-            >
-              <option value="pending">Pendiente</option>
-              <option value="active">Activo</option>
-              <option value="inactive">Inactivo</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Fecha de Registro</label>
-            <input
-              type="date"
-              [(ngModel)]="userForm.registrationDate"
-              name="registrationDate"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-red-500 transition-colors"
-            />
-          </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
+          <select
+            [(ngModel)]="userForm.status"
+            name="status"
+            required
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-red-500 transition-colors"
+          >
+            <option value="pending">Pendiente</option>
+            <option value="active">Activo</option>
+            <option value="inactive">Inactivo</option>
+          </select>
         </div>
 
         <div>

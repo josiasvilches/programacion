@@ -4,14 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { AdminSidebarComponent } from '../../../components/admin/sidebar/admin-sidebar.component';
 import { AdminHeaderComponent } from '../../../components/admin/header/admin-header.component';
 
-interface UserStats {
-  label: string;
-  value: string | number;
-  icon: string;
-  bgColor: string;
-  textColor: string;
-}
-
 interface User {
   id: number;
   name: string;
@@ -49,37 +41,6 @@ export class AdminUsersComponent implements OnInit {
     actionIconBg: '',
     actionButtonClass: ''
   };
-
-  stats: UserStats[] = [
-    {
-      label: 'Total Usuarios',
-      value: 15,
-      icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z',
-      bgColor: 'bg-blue-100',
-      textColor: 'text-blue-600'
-    },
-    {
-      label: 'Activos',
-      value: 10,
-      icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
-      bgColor: 'bg-green-100',
-      textColor: 'text-green-600'
-    },
-    {
-      label: 'Pendientes',
-      value: 3,
-      icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
-      bgColor: 'bg-yellow-100',
-      textColor: 'text-yellow-600'
-    },
-    {
-      label: 'Administradores',
-      value: 2,
-      icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
-      bgColor: 'bg-purple-100',
-      textColor: 'text-purple-600'
-    }
-  ];
 
   users: User[] = [
     {
@@ -180,15 +141,12 @@ export class AdminUsersComponent implements OnInit {
     phone: '',
     role: 'user' as 'user' | 'admin',
     status: 'pending' as 'active' | 'inactive' | 'pending',
-    registrationDate: '',
     notes: ''
   };
 
   constructor() {}
 
   ngOnInit() {
-    this.updateStats();
-    this.userForm.registrationDate = new Date().toISOString().split('T')[0];
   }
 
   // Filter methods
@@ -268,7 +226,6 @@ export class AdminUsersComponent implements OnInit {
       phone: user.phone,
       role: user.role,
       status: user.status,
-      registrationDate: user.registrationDate,
       notes: user.notes
     };
 
@@ -286,7 +243,6 @@ export class AdminUsersComponent implements OnInit {
       phone: '',
       role: 'user',
       status: 'pending',
-      registrationDate: new Date().toISOString().split('T')[0],
       notes: ''
     };
     this.showUserModal = true;
@@ -324,9 +280,6 @@ export class AdminUsersComponent implements OnInit {
       case 'validate':
         this.users[userIndex].status = 'active';
         break;
-      case 'promote':
-        this.users[userIndex].role = 'admin';
-        break;
       case 'deactivate':
         this.users[userIndex].status = 'inactive';
         break;
@@ -335,7 +288,6 @@ export class AdminUsersComponent implements OnInit {
         break;
     }
 
-    this.updateStats();
     this.closeActionModal();
   }
 
@@ -352,7 +304,6 @@ export class AdminUsersComponent implements OnInit {
           phone: this.userForm.phone,
           role: this.userForm.role,
           status: this.userForm.status,
-          registrationDate: this.userForm.registrationDate,
           notes: this.userForm.notes
         };
       }
@@ -366,24 +317,16 @@ export class AdminUsersComponent implements OnInit {
         phone: this.userForm.phone,
         role: this.userForm.role,
         status: this.userForm.status,
-        registrationDate: this.userForm.registrationDate,
+        registrationDate: new Date().toISOString().split('T')[0],
         notes: this.userForm.notes,
         lastLogin: null
       });
     }
 
-    this.updateStats();
     this.closeUserModal();
   }
 
   // Utility methods
-  updateStats() {
-    this.stats[0].value = this.users.length;
-    this.stats[1].value = this.users.filter(u => u.status === 'active').length;
-    this.stats[2].value = this.users.filter(u => u.status === 'pending').length;
-    this.stats[3].value = this.users.filter(u => u.role === 'admin').length;
-  }
-
   getStatusName(status: string): string {
     const names = {
       'active': 'Activo',
