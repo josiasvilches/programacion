@@ -1,4 +1,4 @@
-import { Component, computed, signal, inject } from '@angular/core';
+import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -32,7 +32,7 @@ interface UserStats {
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss']
 })
-export class UserComponent {
+export class UserComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private userService = inject(UserService);
@@ -68,12 +68,11 @@ export class UserComponent {
   passwordForm: FormGroup;
 
   constructor() {
-    const user = this.userProfile();
-    
+    // Inicializar formulario con valores vacíos; se parcheará al cargar datos desde el backend
     this.profileForm = this.fb.group({
-      fullName: [user?.fullName || '', [Validators.required, Validators.minLength(2)]],
-      email: [user?.email || '', [Validators.required, Validators.email]],
-      phone: [user?.phone || '', [Validators.required, Validators.pattern(/^[\+]?[0-9\s\-\(\)]{10,15}$/)]]
+      fullName: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required, Validators.pattern(/^[\+]?[0-9\s\-\(\)]{10,15}$/)]]
     });
 
     this.passwordForm = this.fb.group({
@@ -84,6 +83,59 @@ export class UserComponent {
 
     // Deshabilitar formulario inicialmente
     this.profileForm.disable();
+  }
+
+  ngOnInit(): void {
+    // Al iniciar la vista, intentar cargar los datos completos del usuario desde el backend
+    this.loadFullProfile();
+  }
+
+  private async loadFullProfile() {
+    const currentUser = this.userService.getCurrentUser();
+    if (!currentUser) return;
+
+  const token = this.userService.getAuthToken();
+  // currentUser viene tipado como User en el frontend y puede no tener "usuario_id";
+  // acceder con any para mantener compatibilidad con el backend que usa usuario_id
+  const userId = ((currentUser as any).usuario_id) ?? currentUser.id;
+  const url = `http://localhost:5001/usuario/${userId}`;
+
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        }
+      });
+
+      if (!res.ok) {
+        // No bloquear la vista si falla la carga remota; mostramos lo local
+        console.warn('No se pudieron obtener datos completos del usuario:', res.status);
+        return;
+      }
+
+      const data = await res.json();
+      // El backend devuelve campos en español: 'nombre', 'email', 'numero', 'rol', 'estado'
+      const updated: any = {};
+      if (data.nombre) updated.fullName = data.nombre;
+      if (data.email) updated.email = data.email;
+      if (data.numero !== undefined && data.numero !== null) updated.phone = String(data.numero);
+      if (data.rol) updated.role = data.rol === 'cliente' ? 'USER' : (data.rol || undefined);
+      if (data.estado) updated.status = data.estado;
+
+      // Actualizar UserService para que el resto de la app vea los datos completos
+      this.userService.updateUser(updated);
+
+      // Parchear formulario con los datos obtenidos
+      this.profileForm.patchValue({
+        fullName: updated.fullName || this.profileForm.get('fullName')?.value,
+        email: updated.email || this.profileForm.get('email')?.value,
+        phone: updated.phone || this.profileForm.get('phone')?.value
+      });
+    } catch (error) {
+      console.error('Error cargando perfil completo:', error);
+    }
   }
 
   // Custom validator para confirmar contraseñas

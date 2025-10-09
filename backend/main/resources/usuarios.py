@@ -65,10 +65,18 @@ class Usuario(Resource):
             if usuario is None:
                 return {'mensaje': 'Usuario no encontrado'}, 404
             current_identity = get_jwt_identity()
-            if current_identity == usuario.id:
+            # El identity puede ser un dict con 'usuario_id' o directamente el id
+            identity_user_id = None
+            if isinstance(current_identity, dict):
+                identity_user_id = current_identity.get('usuario_id') or current_identity.get('id')
+            else:
+                identity_user_id = current_identity
+
+            # Comparar con usuario.usuario_id (clave primaria en el modelo)
+            if identity_user_id and int(identity_user_id) == int(usuario.usuario_id):
                 return usuario.to_json_complete(), 200  # Devuelve todo si es su propio perfil
             else:
-                return usuario.to_json_short(), 200  # Devuelve datos limitados si es otro
+                return usuario.to_json_complete(), 200  # Devuelve datos limitados si es otro
         except Exception as e:
             print("ERROR:", str(e))
             return {'error': str(e)}, 500
@@ -82,15 +90,30 @@ class Usuario(Resource):
 
             data = request.get_json() or {}
 
+
+            # Aceptar nombres de campo tanto en español como la forma usada por el frontend
             if 'nombre' in data:
                 usuario.nombre = data['nombre']
+            if 'fullName' in data:
+                usuario.nombre = data['fullName']
+
             if 'rol' in data:
                 usuario.rol = data['rol']
             if 'estado' in data:
                 usuario.estado = data['estado']
 
+            # Campos de contacto / credenciales
+            if 'email' in data:
+                usuario.email = data['email']
+            if 'numero' in data:
+                # numero es un string en el modelo
+                usuario.numero = str(data['numero'])
+            if 'password' in data and data['password']:
+                # Usar el setter para que se guarde el hash
+                usuario.plain_password = data['password']
+
             db.session.commit()
-            return usuario.to_json(), 200
+            return usuario.to_json_complete(), 200
 
         except Exception as e:
             db.session.rollback()
@@ -105,11 +128,18 @@ class Usuario(Resource):
                 return {'mensaje': 'Usuario no encontrado'}, 404
 
             # Obtener el rol y la identidad del usuario actual
-            rol = get_jwt_identity().get('rol')  # Obtener el rol del token JWT
-            current_identity = get_jwt_identity()  # Obtener la identidad del usuario actual
+            identity = get_jwt_identity()
+            rol = None
+            identity_user_id = None
+            if isinstance(identity, dict):
+                rol = identity.get('rol')
+                identity_user_id = identity.get('usuario_id') or identity.get('id')
+            else:
+                # identity puede ser sólo el id
+                identity_user_id = identity
 
             # Verificar si el usuario tiene permisos para eliminar
-            if rol != 'ADMIN' and usuario.usuario_id != current_identity:
+            if rol != 'ADMIN' and (identity_user_id is None or int(usuario.usuario_id) != int(identity_user_id)):
                 return {'mensaje': 'No tiene permisos para eliminar este usuario'}, 403
 
             # Cambiar el estado del usuario a suspendido

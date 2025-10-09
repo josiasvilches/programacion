@@ -29,19 +29,34 @@ def role_required(roles):
 # define el atributo que utilizará para identificar al usuario
 @jwt.user_identity_loader
 def user_identity_lookup(usuario):
-    print('hola')
-    # Devuelve un diccionario con más información del usuario
-    return str(usuario.usuario_id)
+    # Acepta tanto instancias del modelo Usuario como un dict con 'usuario_id'
+    try:
+        if isinstance(usuario, dict):
+            return str(usuario.get('usuario_id') or usuario.get('id') or '')
+        # si es un objeto modelo
+        return str(usuario.usuario_id)
+    except Exception:
+        # fallback seguro
+        return str(usuario)
 
 # define qué atributos se guardarán en el token JWT
 @jwt.additional_claims_loader
 def add_claims_to_access_token(usuario):
-    claims = {
-        'rol': usuario.rol,
-        'nombre': str(usuario.nombre),
-        'email': str(usuario.email)
-    }
-    return claims
+    # Aceptar tanto dict como objeto modelo
+    try:
+        if isinstance(usuario, dict):
+            return {
+                'rol': usuario.get('rol'),
+                'nombre': str(usuario.get('nombre') or ''),
+                'email': str(usuario.get('email') or '')
+            }
+        return {
+            'rol': usuario.rol,
+            'nombre': str(usuario.nombre),
+            'email': str(usuario.email)
+        }
+    except Exception:
+        return {'rol': None, 'nombre': '', 'email': ''}
 
 @jwt.expired_token_loader
 def expired_token_callback(jwt_header, jwt_payload):

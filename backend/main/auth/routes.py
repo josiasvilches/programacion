@@ -53,9 +53,15 @@ def login():
         if not usuario or not usuario.validate_pass(password):
             return {'mensaje': 'Credenciales inválidas'}, 401
 
-        # Crear token de acceso
-        access_token = create_access_token(identity=usuario)
-        refresh_token = create_refresh_token(identity=usuario)
+        # Crear token de acceso: usar un identity consistente (dict)
+        identity_payload = {
+            'usuario_id': usuario.usuario_id,
+            'rol': usuario.rol,
+            'nombre': usuario.nombre,
+            'email': usuario.email
+        }
+        access_token = create_access_token(identity=identity_payload)
+        refresh_token = create_refresh_token(identity=identity_payload)
 
         data = {
             'mensaje': f'Bienvenido {usuario.nombre}',
@@ -71,12 +77,18 @@ def login():
 @auth.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
-    usuario_id = get_jwt_identity()
+    identity = get_jwt_identity()
+    # identity será un dict con 'usuario_id'
+    usuario_id = None
+    if isinstance(identity, dict):
+        usuario_id = identity.get('usuario_id')
+    else:
+        usuario_id = identity
     usuario = UsuarioModel.query.get(usuario_id)
     if not usuario:
         return {"msg": "Usuario no encontrado"}, 404
 
-    new_access  = create_access_token(identity=usuario, fresh=False)
+    new_access  = create_access_token(identity=identity, fresh=False)
     return {'access_token': new_access}, 200
 
 # Método de logout
