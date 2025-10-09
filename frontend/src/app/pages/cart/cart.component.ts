@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit, AfterViewInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CartService } from '../../services/cart.service';
@@ -17,7 +17,7 @@ interface ExtendedCartItem extends CartItem {
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss']
 })
-export class CartComponent implements OnInit, AfterViewInit {
+export class CartComponent implements OnInit {
   private router = inject(Router);
   private cartService = inject(CartService);
 
@@ -73,27 +73,8 @@ export class CartComponent implements OnInit, AfterViewInit {
     return this.cartItems().length === 0;
   });
 
-  // Método helper para scroll al top
-  private scrollToTop(): void {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: 'instant'
-    });
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-  }
-
   ngOnInit() {
-    this.scrollToTop();
     this.loadCartItems();
-  }
-
-  ngAfterViewInit() {
-    // Doble verificación después de que la vista esté completamente inicializada
-    setTimeout(() => {
-      this.scrollToTop();
-    }, 100);
   }
 
   private loadCartItems() {

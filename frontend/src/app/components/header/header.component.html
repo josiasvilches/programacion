@@ -169,15 +169,13 @@
         </button>
         }
         <!-- Mobile Menu Button -->
-        <div *ngIf="showMobileMenu" class="mobile-menu-container">
-          <!-- Botón hamburguesa (cuando el menú está cerrado) -->
+        <div class="mobile-menu-container">
           <button
-            *ngIf="!isMobileMenuOpen"
-            (click)="openMobileMenu(); $event.stopPropagation()"
-            (touchstart)="$event.stopPropagation()"
+            (click)="toggleMobileMenu()"
             class="flex items-center justify-center w-10 h-10 text-gray-700 hover:text-red-500 smooth-transition"
           >
             <svg 
+              *ngIf="!isMobileMenuOpen"
               class="w-6 h-6" 
               fill="none" 
               stroke="currentColor" 
@@ -185,15 +183,8 @@
             >
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
-          </button>
-          <!-- Botón X (cuando el menú está abierto) -->
-          <button
-            *ngIf="isMobileMenuOpen"
-            (click)="closeMobileMenu($event)"
-            (touchstart)="closeMobileMenu($event)"
-            class="flex items-center justify-center w-10 h-10 text-gray-700 hover:text-red-500 smooth-transition"
-          >
             <svg 
+              *ngIf="isMobileMenuOpen"
               class="w-6 h-6" 
               fill="none" 
               stroke="currentColor" 
@@ -207,18 +198,31 @@
     </div>
     <!-- Mobile Menu Backdrop -->
     <div 
-      *ngIf="showMobileMenu && isMobileMenuOpen"
+      *ngIf="isMobileMenuOpen"
       class="fixed inset-0 bg-black bg-opacity-20 z-30 md:hidden"
-      (click)="closeMobileMenu($event)"
-      (touchstart)="closeMobileMenu($event)">
+      (click)="closeMobileMenu()">
     </div>
     <!-- Mobile Menu -->
     <div 
-      *ngIf="showMobileMenu"
       class="absolute top-full left-0 right-0 md:hidden mobile-menu-dropdown bg-white shadow-lg border-t border-gray-200 z-40"
       [class.hidden]="!isMobileMenuOpen"
     >
       <div class="px-2 pt-4 pb-3 space-y-1">
+        <!-- Navigation Links -->
+        <a
+          routerLink="/comidas"
+          (click)="closeMobileMenu()"
+          class="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-red-500 smooth-transition rounded-lg"
+        >
+          Comidas
+        </a>
+        <a
+          routerLink="/comidas"
+          (click)="closeMobileMenu()"
+          class="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-red-500 smooth-transition rounded-lg"
+        >
+          Guarniciones
+        </a>
         <!-- User Section -->
         @if (showUserMenu && isUserLoggedIn) {
         <div class="border-t border-gray-200 mt-4 pt-4">
@@ -234,23 +238,15 @@
           </div>
           <!-- User Menu Items -->
           <a
-            routerLink="/comidas"
-            (click)="closeMobileMenu($event)"
-            class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-red-500 smooth-transition rounded-lg"
-          >
-            <span class="mr-3 text-lg">🍽️</span>
-            Comidas
-          </a>
-          <a
             routerLink="/user"
-            (click)="closeMobileMenu($event)"
+            (click)="closeMobileMenu()"
             class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-red-500 smooth-transition rounded-lg"
           >
             <span class="mr-3 text-lg">👤</span>
             Mi Usuario
           </a>
           <a
-            (click)="closeMobileMenu($event)"
+            (click)="closeMobileMenu()"
             class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-red-500 smooth-transition rounded-lg"
           >
             <span class="mr-3 text-lg">🔔</span>
@@ -264,7 +260,7 @@
           </a>
           <a
             routerLink="/orders"
-            (click)="closeMobileMenu($event)"
+            (click)="closeMobileMenu()"
             class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-red-500 smooth-transition rounded-lg"
           >
             <span class="mr-3 text-lg">📦</span>
@@ -292,7 +288,7 @@
         <div class="border-t border-gray-200 mt-4 pt-4">
           <a
             routerLink="/login"
-            (click)="closeMobileMenu($event)"
+            (click)="closeMobileMenu()"
             class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-red-500 smooth-transition rounded-lg"
           >
             <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 mr-3">
