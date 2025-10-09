@@ -9,7 +9,7 @@ interface User {
   name: string;
   email: string;
   phone: string;
-  role: 'user' | 'admin';
+  role: 'USER' | 'ADMIN' | 'EMPLOYER';
   status: 'active' | 'inactive' | 'pending';
   registrationDate: string;
   lastLogin: string | null;
@@ -48,7 +48,7 @@ export class AdminUsersComponent implements OnInit {
       name: "Juan Pérez",
       email: "juan@email.com",
       phone: "+54 9 11 1234-5678",
-      role: "admin",
+      role: "ADMIN",
       status: "active",
       registrationDate: "2024-01-15",
       lastLogin: "2024-01-20",
@@ -59,7 +59,7 @@ export class AdminUsersComponent implements OnInit {
       name: "María González",
       email: "maria@email.com",
       phone: "+54 9 11 2345-6789",
-      role: "user",
+      role: "USER",
       status: "active",
       registrationDate: "2024-01-18",
       lastLogin: "2024-01-19",
@@ -70,7 +70,7 @@ export class AdminUsersComponent implements OnInit {
       name: "Carlos Rodríguez",
       email: "carlos@email.com",
       phone: "+54 9 11 3456-7890",
-      role: "user",
+      role: "USER",
       status: "pending",
       registrationDate: "2024-01-20",
       lastLogin: null,
@@ -81,7 +81,7 @@ export class AdminUsersComponent implements OnInit {
       name: "Ana Martínez",
       email: "ana@email.com",
       phone: "+54 9 11 4567-8901",
-      role: "user",
+      role: "USER",
       status: "active",
       registrationDate: "2024-01-16",
       lastLogin: "2024-01-18",
@@ -92,7 +92,7 @@ export class AdminUsersComponent implements OnInit {
       name: "Luis Torres",
       email: "luis@email.com",
       phone: "+54 9 11 5678-9012",
-      role: "user",
+      role: "USER",
       status: "pending",
       registrationDate: "2024-01-21",
       lastLogin: null,
@@ -103,7 +103,7 @@ export class AdminUsersComponent implements OnInit {
       name: "Sofia López",
       email: "sofia@email.com",
       phone: "+54 9 11 6789-0123",
-      role: "admin",
+      role: "ADMIN",
       status: "active",
       registrationDate: "2024-01-10",
       lastLogin: "2024-01-20",
@@ -114,7 +114,7 @@ export class AdminUsersComponent implements OnInit {
       name: "Diego Fernández",
       email: "diego@email.com",
       phone: "+54 9 11 7890-1234",
-      role: "user",
+      role: "USER",
       status: "inactive",
       registrationDate: "2024-01-12",
       lastLogin: "2024-01-14",
@@ -125,7 +125,7 @@ export class AdminUsersComponent implements OnInit {
       name: "Laura Sánchez",
       email: "laura@email.com",
       phone: "+54 9 11 8901-2345",
-      role: "user",
+      role: "USER",
       status: "pending",
       registrationDate: "2024-01-22",
       lastLogin: null,
@@ -139,7 +139,7 @@ export class AdminUsersComponent implements OnInit {
     name: '',
     email: '',
     phone: '',
-    role: 'user' as 'user' | 'admin',
+    role: 'USER' as 'USER' | 'ADMIN' | 'EMPLOYER',
     status: 'pending' as 'active' | 'inactive' | 'pending',
     notes: ''
   };
@@ -156,7 +156,7 @@ export class AdminUsersComponent implements OnInit {
 
   getFilteredUsers(): User[] {
     if (this.currentFilter === 'all') return this.users;
-    if (this.currentFilter === 'admin') return this.users.filter(u => u.role === 'admin');
+    if (this.currentFilter === 'admin') return this.users.filter(u => u.role === 'ADMIN');
     return this.users.filter(u => u.status === this.currentFilter);
   }
 
@@ -241,7 +241,7 @@ export class AdminUsersComponent implements OnInit {
       name: '',
       email: '',
       phone: '',
-      role: 'user',
+      role: 'USER',
       status: 'pending',
       notes: ''
     };
@@ -337,7 +337,12 @@ export class AdminUsersComponent implements OnInit {
   }
 
   getRoleName(role: string): string {
-    return role === 'admin' ? 'Admin' : 'Usuario';
+    const roleNames = {
+      'ADMIN': 'Administrador',
+      'USER': 'Usuario',
+      'EMPLOYER': 'Empleado'
+    };
+    return roleNames[role as keyof typeof roleNames] || role;
   }
 
   getUserInitials(name: string): string {

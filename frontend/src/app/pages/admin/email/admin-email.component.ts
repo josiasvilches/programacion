@@ -301,7 +301,7 @@ export class AdminEmailComponent implements OnInit {
   }
 
   getActiveUsers(): User[] {
-    return this.users.filter(u => u.status === 'active' && u.role === 'user');
+    return this.users.filter(u => u.status === 'active' && u.role === 'USER');
   }
 
   getSelectedCount(): number {

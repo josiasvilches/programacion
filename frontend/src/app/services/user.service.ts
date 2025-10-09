@@ -1,11 +1,13 @@
 import { Injectable, signal, computed } from '@angular/core';
 
+export type UserRole = 'ADMIN' | 'USER' | 'EMPLOYER';
+
 export interface User {
   id: number;
   fullName: string;
   email: string;
   phone?: string;
-  role: string;
+  role: UserRole;
   status: string;
   initials?: string;
 }
@@ -42,7 +44,7 @@ export class UserService {
       fullName: 'Juan Carlos Pérez',
       email: 'juan.perez@email.com',
       phone: '+54 11 1234-5678',
-      role: 'Cliente',
+      role: 'USER',
       status: 'Activo'
     },
     {
@@ -50,7 +52,7 @@ export class UserService {
       fullName: 'María García López',
       email: 'maria.garcia@admin.com',
       phone: '+54 11 2345-6789',
-      role: 'Admin',
+      role: 'ADMIN',
       status: 'Activo'
     },
     {
@@ -58,7 +60,7 @@ export class UserService {
       fullName: 'Carlos Rodríguez',
       email: 'carlos.rodriguez@empleado.com',
       phone: '+54 11 3456-7890',
-      role: 'Empleado',
+      role: 'EMPLOYER',
       status: 'Activo'
     },
     {
@@ -66,7 +68,7 @@ export class UserService {
       fullName: 'Ana Sofía Martínez',
       email: 'ana.martinez@cliente.com',
       phone: '+54 11 4567-8901',
-      role: 'Cliente',
+      role: 'USER',
       status: 'Activo'
     }
   ];
@@ -240,7 +242,7 @@ export class UserService {
         id: parseInt(payload.sub) || 0,
         fullName: payload.nombre || 'Usuario',
         email: payload.email || '',
-        role: loginResponse.rol || 'USER',
+        role: this.validateRole(loginResponse.rol) || 'USER',
         status: 'Activo'
       };
     } catch (error) {
@@ -249,10 +251,16 @@ export class UserService {
         id: 0,
         fullName: 'Usuario',
         email: '',
-        role: loginResponse.rol || 'USER',
+        role: this.validateRole(loginResponse.rol) || 'USER',
         status: 'Activo'
       };
     }
+  }
+
+  // Validar que el rol del backend sea uno de los válidos
+  private validateRole(role: string): UserRole {
+    const validRoles: UserRole[] = ['ADMIN', 'USER', 'EMPLOYER'];
+    return validRoles.includes(role as UserRole) ? (role as UserRole) : 'USER';
   }
 
   // Verificar si hay un token almacenado al inicializar
@@ -276,7 +284,7 @@ export class UserService {
             id: parseInt(payload.sub) || 0,
             fullName: payload.nombre || 'Usuario',
             email: payload.email || '',
-            role: payload.rol || userInfo?.rol || 'USER',
+            role: this.validateRole(payload.rol || userInfo?.rol) || 'USER',
             status: 'Activo'
           };
           
@@ -307,9 +315,27 @@ export class UserService {
   }
 
   // Método para verificar si el usuario tiene un rol específico
-  hasRole(role: string): boolean {
+  hasRole(role: UserRole): boolean {
     const currentUser = this.getCurrentUser();
     return currentUser?.role === role;
+  }
+
+  // Métodos específicos para verificar roles
+  isAdmin(): boolean {
+    return this.hasRole('ADMIN');
+  }
+
+  isUser(): boolean {
+    return this.hasRole('USER');
+  }
+
+  isEmployer(): boolean {
+    return this.hasRole('EMPLOYER');
+  }
+
+  // Método para verificar si tiene permisos administrativos
+  hasAdminPermissions(): boolean {
+    return this.isAdmin() || this.isEmployer();
   }
 
   // Método para obtener todos los datos almacenados del usuario
@@ -359,7 +385,7 @@ export class UserService {
 
   // Métodos específicos para cambiar a diferentes tipos de usuarios (para testing)
   loginAsAdmin() {
-    const admin = this.testUsers.find(u => u.role === 'Admin');
+    const admin = this.testUsers.find(u => u.role === 'ADMIN');
     if (admin) {
       this.currentUser.set(admin);
       this.isAuthenticated.set(true);
@@ -368,7 +394,7 @@ export class UserService {
   }
 
   loginAsEmployee() {
-    const employee = this.testUsers.find(u => u.role === 'Empleado');
+    const employee = this.testUsers.find(u => u.role === 'EMPLOYER');
     if (employee) {
       this.currentUser.set(employee);
       this.isAuthenticated.set(true);
@@ -377,7 +403,7 @@ export class UserService {
   }
 
   loginAsClient() {
-    const client = this.testUsers.find(u => u.role === 'Cliente');
+    const client = this.testUsers.find(u => u.role === 'USER');
     if (client) {
       this.currentUser.set(client);
       this.isAuthenticated.set(true);

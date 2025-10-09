@@ -283,7 +283,7 @@ export class UserComponent {
       id: 1,
       fullName: 'María García Fernández',
       email: 'maria.garcia@email.com',
-      role: 'Cliente',
+      role: 'USER',
       status: 'Activo'
     });
   }
@@ -293,7 +293,7 @@ export class UserComponent {
       id: 2,
       fullName: 'Carlos Eduardo López',
       email: 'carlos.lopez@email.com',
-      role: 'Cliente',
+      role: 'USER',
       status: 'Activo'
     });
   }
@@ -303,7 +303,7 @@ export class UserComponent {
       id: 3,
       fullName: 'Ana Sofía',
       email: 'ana.sofia@email.com',
-      role: 'Cliente',
+      role: 'USER',
       status: 'Activo'
     });
   }
