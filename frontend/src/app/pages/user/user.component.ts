@@ -86,6 +86,13 @@ export class UserComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Si no hay usuario logueado, redirigir al login para evitar cargar la vista sin autenticación
+    const currentUser = this.userService.getCurrentUser();
+    if (!currentUser) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     // Al iniciar la vista, intentar cargar los datos completos del usuario desde el backend
     this.loadFullProfile();
   }
