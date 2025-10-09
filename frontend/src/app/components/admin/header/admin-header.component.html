@@ -1,5 +1,5 @@
 <!-- Header -->
-<header class="bg-white shadow-sm border-b border-gray-200 top-0 z-40 absolute left-0 w-full pl-16">
+<header class="bg-white shadow-sm border-b border-gray-200 top-0 z-40 absolute left-0 w-full pl-16" *ngIf="isUserLoggedIn()">
   <div class="px-6 py-4">
     <div class="flex items-center justify-between">
       <div>
@@ -8,13 +8,25 @@
       </div>
       
       <div class="flex items-center space-x-4">
+        <!-- Time Display -->
+        <div class="hidden md:flex items-center space-x-2 text-sm text-gray-600">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span>{{ currentTime }}</span>
+        </div>
+        
         <!-- User Dropdown -->
         <div class="relative">
           <button 
             (click)="toggleUserDropdown()"
             class="user-button flex items-center space-x-2 hover:bg-gray-50 rounded-lg px-3 py-2 transition-all duration-200 cursor-pointer">
-            <div class="user-avatar w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-              {{ adminUser().initials }}
+            <div class="relative">
+              <div class="user-avatar w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                {{ adminUser().initials }}
+              </div>
+              <!-- Indicador de estado online -->
+              <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
             </div>
             <span class="text-sm font-medium text-gray-700 md:block hidden">{{ adminUser().name }}</span>
             <svg 
@@ -36,12 +48,17 @@
             <!-- User Info -->
             <div class="px-4 py-3 border-b border-gray-100">
               <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-white font-medium">
-                  {{ adminUser().initials }}
+                <div class="relative">
+                  <div class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-white font-medium">
+                    {{ adminUser().initials }}
+                  </div>
+                  <!-- Indicador de estado online -->
+                  <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
                 </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">{{ adminUser().role }}</p>
-                  <p class="text-xs text-gray-500">Panel de Administración</p>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900 truncate">{{ adminUser().name }}</p>
+                  <p class="text-xs text-gray-500 truncate">{{ adminUser().email }}</p>
+                  <p class="text-xs text-red-600 font-medium">{{ adminUser().role }}</p>
                 </div>
               </div>
             </div>

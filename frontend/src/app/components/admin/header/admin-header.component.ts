@@ -20,20 +20,28 @@ export class AdminHeaderComponent implements OnInit {
   isUserDropdownOpen = false;
   
   // Computed para obtener información del usuario actual
+  user = computed(() => this.userService.user());
+  
+  // Computed para verificar si hay usuario logueado
+  isUserLoggedIn = computed(() => this.user() !== null);
+  
+  // Computed para obtener información de display del usuario
   adminUser = computed(() => {
-    const user = this.userService.user();
-    if (!user) {
+    const currentUser = this.user();
+    if (!currentUser) {
       return {
         name: 'Usuario',
         initials: 'U',
-        role: 'Usuario'
+        role: 'Usuario',
+        email: ''
       };
     }
     
     return {
-      name: user.role, // Mostrar el rol como nombre
-      initials: user.initials || 'U',
-      role: user.role
+      name: currentUser.fullName || 'Usuario',
+      initials: currentUser.initials || 'U',
+      role: this.getRoleDisplayName(currentUser.role),
+      email: currentUser.email || ''
     };
   });
 
@@ -42,6 +50,16 @@ export class AdminHeaderComponent implements OnInit {
   ngOnInit() {
     this.updateTime();
     setInterval(() => this.updateTime(), 1000);
+  }
+
+  // Método para obtener el nombre de display del rol
+  private getRoleDisplayName(role: string): string {
+    const roleNames = {
+      'ADMIN': 'Administrador',
+      'USER': 'Usuario',
+      'EMPLOYER': 'Empleado'
+    };
+    return roleNames[role as keyof typeof roleNames] || role;
   }
 
   @HostListener('document:click', ['$event'])
@@ -82,11 +100,10 @@ export class AdminHeaderComponent implements OnInit {
   }
 
   logout() {
-    // TODO: Implementar lógica de cerrar sesión
     if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-      console.log('Cerrando sesión...');
-      // Aquí iría la lógica de logout
+      this.userService.logout();
       this.closeUserDropdown();
+      this.router.navigate(['/']);
     }
   }
 }
