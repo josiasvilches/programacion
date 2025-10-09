@@ -13,6 +13,20 @@
           <h1 class="text-xl font-bold text-gray-800">Rotisería Cacho</h1>
         </a>
       </div>
+      <!-- Desktop Navigation Links -->
+      @if (showNavLinks) {
+      <div class="hidden md:flex items-center space-x-8">
+        <a routerLink="/comidas" 
+           class="text-gray-700 hover:text-red-500 smooth-transition font-medium">
+          Comidas
+        </a>
+        <a routerLink="/comidas" 
+           class="text-gray-700 hover:text-red-500 smooth-transition font-medium">
+          Guarniciones
+        </a>
+      </div>
+      }
+
       <!-- Desktop User Menu & Cart -->
       <div class="hidden md:flex items-center space-x-4">
         <!-- User Dropdown (Solo si hay usuario logueado) -->
@@ -25,9 +39,9 @@
             <div
               class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white text-sm font-bold"
             >
-              {{ user()?.initials }}
+               {{ user()?.initials }}
             </div>
-            <span class="hidden md:block font-medium">{{ user()?.name }}</span>
+            <span class="hidden md:block font-medium">{{ user()?.fullName }}</span>
             <svg
               class="w-4 h-4 transition-transform duration-200"
               [class.rotate-180]="isDropdownOpen"
@@ -61,10 +75,10 @@
               <span class="mr-3">🔔</span>
               Notificaciones
               <span
-                *ngIf="user()?.notifications && user()!.notifications > 0"
+                *ngIf="notifications() && notifications() > 0"
                 class="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-1"
               >
-                {{ user()?.notifications }}
+                {{ notifications() }}
               </span>
             </a>
             <a
@@ -232,7 +246,7 @@
               {{ user()?.initials }}
             </div>
             <div>
-              <p class="font-medium text-gray-800">{{ user()?.name }}</p>
+              <p class="font-medium text-gray-800">{{ user()?.fullName }}</p>
               <p class="text-sm text-gray-600">{{ user()?.role }}</p>
             </div>
           </div>
@@ -252,10 +266,10 @@
             <span class="mr-3 text-lg">🔔</span>
             Notificaciones
             <span
-              *ngIf="user()?.notifications && user()!.notifications > 0"
+              *ngIf="notifications() && notifications() > 0"
               class="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-1"
             >
-              {{ user()?.notifications }}
+              {{ notifications() }}
             </span>
           </a>
           <a

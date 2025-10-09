@@ -2,7 +2,7 @@ import { Component, HostListener, OnInit, Input, inject, computed } from '@angul
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { CartService } from '../../services/cart.service';
-import { UserService } from '../../services/user.service';
+import { UserService, User } from '../../services/user.service';
 
 @Component({
   selector: 'app-header',
@@ -14,6 +14,7 @@ import { UserService } from '../../services/user.service';
 export class HeaderComponent implements OnInit {
   @Input() showUserMenu: boolean = true;
   @Input() showCart: boolean = true;
+  @Input() showNavLinks: boolean = true;
   
   private userService = inject(UserService);
   
@@ -21,26 +22,20 @@ export class HeaderComponent implements OnInit {
   isMobileMenuOpen = false;
   cartItemsCount = 0;
 
-
-  // Usuario hardcodeado - cambiar a null para simular usuario no logueado
-  user = {
-    name: 'Juan Díaz',
-    initials: 'JD',
-    notifications: 3,
-    // role: 'cliente' // Puede ser 'admin', 'empleado', 'cliente'
-    role: 'empleado' // Puede ser 'admin', 'empleado', 'cliente'
-  };
-  // Para probar sin usuario logueado, cambiar a: user = null;
+  // Usar el servicio para obtener el usuario actual
+  user = computed(() => this.userService.user());
+  
+  // Computed para obtener las notificaciones (hardcodeado por ahora)
+  notifications = computed(() => 3);
 
   // Getter para verificar si hay usuario logueado
   get isUserLoggedIn(): boolean {
-    return this.user !== null;
-    // return false;
+    return this.user() !== null;
   }
 
-    // Getter para verificar si el usuario puede acceder al panel de administración
+  // Getter para verificar si el usuario puede acceder al panel de administración
   get canAccessAdminPanel(): boolean {
-    const currentUser = this.userService.getCurrentUser();
+    const currentUser = this.user();
     return currentUser ? (currentUser.role === 'Admin' || currentUser.role === 'Empleado') : false;
   }
 
@@ -101,7 +96,8 @@ export class HeaderComponent implements OnInit {
   }
 
   onLogout() {
-    console.log('Logout user');
+    this.userService.logout();
     this.closeMobileMenu();
+    console.log('Usuario deslogueado');
   }
 }
