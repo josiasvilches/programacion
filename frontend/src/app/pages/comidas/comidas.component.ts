@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { CartService } from '../../services/cart.service';
+import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product.interface';
 
 interface ExtendedProduct extends Product {
@@ -31,7 +32,13 @@ interface CategoryInfo {
 })
 export class ComidasComponent {
   private cartService = inject(CartService);
+  private productService = inject(ProductService);
   private router = inject(Router);
+
+  constructor() {
+    // Llamar a la función para obtener productos de la API
+    this.productService.fetchProductsFromAPI();
+  }
 
   // Signals para el estado del componente
   products = signal<ExtendedProduct[]>([

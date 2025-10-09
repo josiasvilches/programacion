@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, verify_jwt_in_request
 from main.auth.decorators import role_required
 from .. import db
 from main.models import ProductoModel as ProductoModel, UsuarioModel as UsuarioModel
@@ -30,17 +30,24 @@ class Productos(Resource):
 
             productos = productos.paginate(page=page, per_page=per_page, error_out=True)
 
-            current_identity = get_jwt_identity()
+            # Verificar JWT de manera opcional
+            current_identity = None
+            try:
+                verify_jwt_in_request(optional=True)
+                current_identity = get_jwt_identity()
+            except:
+                current_identity = None
+
             if current_identity:
                 usuario = db.session.query(UsuarioModel).get(current_identity)
-                if usuario.rol == 'ADMIN':
+                if usuario and usuario.rol == 'ADMIN':
                     productos_json = [producto.to_json_complete() for producto in productos.items]
-                elif usuario.rol == 'USER':
+                elif usuario and usuario.rol == 'USER':
                     productos_json = [producto.to_json() for producto in productos.items]
                 else:
-                    productos_json = [producto.to_json_short() for producto in productos.items]
+                    productos_json = [producto.to_json() for producto in productos.items]
             else:
-                productos_json = [producto.to_json_short() for producto in productos.items]
+                productos_json = [producto.to_json() for producto in productos.items]
 
             return jsonify({'productos': productos_json,
                             'total': productos.total,

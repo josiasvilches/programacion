@@ -6,6 +6,7 @@ import { Product } from '../models/product.interface';
   providedIn: 'root'
 })
 export class ProductService {
+  
   private featuredProducts: Product[] = [
     {
       id: 1,
@@ -110,5 +111,16 @@ export class ProductService {
 
   getProductById(id: number): Product | undefined {
     return this.getAllProducts().find(product => product.id === id);
+  }
+
+  // Fetch productos desde el backend
+  async fetchProductsFromAPI(): Promise<void> {
+    try {
+      const response = await fetch('http://localhost:5001/productos');
+      const data = await response.json();
+      console.log('Respuesta del API:', data);
+    } catch (error) {
+      console.error('Error al obtener productos:', error);
+    }
   }
 }

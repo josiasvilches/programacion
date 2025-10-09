@@ -41,8 +41,10 @@ class Producto(db.Model):
     # invitados que todavía NO son clientes
     def to_json_short(self):
         prod_json = {
+            'producto_id': self.producto_id,
             'nombre': self.nombre,
             'precio': float(self.precio),
             'imagen_url': self.imagen_url
         }
+        return prod_json
 

@@ -17,6 +17,14 @@ mailsender = Mail()
 def create_app():
     app = Flask(__name__)
     load_dotenv()
+    
+    # Configurar CORS manualmente
+    @app.after_request
+    def after_request(response):
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:4200')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+        return response
 
     # Definir ruta base UN NIVEL ARRIBA (subir de main/ a backend/)
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
