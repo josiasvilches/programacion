@@ -220,8 +220,8 @@ export class UserComponent {
     this.passwordForm.reset();
   }
 
-  // Método para guardar perfil
-  saveProfile() {
+  // Método para guardar perfil -> realiza una petición al backend
+  async saveProfile() {
     if (this.profileForm.invalid) {
       this.profileForm.markAllAsTouched();
       return;
@@ -234,25 +234,76 @@ export class UserComponent {
       return;
     }
 
+    const currentUser = this.userService.getCurrentUser();
+    if (!currentUser) {
+      alert('No hay usuario logueado');
+      return;
+    }
+
+    // Construir payload con sólo los campos que cambiaron
+    const formValues = this.profileForm.value;
+    const payload: any = {};
+  if (formValues.fullName !== currentUser.fullName) payload.fullName = formValues.fullName;
+  if (formValues.email !== currentUser.email) payload.email = formValues.email;
+  // El backend espera el campo "numero" para el teléfono
+  if (formValues.phone !== currentUser.phone) payload.numero = formValues.phone;
+    if (newPassword) payload.password = newPassword;
+
+    // Si no hay cambios, salir
+    if (Object.keys(payload).length === 0) {
+      // No hay cambios, cerrar edición
+      this.isEditing.set(false);
+      this.profileForm.disable();
+      return;
+    }
+
     this.isLoading.set(true);
 
-    // Simular guardado
-    setTimeout(() => {
-      const formValues = this.profileForm.value;
-      
-      // Actualizar usuario a través del servicio
-      this.userService.updateUser({
-        fullName: formValues.fullName,
-        email: formValues.email
+    try {
+      const token = this.userService.getAuthToken();
+      const url = `http://localhost:5001/usuario/${currentUser.id}`;
+
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify(payload)
       });
 
-      this.isLoading.set(false);
+      if (!res.ok) {
+        let errorMsg = 'Error al actualizar el usuario.';
+        try {
+          const err = await res.json();
+          errorMsg = err.message || err.mensaje || errorMsg;
+        } catch (_) {}
+        alert(errorMsg);
+        return;
+      }
+
+      const data = await res.json();
+
+      // Actualizar el usuario en el frontend
+  const updatedFields: any = {};
+  if (payload.fullName) updatedFields.fullName = payload.fullName;
+  if (payload.email) updatedFields.email = payload.email;
+  // mapear "numero" del backend a la propiedad "phone" del frontend
+  if (payload.numero) updatedFields.phone = payload.numero;
+
+      this.userService.updateUser(updatedFields);
+
       this.isEditing.set(false);
       this.profileForm.disable();
       this.passwordForm.reset();
 
-      alert('Perfil actualizado correctamente!');
-    }, 1000);
+      alert(data.message || data.mensaje || 'Perfil actualizado correctamente!');
+    } catch (error) {
+      console.error('Error guardando perfil:', error);
+      alert('Error de conexión. Verificá tu red y volvé a intentar.');
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   // Método para resetear formulario
