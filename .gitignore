@@ -56,6 +56,8 @@
 # ===== ANGULAR/NODE.js FRONTEND =====
 # Dependencies
 **/node_modules/
+node_modules/
+frontend/node_modules/
 **/npm-debug.log*
 **/yarn-debug.log*
 **/yarn-error.log*
@@ -64,18 +66,32 @@
 
 # Compiled output
 **/dist/
+dist/
+frontend/dist/
 **/tmp/
+tmp/
+frontend/tmp/
 **/out-tsc/
+frontend/out-tsc/
 **/bazel-out/
+frontend/bazel-out/
 
 # Angular specific
 **/.angular/
+.angular/
+frontend/.angular/
 **/.sass-cache/
+frontend/.sass-cache/
 **/connect.lock
+frontend/connect.lock
 **/coverage/
+frontend/coverage/
 **/libpeerconnection.log
+frontend/libpeerconnection.log
 **/testem.log
+frontend/testem.log
 **/typings/
+frontend/typings/
 
 # Build outputs
 **/build/
@@ -85,11 +101,16 @@
 # ===== IDEs Y EDITORES =====
 # Visual Studio Code
 **/.vscode/
+.vscode/
+frontend/.vscode/
+backend/.vscode/
 !**/.vscode/settings.json
 !**/.vscode/tasks.json
 !**/.vscode/launch.json
 !**/.vscode/extensions.json
 **/.history/
+.history/
+frontend/.history/
 
 # JetBrains (IntelliJ, PyCharm, WebStorm, etc.)
 **/.idea/
