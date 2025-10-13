@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/components/footer/footer.component.scss"],
-  "sourcesContent": ["// Footer con Tailwind CSS - Los estilos se manejan principalmente en el HTML\n\n.smooth-transition {\n  transition: all 0.3s ease;\n}\n\n// Animaciones adicionales para redes sociales\na {\n  &:hover {\n    transform: translateY(-2px);\n  }\n}\n\n// Responsive adjustments adicionales si son necesarios\n@media (max-width: 768px) {\n  .grid {\n    gap: 1.5rem;\n  }\n}\n"],
-  "mappings": ";AAEA,CAAA;AACE,cAAA,IAAA,KAAA;;AAKA,CAAA;AACE,aAAA,WAAA;;AAKJ,OAAA,CAAA,SAAA,EAAA;AACE,GAAA;AACE,SAAA;;;",
-  "names": []
-}

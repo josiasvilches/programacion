@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/pages/home/home.component.scss"],
-  "sourcesContent": [".home-layout {\n  min-height: 100vh;\n  display: flex;\n  flex-direction: column;\n\n  .main-content {\n    flex: 1;\n\n    // Ensure sections have proper spacing\n    > * {\n      margin-bottom: 0;\n    }\n  }\n}\n\n// Global section spacing\n:host ::ng-deep {\n  section {\n    padding: 3rem 0;\n\n    @media (max-width: 768px) {\n      padding: 2rem 0;\n    }\n  }\n}\n\n// Smooth scrolling for anchor links\nhtml {\n  scroll-behavior: smooth;\n}\n.smooth-transition {\n  transition: all 0.3s ease;\n}\n"],
-  "mappings": ";AAAA,CAAA;AACE,cAAA;AACA,WAAA;AACA,kBAAA;;AAEA,CALF,YAKE,CAAA;AACE,QAAA;;AAGA,CATJ,YASI,CAJF,aAIE,EAAA;AACE,iBAAA;;AAOJ,MAAA,UAAA;AACE,WAAA,KAAA;;AAEA,OAAA,CAAA,SAAA,EAAA;AAHF,QAAA,UAAA;AAII,aAAA,KAAA;;;AAMN;AACE,mBAAA;;AAEF,CAAA;AACE,cAAA,IAAA,KAAA;;",
-  "names": []
-}
