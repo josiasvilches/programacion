@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { AdminHeaderComponent } from '../../../components/admin/header/admin-header.component';
 import { AdminSidebarComponent } from '../../../components/admin/sidebar/admin-sidebar.component';
 import { UserService } from '../../../services/user.service';
+import { environment } from '../../../../enviroments/enviroments.development';
 
 export interface ProfileData {
   name: string;
@@ -105,7 +106,7 @@ export class AdminProfileComponent implements OnInit {
 
     const token = this.userService.getAuthToken();
     const userId = ((currentUser as any).usuario_id) ?? currentUser.id;
-    const url = `http://localhost:5001/usuario/${userId}`;
+    const url = `${environment.apiUrl}/usuario/${userId}`;
 
     try {
       const res = await fetch(url, {

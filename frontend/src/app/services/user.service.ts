@@ -1,4 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
+import { environment } from '../../enviroments/enviroments.development';
 
 export type UserRole = 'ADMIN' | 'USER' | 'EMPLOYER';
 
@@ -25,15 +26,17 @@ export interface LoginResponse {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
+  private readonly apiUrl = environment.apiUrl; // <-- 2. PROPIEDAD AÑADIDA
   // Signal para el usuario actual
+
   private currentUser = signal<User | null>(null);
-  
+
   // Signal para el estado de autenticación
   private isAuthenticated = signal<boolean>(false);
-  
+
   // Signal para el estado de carga
   private isLoading = signal<boolean>(false);
 
@@ -45,7 +48,7 @@ export class UserService {
       email: 'juan.perez@email.com',
       phone: '+54 11 1234-5678',
       role: 'USER',
-      status: 'Activo'
+      status: 'Activo',
     },
     {
       id: 2,
@@ -53,7 +56,7 @@ export class UserService {
       email: 'maria.garcia@admin.com',
       phone: '+54 11 2345-6789',
       role: 'ADMIN',
-      status: 'Activo'
+      status: 'Activo',
     },
     {
       id: 3,
@@ -61,7 +64,7 @@ export class UserService {
       email: 'carlos.rodriguez@empleado.com',
       phone: '+54 11 3456-7890',
       role: 'EMPLOYER',
-      status: 'Activo'
+      status: 'Activo',
     },
     {
       id: 4,
@@ -69,8 +72,8 @@ export class UserService {
       email: 'ana.martinez@cliente.com',
       phone: '+54 11 4567-8901',
       role: 'USER',
-      status: 'Activo'
-    }
+      status: 'Activo',
+    },
   ];
 
   constructor() {
@@ -89,7 +92,7 @@ export class UserService {
   userInitials = computed(() => {
     const user = this.currentUser();
     if (!user?.fullName) return 'U';
-    
+
     return this.generateInitials(user.fullName);
   });
 
@@ -97,10 +100,10 @@ export class UserService {
   user = computed(() => {
     const user = this.currentUser();
     if (!user) return null;
-    
+
     return {
       ...user,
-      initials: this.userInitials()
+      initials: this.userInitials(),
     };
   });
 
@@ -111,49 +114,37 @@ export class UserService {
   // Método para generar iniciales desde el nombre completo
   private generateInitials(fullName: string): string {
     const names = fullName.trim().split(' ');
-    
+
     if (names.length === 1) {
       // Si solo hay un nombre, tomar las primeras dos letras
       return names[0].substring(0, 2).toUpperCase();
     }
-    
+
     // Tomar la primera letra del primer nombre y la primera del último apellido
     const firstName = names[0];
     const lastName = names[names.length - 1];
-    
+
     return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
   }
 
   // Métodos de autenticación con API
   async login(credentials: LoginRequest): Promise<{ success: boolean; message: string }> {
     this.isLoading.set(true);
-    
-    // Mostrar en consola el valor de NG_APP_API_URL (intentando varias fuentes comunes)
     try {
-      const apiUrl = (typeof window !== 'undefined' && (window as any).NG_APP_API_URL)
-        || (typeof process !== 'undefined' && (process as any).env && (process as any).env.NG_APP_API_URL)
-        || (typeof import.meta !== 'undefined' && (import.meta as any).env && (import.meta as any).env.NG_APP_API_URL)
-        || null;
-      console.log('NG_APP_API_URL =', apiUrl);
-    } catch (e) {
-      console.log('NG_APP_API_URL = <unavailable>');
-    }
-
-    try {
-      const response = await fetch('http://localhost:5001/auth/login', {
+      const response = await fetch(`${this.apiUrl}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(credentials)
+        body: JSON.stringify(credentials),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Error de login:', errorData);
-        return { 
-          success: false, 
-          message: errorData.mensaje || 'Error de autenticación'
+        return {
+          success: false,
+          message: errorData.mensaje || 'Error de autenticación',
         };
       }
 
@@ -162,29 +153,28 @@ export class UserService {
 
       // Guardar tokens
       this.storeTokens(data.access_token, data.refresh_token);
-      
+
       // Crear objeto de usuario a partir de la respuesta
       const userData = this.extractUserFromToken(data);
-      
+
       // Guardar datos adicionales del login en localStorage
       this.storeUserData(data);
-      
+
       // Actualizar los signals
       this.currentUser.set(userData);
       this.isAuthenticated.set(true);
 
       console.log('Usuario logueado y datos guardados:', userData);
 
-      return { 
-        success: true, 
-        message: data.mensaje || 'Login exitoso'
+      return {
+        success: true,
+        message: data.mensaje || 'Login exitoso',
       };
-
     } catch (error) {
       console.error('Error en login:', error);
-      return { 
-        success: false, 
-        message: 'Error de conexión con el servidor'
+      return {
+        success: false,
+        message: 'Error de conexión con el servidor',
       };
     } finally {
       this.isLoading.set(false);
@@ -205,7 +195,7 @@ export class UserService {
       const userInfo = {
         rol: loginData.rol,
         mensaje: loginData.mensaje,
-        loginTime: new Date().toISOString()
+        loginTime: new Date().toISOString(),
       };
       localStorage.setItem('user_info', JSON.stringify(userInfo));
       console.log('Datos del usuario guardados en localStorage:', userInfo);
@@ -248,13 +238,13 @@ export class UserService {
     // Decodificar el JWT payload para obtener la información del usuario
     try {
       const payload = JSON.parse(atob(loginResponse.access_token.split('.')[1]));
-      
+
       return {
         id: parseInt(payload.sub) || 0,
         fullName: payload.nombre || 'Usuario',
         email: payload.email || '',
         role: this.validateRole(loginResponse.rol) || 'USER',
-        status: 'Activo'
+        status: 'Activo',
       };
     } catch (error) {
       console.error('Error decodificando token:', error);
@@ -263,7 +253,7 @@ export class UserService {
         fullName: 'Usuario',
         email: '',
         role: this.validateRole(loginResponse.rol) || 'USER',
-        status: 'Activo'
+        status: 'Activo',
       };
     }
   }
@@ -282,13 +272,13 @@ export class UserService {
 
     const token = this.getAccessToken();
     const userInfo = this.getUserData();
-    
+
     if (token) {
       // Verificar si el token no está expirado
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
         const currentTime = Math.floor(Date.now() / 1000);
-        
+
         if (payload.exp > currentTime) {
           // Token válido, restaurar usuario
           const userData: User = {
@@ -296,9 +286,9 @@ export class UserService {
             fullName: payload.nombre || 'Usuario',
             email: payload.email || '',
             role: this.validateRole(payload.rol || userInfo?.rol) || 'USER',
-            status: 'Activo'
+            status: 'Activo',
           };
-          
+
           this.currentUser.set(userData);
           this.isAuthenticated.set(true);
           console.log('Usuario restaurado desde localStorage:', userData);
@@ -354,18 +344,23 @@ export class UserService {
     return {
       user: this.getCurrentUser(),
       userInfo: this.getUserInfo(),
-      token: this.getAuthToken()
+      token: this.getAuthToken(),
     };
   }
 
   // Método para registrar un nuevo usuario contra el backend
-  async register(payload: { nombre: string; email: string; password: string; numero?: string }): Promise<{ success: boolean; data?: any; message?: string }> {
+  async register(payload: {
+    nombre: string;
+    email: string;
+    password: string;
+    numero?: string;
+  }): Promise<{ success: boolean; data?: any; message?: string }> {
     this.isLoading.set(true);
     try {
-      const res = await fetch('http://localhost:5001/auth/register', {
+      const res = await fetch(`${this.apiUrl}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json().catch(() => ({}));
@@ -385,13 +380,13 @@ export class UserService {
   // Método para hacer llamadas autenticadas
   async authenticatedFetch(url: string, options: RequestInit = {}): Promise<Response> {
     const token = this.getAccessToken();
-    
+
     const authOptions: RequestInit = {
       ...options,
       headers: {
         ...options.headers,
-        ...(token && { 'Authorization': `Bearer ${token}` })
-      }
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
     };
 
     return fetch(url, authOptions);
@@ -403,7 +398,7 @@ export class UserService {
     if (current) {
       this.currentUser.set({
         ...current,
-        ...userData
+        ...userData,
       });
     }
   }
@@ -420,7 +415,7 @@ export class UserService {
 
   // Métodos específicos para cambiar a diferentes tipos de usuarios (para testing)
   loginAsAdmin() {
-    const admin = this.testUsers.find(u => u.role === 'ADMIN');
+    const admin = this.testUsers.find((u) => u.role === 'ADMIN');
     if (admin) {
       this.currentUser.set(admin);
       this.isAuthenticated.set(true);
@@ -429,7 +424,7 @@ export class UserService {
   }
 
   loginAsEmployee() {
-    const employee = this.testUsers.find(u => u.role === 'EMPLOYER');
+    const employee = this.testUsers.find((u) => u.role === 'EMPLOYER');
     if (employee) {
       this.currentUser.set(employee);
       this.isAuthenticated.set(true);
@@ -438,7 +433,7 @@ export class UserService {
   }
 
   loginAsClient() {
-    const client = this.testUsers.find(u => u.role === 'USER');
+    const client = this.testUsers.find((u) => u.role === 'USER');
     if (client) {
       this.currentUser.set(client);
       this.isAuthenticated.set(true);
@@ -453,7 +448,7 @@ export class UserService {
 
   // Método para hacer login por ID (testing)
   loginAsUser(userId: number) {
-    const user = this.testUsers.find(u => u.id === userId);
+    const user = this.testUsers.find((u) => u.id === userId);
     if (user) {
       this.currentUser.set(user);
       this.isAuthenticated.set(true);

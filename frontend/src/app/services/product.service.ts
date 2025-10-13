@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Product } from '../models/product.interface';
+import { environment } from '../../enviroments/enviroments.development';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProductService {
-  
+  private readonly apiUrl = environment.apiUrl; // <-- 2. PROPIEDAD AÑADIDA
   // BehaviorSubject para manejar los productos de la API
   private apiProductsSubject = new BehaviorSubject<Product[]>([]);
   public apiProducts$ = this.apiProductsSubject.asObservable();
@@ -20,7 +21,7 @@ export class ProductService {
       category: 'Principales',
       emoji: '🍗',
       unit: 'pollo entero',
-      featured: true
+      featured: true,
     },
     {
       id: 2,
@@ -30,7 +31,7 @@ export class ProductService {
       category: 'Principales',
       emoji: '🥩',
       unit: 'con guarnición',
-      featured: true
+      featured: true,
     },
     {
       id: 3,
@@ -40,8 +41,8 @@ export class ProductService {
       category: 'Empanadas',
       emoji: '🥟',
       unit: 'cada una',
-      featured: true
-    }
+      featured: true,
+    },
   ];
 
   private recommendedProducts: Product[] = [
@@ -52,7 +53,7 @@ export class ProductService {
       price: 4200,
       category: 'Parrilla',
       emoji: '🥩',
-      unit: 'por kg'
+      unit: 'por kg',
     },
     {
       id: 5,
@@ -61,7 +62,7 @@ export class ProductService {
       price: 380,
       category: 'Postres',
       emoji: '🥧',
-      unit: 'cada una'
+      unit: 'cada una',
     },
     {
       id: 6,
@@ -70,7 +71,7 @@ export class ProductService {
       price: 3200,
       category: 'Principales',
       emoji: '🍕',
-      unit: 'porción'
+      unit: 'porción',
     },
     {
       id: 7,
@@ -79,7 +80,7 @@ export class ProductService {
       price: 2400,
       category: 'Principales',
       emoji: '🥧',
-      unit: 'porción'
+      unit: 'porción',
     },
     {
       id: 8,
@@ -88,7 +89,7 @@ export class ProductService {
       price: 2900,
       category: 'Principales',
       emoji: '🐔',
-      unit: 'con guarnición'
+      unit: 'con guarnición',
     },
     {
       id: 9,
@@ -97,8 +98,8 @@ export class ProductService {
       price: 1200,
       category: 'Guarniciones',
       emoji: '🍟',
-      unit: 'porción grande'
-    }
+      unit: 'porción grande',
+    },
   ];
 
   getFeaturedProducts(): Product[] {
@@ -114,34 +115,32 @@ export class ProductService {
   }
 
   getProductById(id: number): Product | undefined {
-    return this.getAllProducts().find(product => product.id === id);
+    return this.getAllProducts().find((product) => product.id === id);
   }
 
   // Fetch productos desde el backend
   async fetchProductsFromAPI(): Promise<void> {
     try {
-      const response = await fetch('http://localhost:5001/productos');
+      const response = await fetch(`${this.apiUrl}/productos`);
       const data = await response.json();
-      console.log('Respuesta del API:', data);
-      
       // Transformar los datos de la API al formato que espera el frontend
       if (data.productos && Array.isArray(data.productos)) {
-        const transformedProducts: Product[] = data.productos.map((apiProduct: any, index: number) => {
-          console.log('Producto API:', apiProduct);
-          return {
-            id: apiProduct.producto_id || apiProduct.id || (index + 1),
-            name: apiProduct.nombre || 'Producto sin nombre',
-            description: apiProduct.descripcion || 'Producto delicioso',
-            price: apiProduct.precio || 0,
-            category: 'Comidas',
-            emoji: '🍽️',
-            unit: 'porción'
-          };
-        });
-        
+        const transformedProducts: Product[] = data.productos.map(
+          (apiProduct: any, index: number) => {
+            return {
+              id: apiProduct.producto_id || apiProduct.id || index + 1,
+              name: apiProduct.nombre || 'Producto sin nombre',
+              description: apiProduct.descripcion || 'Producto delicioso',
+              price: apiProduct.precio || 0,
+              category: 'Comidas',
+              emoji: '🍽️',
+              unit: 'porción',
+            };
+          }
+        );
+
         // Actualizar el BehaviorSubject con los nuevos productos
         this.apiProductsSubject.next(transformedProducts);
-        console.log('Productos transformados:', transformedProducts);
       }
     } catch (error) {
       console.error('Error al obtener productos:', error);
@@ -158,10 +157,8 @@ export class ProductService {
   // Fetch un producto específico por ID desde el backend
   async fetchProductById(id: number): Promise<Product | null> {
     try {
-      const response = await fetch(`http://localhost:5001/producto/${id}`);
+      const response = await fetch(`${this.apiUrl}/producto/${id}`);
       const data = await response.json();
-      console.log('Respuesta del API para producto individual:', data);
-      
       // La API devuelve directamente el objeto del producto (no envuelto en "productos")
       if (data && data.producto_id) {
         const transformedProduct: Product = {
@@ -171,13 +168,11 @@ export class ProductService {
           price: data.precio || 0,
           category: 'Comidas',
           emoji: '🍽️',
-          unit: 'porción'
+          unit: 'porción',
         };
-        
-        console.log('Producto individual transformado:', transformedProduct);
         return transformedProduct;
       }
-      
+
       return null;
     } catch (error) {
       console.error('Error al obtener producto individual:', error);
