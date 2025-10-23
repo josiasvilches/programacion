@@ -59,7 +59,8 @@ class Pedidos(Resource):
                 fecha_pedido=datetime.now(),
                 estado_pedido=data['estado_pedido'],
                 metodo_pago=data['metodo_pago'],
-                total=total
+                total=total,
+                hora_retiro=data.get('hora_retiro')  # Acepta hora_retiro como string opcional
             )
             db.session.add(nuevo_pedido)
             db.session.flush()  # Obtener el ID del pedido antes del commit
