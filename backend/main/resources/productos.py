@@ -3,14 +3,14 @@ from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, verify_jwt_in_request
 from main.auth.decorators import role_required
 from .. import db
-from main.models import ProductoModel as ProductoModel, UsuarioModel as UsuarioModel
+from main.models import ProductoModel as ProductoModel, UsuarioModel as UsuarioModel, CategoriaModel
 
 class Productos(Resource):
     def get(self):
         try:
             #productos = db.session.query(ProductoModel).all()
             page = 1
-            per_page = 15
+            per_page = 10
 
             productos = db.session.query(ProductoModel)
 
@@ -22,13 +22,35 @@ class Productos(Resource):
             # Filtrar por nombre
             if request.args.get('nombre'):
                 productos = productos.filter(ProductoModel.nombre.like("%"+request.args.get('nombre')+"%"))
-            # Filtrar por precio. NOTA: En postman hay que añadir dos params de precio: un límite menor y uno mayor.
-            if request.args.getlist('precios'):
+            
+            # Filtrar por precio (nuevo formato con precio_min y precio_max)
+            if request.args.get('precio_min') or request.args.get('precio_max'):
+                if request.args.get('precio_min') and request.args.get('precio_max'):
+                    min_precio = int(request.args.get('precio_min'))
+                    max_precio = int(request.args.get('precio_max'))
+                    productos = productos.filter(ProductoModel.precio.between(min_precio, max_precio))
+                elif request.args.get('precio_min'):
+                    min_precio = int(request.args.get('precio_min'))
+                    productos = productos.filter(ProductoModel.precio >= min_precio)
+                elif request.args.get('precio_max'):
+                    max_precio = int(request.args.get('precio_max'))
+                    productos = productos.filter(ProductoModel.precio <= max_precio)
+            # Filtrar por precio (formato antiguo para compatibilidad)
+            elif request.args.getlist('precios'):
                 min_precio, max_precio = request.args.getlist('precios')
                 print(min_precio, max_precio)
                 productos = productos.filter(ProductoModel.precio.between(min_precio, max_precio))
+            
+            # Filtrar por id_categoria
+            if request.args.get('id_categoria'):
+                id_cat = request.args.get('id_categoria')
+                print(f"Filtrando por id_categoria: {id_cat}")
+                productos = productos.filter(ProductoModel.id_categoria == int(id_cat))
 
-            productos = productos.paginate(page=page, per_page=per_page, error_out=True)
+            print(f"Paginando: page={page}, per_page={per_page}")
+            productos = productos.paginate(page=page, per_page=per_page, error_out=False)
+            
+            print(f"Productos encontrados: {productos.total}")
 
             # Verificar JWT de manera opcional
             current_identity = None
@@ -49,13 +71,23 @@ class Productos(Resource):
             else:
                 productos_json = [producto.to_json() for producto in productos.items]
 
-            return jsonify({'productos': productos_json,
-                            'total': productos.total,
-                            'pages': productos.pages,
-                            'page': page})
+            response_data = {
+                'productos': productos_json,
+                'total': productos.total,
+                'pages': productos.pages,
+                'page': page,
+                'per_page': per_page,
+                'total_pages': productos.pages
+            }
+            
+            print(f"Respuesta: {len(productos_json)} productos, página {page} de {productos.pages}")
+            
+            return jsonify(response_data)
         except Exception as e:
-            print("ERROR:", str(e))
-            return {'error': str(e)}, 500
+            import traceback
+            print("ERROR COMPLETO:", str(e))
+            print("TRACEBACK:", traceback.format_exc())
+            return {'error': str(e), 'mensaje': 'Error al obtener productos'}, 500
     
     @role_required(roles=['ADMIN'])
     def post(self):
@@ -106,20 +138,39 @@ class Producto(Resource):
             producto = ProductoModel.query.get(id)
             if producto is None:
                 return {"mensaje": "Producto no encontrado"}, 404
-
+            
+            # Obtener datos del producto
+            producto_data = producto.to_json_complete()
+            
+            # Buscar el nombre de la categoría si existe id_categoria
+            if producto.id_categoria:
+                categoria = db.session.query(CategoriaModel).get(producto.id_categoria)
+                if categoria:
+                    producto_data['categoria'] = categoria.nombre_categoria
+                    print(f"Producto con categoría: {categoria.nombre_categoria}")
+                else:
+                    producto_data['categoria'] = None
+                    print("Categoría no encontrada")
+            else:
+                producto_data['categoria'] = None
+            
+            print(f"Producto completo: {producto_data}")
+            
             current_identity = get_jwt_identity()
             if current_identity:
                 usuario = db.session.query(UsuarioModel).get(current_identity)
                 if usuario.rol == 'ADMIN':
-                    return producto.to_json_complete(), 200
+                    return producto_data, 200
                 elif usuario.rol == 'cliente':
-                    return producto.to_json_complete(), 200
+                    return producto_data, 200
                 else:
-                    return producto.to_json_complete(), 200
+                    return producto_data, 200
             else:
-                return producto.to_json_complete(), 200
+                return producto_data, 200
         except Exception as e:
+            import traceback
             print("ERROR:", str(e))
+            print("TRACEBACK:", traceback.format_exc())
             return {'error': str(e)}, 500
 
     @role_required(roles=['ADMIN'])

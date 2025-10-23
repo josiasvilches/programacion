@@ -1,0 +1,75 @@
+<div class="pagination-container" *ngIf="paginationInfo.totalPages > 1">
+  <!-- Información de items -->
+  <div class="pagination-info">
+    <p class="text-sm text-gray-600">
+      Mostrando {{ getStartItem() }} - {{ getEndItem() }} de {{ paginationInfo.totalItems }} productos
+    </p>
+  </div>
+
+  <!-- Controles de paginación -->
+  <div class="pagination-controls">
+    <!-- Botón primera página -->
+    <button
+      (click)="goToFirstPage()"
+      [disabled]="paginationInfo.currentPage === 1"
+      class="pagination-button"
+      [class.disabled]="paginationInfo.currentPage === 1"
+      aria-label="Primera página"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+      </svg>
+    </button>
+
+    <!-- Botón página anterior -->
+    <button
+      (click)="goToPreviousPage()"
+      [disabled]="paginationInfo.currentPage === 1"
+      class="pagination-button"
+      [class.disabled]="paginationInfo.currentPage === 1"
+      aria-label="Página anterior"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+
+    <!-- Números de página -->
+    <div class="page-numbers">
+      <button
+        *ngFor="let page of getPageNumbers()"
+        (click)="goToPage(page)"
+        class="page-number"
+        [class.active]="page === paginationInfo.currentPage"
+      >
+        {{ page }}
+      </button>
+    </div>
+
+    <!-- Botón página siguiente -->
+    <button
+      (click)="goToNextPage()"
+      [disabled]="paginationInfo.currentPage === paginationInfo.totalPages"
+      class="pagination-button"
+      [class.disabled]="paginationInfo.currentPage === paginationInfo.totalPages"
+      aria-label="Página siguiente"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+
+    <!-- Botón última página -->
+    <button
+      (click)="goToLastPage()"
+      [disabled]="paginationInfo.currentPage === paginationInfo.totalPages"
+      class="pagination-button"
+      [class.disabled]="paginationInfo.currentPage === paginationInfo.totalPages"
+      aria-label="Última página"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+      </svg>
+    </button>
+  </div>
+</div>

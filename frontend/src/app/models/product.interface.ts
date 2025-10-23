@@ -7,6 +7,7 @@ export interface Product {
   emoji: string;
   unit?: string;
   featured?: boolean;
+  id_categoria?: number;
 }
 
 export interface CartItem {

@@ -104,7 +104,14 @@ export class ProductComponent implements OnInit {
         };
         
         this.currentProduct.set(productDetails);
-        this.loadRelatedProducts(productDetails.category);
+        console.log('Producto cargado desde API:', productDetails);
+        
+        // Cargar productos relacionados usando id_categoria si existe, sino usar category
+        if (productDetails.id_categoria) {
+          this.loadRelatedProducts(productDetails.id_categoria.toString());
+        } else if (productDetails.category) {
+          this.loadRelatedProducts(productDetails.category);
+        }
       } else {
         console.error('Producto no encontrado en API');
         // Si no se encuentra en API, usar método fallback
@@ -377,117 +384,45 @@ export class ProductComponent implements OnInit {
     return detailedProducts[id] || null;
   }
 
-  private loadRelatedProducts(category: string) {
-    // Combinar productos del servicio con productos simulados para asegurar variedad
-    const serviceProducts = this.productService.getAllProducts();
-    const simulatedProducts = this.getSimulatedProductsByCategory(category);
-    
-    // Combinar y filtrar productos
-    const allProducts = [...serviceProducts, ...simulatedProducts];
-    const related = allProducts
-      .filter((p: Product) => p.category === category && p.id !== this.currentProduct()?.id)
-      .slice(0, 4);
-    
-    // Si no hay suficientes productos de la misma categoría, agregar productos populares
-    if (related.length < 4) {
-      const popularProducts = allProducts
-        .filter((p: Product) => p.id !== this.currentProduct()?.id && !related.some(r => r.id === p.id))
-        .slice(0, 4 - related.length);
-      related.push(...popularProducts);
+  private async loadRelatedProducts(category: string) {
+    try {
+      const currentProduct = this.currentProduct();
+      
+      if (!currentProduct || !currentProduct.id_categoria) {
+        console.log('No hay id_categoria disponible');
+        this.relatedProducts.set([]);
+        return;
+      }
+      
+      const categoryId = currentProduct.id_categoria;
+      console.log(`Cargando productos relacionados de categoría ${categoryId}`);
+      
+      // Hacer fetch con id_categoria y per_page=5 (por si viene el producto actual)
+      await this.productService.fetchProducts({
+        id_categoria: categoryId,
+        per_page: 5,
+        page: 1
+      });
+      
+      // Esperar un momento para que el Observable se actualice
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Obtener los productos actuales del servicio
+      const products = this.productService.getCurrentApiProducts();
+      console.log('Productos obtenidos del backend:', products.length, products);
+      
+      // Filtrar el producto actual (por si viene incluido) y limitar a 4
+      const filtered = products
+        .filter(p => p.id !== currentProduct.id)
+        .slice(0, 4);
+        
+      console.log('Productos relacionados después de filtrar:', filtered.length, filtered);
+      this.relatedProducts.set(filtered);
+      
+    } catch (error) {
+      console.error('Error cargando productos relacionados:', error);
+      this.relatedProducts.set([]);
     }
-    
-    this.relatedProducts.set(related.slice(0, 4));
-  }
-
-  private getSimulatedProductsByCategory(category: string): Product[] {
-    const productsByCategory: { [key: string]: Product[] } = {
-      'Pollos': [
-        {
-          id: 101, name: 'Pollo a la Parrilla', description: 'Pollo marinado a la parrilla',
-          price: 2800, category: 'Pollos', emoji: '🐔'
-        },
-        {
-          id: 102, name: 'Alitas de Pollo', description: 'Alitas crujientes con salsa',
-          price: 1500, category: 'Pollos', emoji: '🍗'
-        },
-        {
-          id: 103, name: 'Pechuga Grillada', description: 'Pechuga de pollo a la plancha',
-          price: 2200, category: 'Pollos', emoji: '🍖'
-        }
-      ],
-      'Guarniciones': [
-        {
-          id: 201, name: 'Puré de Papas', description: 'Puré cremoso casero',
-          price: 800, category: 'Guarniciones', emoji: '🥔'
-        },
-        {
-          id: 202, name: 'Arroz Primavera', description: 'Arroz con vegetales frescos',
-          price: 900, category: 'Guarniciones', emoji: '🍚'
-        },
-        {
-          id: 203, name: 'Vegetales Grillados', description: 'Mix de vegetales a la parrilla',
-          price: 1100, category: 'Guarniciones', emoji: '🥕'
-        }
-      ],
-      'Bebidas': [
-        {
-          id: 301, name: 'Agua Mineral', description: 'Agua mineral sin gas 500ml',
-          price: 400, category: 'Bebidas', emoji: '💧'
-        },
-        {
-          id: 302, name: 'Jugo Natural', description: 'Jugo exprimido de naranja',
-          price: 600, category: 'Bebidas', emoji: '🍊'
-        },
-        {
-          id: 303, name: 'Gaseosa Sprite', description: 'Sprite 500ml',
-          price: 700, category: 'Bebidas', emoji: '🥤'
-        }
-      ],
-      'Principales': [
-        {
-          id: 401, name: 'Bife de Chorizo', description: 'Bife jugoso a la parrilla',
-          price: 4500, category: 'Principales', emoji: '🥩'
-        },
-        {
-          id: 402, name: 'Pescado a la Plancha', description: 'Filete de merluza grillado',
-          price: 3200, category: 'Principales', emoji: '🐟'
-        },
-        {
-          id: 403, name: 'Pasta Casera', description: 'Ravioles con salsa bolognesa',
-          price: 2600, category: 'Principales', emoji: '🍝'
-        }
-      ],
-      'Empanadas': [
-        {
-          id: 501, name: 'Empanada de Carne', description: 'Carne cortada a cuchillo',
-          price: 450, category: 'Empanadas', emoji: '🥟'
-        },
-        {
-          id: 502, name: 'Empanada de Pollo', description: 'Pollo desmenuzado con verduras',
-          price: 420, category: 'Empanadas', emoji: '🥟'
-        },
-        {
-          id: 503, name: 'Empanada de Jamón y Queso', description: 'Clásica de jamón y queso',
-          price: 380, category: 'Empanadas', emoji: '🥟'
-        }
-      ],
-      'Parrilla': [
-        {
-          id: 601, name: 'Chorizo Criollo', description: 'Chorizo casero a la parrilla',
-          price: 1800, category: 'Parrilla', emoji: '🌭'
-        },
-        {
-          id: 602, name: 'Morcilla Dulce', description: 'Morcilla con pasas de uva',
-          price: 1600, category: 'Parrilla', emoji: '🥩'
-        },
-        {
-          id: 603, name: 'Provoleta', description: 'Queso provolone a la parrilla',
-          price: 1200, category: 'Parrilla', emoji: '🧀'
-        }
-      ]
-    };
-
-    return productsByCategory[category] || [];
   }
 
   increaseQuantity() {
@@ -544,7 +479,7 @@ export class ProductComponent implements OnInit {
   }
 
   viewProduct(productId: number) {
-    this.router.navigate(['/product', productId]);
+    this.router.navigate(['/comidas', productId]);
   }
 
   viewCart() {

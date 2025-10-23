@@ -1,12 +1,15 @@
-import { Component, ChangeDetectionStrategy, signal, computed, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
+import { PaginationComponent, PaginationInfo } from '../../components/pagination/pagination.component';
 import { CartService } from '../../services/cart.service';
 import { ProductService } from '../../services/product.service';
+import { CategoryService } from '../../services/category.service';
 import { Product } from '../../models/product.interface';
+import { Category } from '../../models/category.interface';
 
 interface ExtendedProduct extends Product {
   available: boolean;
@@ -28,16 +31,32 @@ interface CategoryInfo {
   templateUrl: './comidas.component.html',
   styleUrls: ['./comidas.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, HeaderComponent, FooterComponent, FormsModule]
+  imports: [CommonModule, HeaderComponent, FooterComponent, FormsModule, PaginationComponent]
 })
 export class ComidasComponent {
   private cartService = inject(CartService);
   private productService = inject(ProductService);
+  private categoryService = inject(CategoryService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+
+  // Signal para las categorías de la API
+  apiCategories = signal<Category[]>([]);
+  
+  // Signal para la información de paginación
+  paginationInfo = signal<PaginationInfo>({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 10
+  });
 
   constructor() {
-    // Llamar a la función para obtener productos de la API
-    this.productService.fetchProductsFromAPI();
+    // Llamar a la función para obtener productos de la API con página 1
+    this.productService.fetchProducts({ page: 1 });
+    
+    // Llamar a la función para obtener categorías de la API
+    this.categoryService.fetchCategoriesFromAPI();
     
     // Suscribirse a los productos de la API
     this.productService.apiProducts$.subscribe(apiProducts => {
@@ -55,6 +74,28 @@ export class ComidasComponent {
         // Actualizar los productos con los de la API
         this.products.set(extendedApiProducts);
         console.log('Productos actualizados desde API:', extendedApiProducts);
+        this.cdr.markForCheck();
+      }
+    });
+
+    // Suscribirse a la paginación
+    this.productService.pagination$.subscribe(pagination => {
+      this.paginationInfo.set({
+        currentPage: pagination.page,
+        totalPages: pagination.total_pages,
+        totalItems: pagination.total,
+        itemsPerPage: pagination.per_page
+      });
+      console.log('Paginación actualizada:', this.paginationInfo());
+      this.cdr.markForCheck();
+    });
+
+    // Suscribirse a las categorías de la API
+    this.categoryService.categories$.subscribe(apiCategories => {
+      if (apiCategories.length > 0) {
+        this.apiCategories.set(apiCategories);
+        console.log('Categorías actualizadas desde API:', apiCategories);
+        this.cdr.markForCheck();
       }
     });
   }
@@ -262,8 +303,29 @@ export class ComidasComponent {
 
   categories = computed((): CategoryInfo[] => {
     const allProducts = this.products();
+    const apiCats = this.apiCategories();
     
-    // Obtener categorías únicas dinámicamente
+    // Si tenemos categorías de la API, usarlas
+    if (apiCats.length > 0) {
+      const dynamicCategories = apiCats.map(cat => ({
+        key: cat.nombre_categoria.toLowerCase(),
+        label: cat.nombre_categoria,
+        count: allProducts.filter(p => 
+          p.category.toLowerCase() === cat.nombre_categoria.toLowerCase()
+        ).length
+      }));
+
+      return [
+        {
+          key: 'all',
+          label: 'Todas',
+          count: allProducts.length
+        },
+        ...dynamicCategories
+      ];
+    }
+    
+    // Fallback: Obtener categorías únicas dinámicamente de los productos
     const uniqueCategories = [...new Set(allProducts.map(p => p.category))];
     
     const dynamicCategories = uniqueCategories.map(category => ({
@@ -285,26 +347,10 @@ export class ComidasComponent {
   filteredProducts = computed(() => {
     let filtered = this.products();
 
-    // Filtro por búsqueda
-    if (this.searchTerm()) {
-      filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(this.searchTerm().toLowerCase())
-      );
-    }
-
-    // Filtro por categoría
-    if (this.selectedCategory() !== 'all') {
-      filtered = filtered.filter(product => 
-        product.category.toLowerCase() === this.selectedCategory()
-      );
-    }
-
-    // Filtro por precio
-    if (this.priceFilter() !== 'all') {
-      filtered = filtered.filter(product => this.passesPriceFilter(product.price));
-    }
-
-    // Filtro por disponibilidad
+    // NOTA: Los filtros de búsqueda, categoría y precio se aplican en el backend
+    // Aquí solo aplicamos filtros locales que no están disponibles en el backend
+    
+    // Filtro por disponibilidad (solo local)
     if (this.availabilityFilter() !== 'all') {
       if (this.availabilityFilter() === 'available') {
         filtered = filtered.filter(product => product.available);
@@ -313,41 +359,119 @@ export class ComidasComponent {
       }
     }
 
-    // Ordenamiento
+    // Ordenamiento (solo local)
     return this.sortProducts(filtered);
   });
 
+  // Método auxiliar para construir filtros actuales
+  private buildCurrentFilters(page: number = 1): any {
+    const filters: any = { page };
+    
+    // Filtro por categoría
+    if (this.selectedCategory() !== 'all') {
+      const apiCats = this.apiCategories();
+      const selectedCat = apiCats.find(cat => 
+        cat.nombre_categoria.toLowerCase() === this.selectedCategory()
+      );
+      if (selectedCat) {
+        filters.id_categoria = selectedCat.categoria_id;
+      }
+    }
+    
+    // Filtro por nombre/búsqueda
+    if (this.searchTerm()) {
+      filters.nombre = this.searchTerm();
+    }
+    
+    // Filtro por precio
+    if (this.priceFilter() !== 'all') {
+      const priceRange = this.getPriceRange(this.priceFilter());
+      if (priceRange.min !== undefined) {
+        filters.precio_min = priceRange.min;
+      }
+      if (priceRange.max !== undefined) {
+        filters.precio_max = priceRange.max;
+      }
+    }
+    
+    console.log('Filtros construidos:', filters);
+    return filters;
+  }
+
+  // Obtener rango de precios según el filtro
+  private getPriceRange(filter: string): { min?: number, max?: number } {
+    switch (filter) {
+      case '0-5000':
+        return { min: 0, max: 5000 };
+      case '5000-10000':
+        return { min: 5000, max: 10000 };
+      case '10000-20000':
+        return { min: 10000, max: 20000 };
+      case '20000+':
+        return { min: 20000 };
+      default:
+        return {};
+    }
+  }
+
   // Métodos para eventos
-  onSearchChange() {
-    // El two-way binding ya actualiza searchTerm automáticamente
+  async onSearchChange() {
+    console.log('onSearchChange llamado, término:', this.searchTerm());
+    // Hacer fetch con los filtros actuales
+    await this.productService.fetchProducts(this.buildCurrentFilters(1));
   }
 
-  clearSearch() {
+  async clearSearch() {
+    console.log('clearSearch llamado');
     this.searchTerm.set('');
+    // Hacer fetch sin el filtro de búsqueda
+    await this.productService.fetchProducts(this.buildCurrentFilters(1));
   }
 
-  setCategory(category: string) {
+  async setCategory(category: string) {
+    console.log('setCategory llamado, categoría:', category);
     this.selectedCategory.set(category);
+    // Hacer fetch con todos los filtros actuales
+    await this.productService.fetchProducts(this.buildCurrentFilters(1));
   }
 
-  onPriceFilterChange() {
-    // El two-way binding ya actualiza priceFilter automáticamente
+  // Método para manejar el cambio de página
+  async onPageChange(page: number): Promise<void> {
+    console.log(`onPageChange llamado, página: ${page}`);
+    
+    // Hacer fetch con los filtros actuales y la nueva página
+    await this.productService.fetchProducts(this.buildCurrentFilters(page));
+    
+    // Scroll al inicio de la página
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async onPriceFilterChange() {
+    console.log('onPriceFilterChange llamado, precio:', this.priceFilter());
+    // Hacer fetch con los filtros actuales incluyendo el nuevo precio
+    await this.productService.fetchProducts(this.buildCurrentFilters(1));
   }
 
   onAvailabilityFilterChange() {
-    // El two-way binding ya actualiza availabilityFilter automáticamente
+    console.log('onAvailabilityFilterChange llamado, disponibilidad:', this.availabilityFilter());
+    // El filtro de disponibilidad se aplica localmente en filteredProducts
   }
 
   onSortChange() {
-    // El two-way binding ya actualiza sortOption automáticamente
+    console.log('onSortChange llamado, ordenamiento:', this.sortOption());
+    // El ordenamiento se aplica localmente en filteredProducts
   }
 
-  clearAllFilters() {
+  async clearAllFilters() {
+    console.log('clearAllFilters llamado');
     this.searchTerm.set('');
     this.selectedCategory.set('all');
     this.priceFilter.set('all');
     this.availabilityFilter.set('all');
     this.sortOption.set('name-asc');
+    
+    // Hacer fetch sin filtros
+    await this.productService.fetchProducts({ page: 1 });
   }
 
   // Métodos auxiliares
@@ -355,14 +479,14 @@ export class ComidasComponent {
     switch (this.priceFilter()) {
       case 'all':
         return true;
-      case '0-2000':
-        return price <= 2000;
-      case '2000-4000':
-        return price > 2000 && price <= 4000;
-      case '4000-6000':
-        return price > 4000 && price <= 6000;
-      case '6000+':
-        return price > 6000;
+      case '0-5000':
+        return price <= 5000;
+      case '5000-10000':
+        return price > 5000 && price <= 10000;
+      case '10000-20000':
+        return price > 10000 && price <= 20000;
+      case '20000+':
+        return price > 20000;
       default:
         return true;
     }
@@ -419,7 +543,20 @@ export class ComidasComponent {
   }
 
   getCategoryLabel(categoryKey: string): string {
-    const category = this.categories().find(c => c.key === categoryKey);
+    // categoryKey puede ser el ID de la categoría o el nombre
+    const apiCats = this.apiCategories();
+    
+    // Primero intentar buscar por ID (si es un número)
+    const categoryId = parseInt(categoryKey);
+    if (!isNaN(categoryId)) {
+      const category = apiCats.find(c => c.categoria_id === categoryId);
+      if (category) {
+        return category.nombre_categoria;
+      }
+    }
+    
+    // Si no, buscar en las categorías computadas por key
+    const category = this.categories().find(c => c.key === categoryKey.toLowerCase());
     return category?.label || categoryKey;
   }
 
