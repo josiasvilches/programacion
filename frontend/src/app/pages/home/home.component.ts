@@ -6,6 +6,7 @@ import { FooterComponent } from '../../components/footer/footer.component';
 import { Schedule, ContactInfo, Testimonial } from '../../models/product.interface';
 import { FavoriteProductsCarrouselComponent } from '../../components/carrousel/favorite-products-carrousel/favorite-products-carrousel.component';
 import { RecommendedProductsCarrouselComponent } from '../../components/carrousel/recommended-products-carrousel/recommended-products-carrousel.component';
+import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-home',
@@ -23,6 +24,7 @@ import { RecommendedProductsCarrouselComponent } from '../../components/carrouse
 export class HomeComponent implements OnInit {
   errorMessage: string = '';
   showError: boolean = false;
+  isLoadingProducts: boolean = false;
   
   schedules: Schedule[] = [
     { day: 'Lun - Vie', hours: '11:00 - 23:00' },
@@ -67,7 +69,11 @@ export class HomeComponent implements OnInit {
 
   isOpen = true; // This could be calculated based on current time
   
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(
+    private router: Router, 
+    private route: ActivatedRoute,
+    private productService: ProductService
+  ) {}
   
   ngOnInit() {
     // Verificar si hay parámetros de error por acceso denegado
@@ -85,6 +91,33 @@ export class HomeComponent implements OnInit {
         this.router.navigate(['/'], { replaceUrl: true });
       }
     });
+
+    // Cargar productos favoritos y recomendados desde la API
+    this.loadProducts();
+  }
+
+  /**
+   * Carga los productos desde la API
+   */
+  async loadProducts() {
+    try {
+      this.isLoadingProducts = true;
+      
+      // Fetch de productos desde el backend
+      const productos = await this.productService.fetchProductsFromAPI();
+      console.log('Productos cargados exitosamente desde la API');
+    } catch (error) {
+      console.error('Error al cargar productos en home:', error);
+      this.errorMessage = 'Error al cargar los productos. Por favor, intente nuevamente.';
+      this.showError = true;
+      
+      // Ocultar mensaje de error después de 5 segundos
+      setTimeout(() => {
+        this.showError = false;
+      }, 5000);
+    } finally {
+      this.isLoadingProducts = false;
+    }
   }
 
   dismissError() {

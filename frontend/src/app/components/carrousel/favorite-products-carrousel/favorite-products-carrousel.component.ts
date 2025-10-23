@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Product } from '../../../models/product.interface';
 import { ProductService } from '../../../services/product.service';
 import { CartService } from '../../../services/cart.service';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-favorite-products-carrousel',
@@ -15,15 +16,37 @@ export class FavoriteProductsCarrouselComponent implements OnInit {
   products: Product[] = [];
   currentSlide = 0;
   totalSlides = 0;
+  isLoading = true;
 
   constructor(
     private productService: ProductService,
-    private cartService: CartService
+    private cartService: CartService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.products = this.productService.getFeaturedProducts();
-    this.totalSlides = this.products.length;
+    // Suscribirse a los productos de la API - solo cuando hay productos
+    this.productService.apiProducts$
+      .pipe(filter(products => products && products.length > 0))
+      .subscribe(apiProducts => {
+        console.log('Favorite products from API:', apiProducts);
+        this.products = [...apiProducts.slice(0, 3)]; // Crear nueva referencia
+        this.totalSlides = this.products.length;
+        this.isLoading = false;
+        this.cdr.detectChanges(); // Forzar detección de cambios
+      });
+
+    // Timeout de seguridad: si después de 2 segundos no hay productos de la API, usar estáticos
+    setTimeout(() => {
+      if (this.products.length === 0) {
+        console.log('Timeout: No favorite products from API, using static data');
+        this.products = this.productService.getFeaturedProducts();
+        this.totalSlides = this.products.length;
+        this.isLoading = false;
+        this.cdr.detectChanges(); // Forzar detección de cambios
+      }
+    }, 2000);
+    
     this.startAutoPlay(); 
   }
 

@@ -78,86 +78,31 @@ export class CartComponent implements OnInit {
   }
 
   private loadCartItems() {
-    // Simular carga de items del carrito desde el servicio
-    // En una aplicación real, esto vendría del CartService
-    const mockCartItems: ExtendedCartItem[] = [
-      {
-        product: {
-          id: 1,
-          name: "Pollo al Spiedo Entero",
-          description: "Pollo entero dorado al spiedo",
-          price: 3500,
-          category: "Pollos",
-          emoji: "🍗"
-        },
-        quantity: 1,
-        available: true,
-        category: "Pollos"
-      },
-      {
-        product: {
-          id: 4,
-          name: "Milanesas de Pollo (4 unidades)",
-          description: "Milanesas crocantes de pollo",
-          price: 2800,
-          category: "Milanesas",
-          emoji: "🍖"
-        },
-        quantity: 2,
-        available: true,
-        category: "Milanesas"
-      },
-      {
-        product: {
-          id: 7,
-          name: "Empanadas de Carne (6 unidades)",
-          description: "Empanadas caseras de carne",
-          price: 2700,
-          category: "Empanadas",
-          emoji: "🥟"
-        },
-        quantity: 1,
-        available: true,
-        category: "Empanadas"
-      },
-      {
-        product: {
-          id: 13,
-          name: "Matambre a la Pizza",
-          description: "Matambre con salsa y queso",
-          price: 5200,
-          category: "Carnes",
-          emoji: "🍕"
-        },
-        quantity: 1,
-        available: false,
-        category: "Carnes"
-      }
-    ];
-
-    this.cartItems.set(mockCartItems);
+    // Suscribirse al servicio de carrito para obtener los items reales
+    this.cartService.cartItems$.subscribe(items => {
+      // Convertir CartItem a ExtendedCartItem
+      const extendedItems: ExtendedCartItem[] = items.map(item => ({
+        ...item,
+        available: true, // Por defecto todos están disponibles
+        category: item.product.category || 'Sin categoría'
+      }));
+      
+      this.cartItems.set(extendedItems);
+    });
   }
 
   increaseQuantity(itemId: number) {
-    this.cartItems.update(items => {
-      return items.map(item => {
-        if (item.product.id === itemId && item.quantity < 10) {
-          return { ...item, quantity: item.quantity + 1 };
-        }
-        return item;
-      });
-    });
+    const item = this.cartItems().find(item => item.product.id === itemId);
+    if (item && item.quantity < 10) {
+      this.cartService.updateQuantity(itemId, item.quantity + 1);
+    }
   }
 
   decreaseQuantity(itemId: number) {
-    this.cartItems.update(items => {
-      return items.map(item => {
-        if (item.product.id === itemId && item.quantity > 1) {
-          return { ...item, quantity: item.quantity - 1 };
-        }
-        return item;
-      });
-    });
+    const item = this.cartItems().find(item => item.product.id === itemId);
+    if (item && item.quantity > 1) {
+      this.cartService.updateQuantity(itemId, item.quantity - 1);
+    }
   }
 
   showRemoveConfirmation(itemId: number) {
@@ -171,9 +116,7 @@ export class CartComponent implements OnInit {
   }
 
   removeItem(itemId: number) {
-    this.cartItems.update(items => {
-      return items.filter(item => item.product.id !== itemId);
-    });
+    this.cartService.removeFromCart(itemId);
   }
 
   showClearCartConfirmation() {
@@ -186,7 +129,7 @@ export class CartComponent implements OnInit {
   }
 
   clearCart() {
-    this.cartItems.set([]);
+    this.cartService.clearCart();
   }
 
   closeModal() {

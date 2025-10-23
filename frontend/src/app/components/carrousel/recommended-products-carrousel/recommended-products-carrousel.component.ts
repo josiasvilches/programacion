@@ -1,8 +1,9 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ProductService } from '../../../services/product.service';
 import { CartService } from '../../../services/cart.service';
 import { Product } from '../../../models/product.interface';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-recommended-products-carrousel',
@@ -16,15 +17,40 @@ export class RecommendedProductsCarrouselComponent implements OnInit {
   currentPosition = 0;
   cardWidth = 320; // 80 * 4 (w-80 + gap)
   maxScroll = 0;
+  isLoading = true;
 
   constructor(
     private productService: ProductService,
     private cartService: CartService,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.products = this.productService.getRecommendedProducts();
+    // Suscribirse a los productos de la API - solo cuando hay productos
+    this.productService.apiProducts$
+      .pipe(filter(products => products && products.length > 0))
+      .subscribe(apiProducts => {
+        console.log('Recommended products from API:', apiProducts);
+        this.products = [...apiProducts]; // Crear nueva referencia para forzar detección de cambios
+        this.isLoading = false;
+        this.calculateMaxScroll();
+        this.cdr.detectChanges(); // Forzar detección de cambios
+      });
+
+    // Timeout de seguridad: si después de 2 segundos no hay productos de la API, usar estáticos
+    setTimeout(() => {
+      if (this.products.length === 0) {
+        console.log('Timeout: No recommended products from API, using static data');
+        this.products = this.productService.getRecommendedProducts();
+        this.isLoading = false;
+        this.calculateMaxScroll();
+        this.cdr.detectChanges(); // Forzar detección de cambios
+      }
+    }, 2000);
+  }
+
+  private calculateMaxScroll() {
     // Calculate max scroll based on container width - only in browser
     if (isPlatformBrowser(this.platformId)) {
       this.maxScroll = Math.max(0, (this.products.length * this.cardWidth) - (window.innerWidth - 200));

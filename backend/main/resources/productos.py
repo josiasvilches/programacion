@@ -10,7 +10,7 @@ class Productos(Resource):
         try:
             #productos = db.session.query(ProductoModel).all()
             page = 1
-            per_page = 10
+            per_page = 15
 
             productos = db.session.query(ProductoModel)
 
@@ -151,6 +151,7 @@ class Producto(Resource):
 
     @role_required(roles=['ADMIN'])
     def delete(self, id):
+        print('eliminando')
         try:
             producto = ProductoModel.query.get(id)
             if producto is None:

@@ -138,7 +138,6 @@ export class ProductService {
             };
           }
         );
-
         // Actualizar el BehaviorSubject con los nuevos productos
         this.apiProductsSubject.next(transformedProducts);
       }
