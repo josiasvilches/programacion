@@ -54,7 +54,7 @@ def create_app():
     # Crear las tablas
     with app.app_context():
         try:
-            from main.models import ValoracionModel, ProductoModel, UsuarioModel, PedidoModel, PedidoProductoModel
+            from main.models import ValoracionModel, ProductoModel, UsuarioModel, PedidoModel, PedidoProductoModel, CampanaModel
 
             db.session.execute(text('SELECT 1'))  # Usar text() para la consulta SQL
             print("Conexión a la base de datos exitosa.")
@@ -79,6 +79,9 @@ def create_app():
     api.add_resource(resources.PedidosUsuarioResource, '/pedidos/usuario/<int:id_usuario>')
     api.add_resource(resources.CategoriasResource, '/categorias')
     api.add_resource(resources.CategoriaResource, '/categoria/<id>')
+    api.add_resource(resources.CampanasResource, '/campanas')
+    api.add_resource(resources.CampanaResource, '/campana/<id>')
+    api.add_resource(resources.CampanasActivasResource, '/campanas/activas')
 
     api.init_app(app)
 

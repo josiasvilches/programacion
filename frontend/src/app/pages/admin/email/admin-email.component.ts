@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminSidebarComponent } from '../../../components/admin/sidebar/admin-sidebar.component';
 import { AdminHeaderComponent } from '../../../components/admin/header/admin-header.component';
+import { CampaignService } from '../../../services/campaign.service';
+import { UserService } from '../../../services/user.service';
 
 interface EmailCampaign {
   id: number;
   name: string;
   subject: string;
-  status: 'sent' | 'draft' | 'scheduled' | 'sending';
+  status: 'activa' | 'pausada' | 'finalizada';
   recipients: number;
   openRate?: number;
   clickRate?: number;
@@ -17,6 +19,7 @@ interface EmailCampaign {
   template: string;
   content?: string;
   cta?: string;
+  descuento?: string;
 }
 
 interface User {
@@ -50,53 +53,12 @@ interface EmailStats {
   styleUrls: ['./admin-email.component.scss']
 })
 export class AdminEmailComponent implements OnInit {
-  // Campaign data
-  campaigns: EmailCampaign[] = [
-    {
-      id: 1,
-      name: "Promoción Fin de Semana",
-      subject: "¡50% OFF en todos los platos!",
-      status: "sent",
-      recipients: 45,
-      openRate: 72,
-      clickRate: 38,
-      sentDate: "2024-01-20",
-      template: "promo"
-    },
-    {
-      id: 2,
-      name: "Nuevos Platos de Temporada",
-      subject: "Descubre nuestros nuevos sabores",
-      status: "scheduled",
-      recipients: 38,
-      scheduledDate: "2024-01-25",
-      template: "news"
-    },
-    {
-      id: 3,
-      name: "Oferta Especial Miércoles",
-      subject: "Miércoles de descuentos especiales",
-      status: "draft",
-      recipients: 0,
-      template: "promo"
-    }
-  ];
+  // Signals
+  campaigns = signal<EmailCampaign[]>([]);
+  isLoading = signal<boolean>(false);
 
-  // User data
-  users: User[] = [
-    { id: 1, name: "María González", email: "maria@email.com", status: "active", role: "user" },
-    { id: 2, name: "Carlos Rodríguez", email: "carlos@email.com", status: "active", role: "user" },
-    { id: 3, name: "Ana Martínez", email: "ana@email.com", status: "active", role: "user" },
-    { id: 4, name: "Luis Torres", email: "luis@email.com", status: "active", role: "user" },
-    { id: 5, name: "Laura Sánchez", email: "laura@email.com", status: "active", role: "user" },
-    { id: 6, name: "Diego Fernández", email: "diego@email.com", status: "active", role: "user" },
-    { id: 7, name: "Carmen López", email: "carmen@email.com", status: "active", role: "user" },
-    { id: 8, name: "Roberto Silva", email: "roberto@email.com", status: "active", role: "user" },
-    { id: 9, name: "Patricia Ruiz", email: "patricia@email.com", status: "active", role: "user" },
-    { id: 10, name: "Fernando Castro", email: "fernando@email.com", status: "active", role: "user" },
-    { id: 11, name: "Mónica Herrera", email: "monica@email.com", status: "active", role: "user" },
-    { id: 12, name: "Alejandro Morales", email: "alejandro@email.com", status: "active", role: "user" }
-  ];
+  // User data (mantenerlo por ahora para el modal de selección)
+  users: User[] = [];
 
   // Email templates
   templates: EmailTemplate[] = [
@@ -137,7 +99,8 @@ export class AdminEmailComponent implements OnInit {
     cta: '',
     date: '',
     time: '',
-    template: 'promo'
+    template: 'promo',
+    descuento: ''
   };
 
   // Selection states
@@ -153,25 +116,66 @@ export class AdminEmailComponent implements OnInit {
     scheduledCount: 0
   };
 
-  ngOnInit() {
+  constructor(
+    private campaignService: CampaignService,
+    private userService: UserService
+  ) {}
+
+  async ngOnInit() {
+    await this.loadCampaignsFromBackend();
     this.updateStats();
+  }
+
+  // Cargar campañas desde el backend
+  async loadCampaignsFromBackend() {
+    console.log('🔄 Cargando campañas desde backend...');
+    this.isLoading.set(true);
+    
+    try {
+      const result = await this.campaignService.getAllCampaignsFromBackend(1, 100);
+      
+      if (result.success && result.data) {
+        const backendCampaigns = result.data.campanas || [];
+        console.log('📦 Campañas recibidas:', backendCampaigns);
+        
+        const convertedCampaigns = this.convertBackendCampaignsToUI(backendCampaigns);
+        this.campaigns.set(convertedCampaigns);
+        console.log('✅ Campañas convertidas:', convertedCampaigns);
+      } else {
+        console.error('❌ Error al cargar campañas:', result.message);
+      }
+    } catch (error) {
+      console.error('❌ Error al cargar campañas:', error);
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  // Convertir campañas del backend al formato UI
+  convertBackendCampaignsToUI(backendCampaigns: any[]): EmailCampaign[] {
+    return backendCampaigns.map(campana => ({
+      id: campana.campana_id,
+      name: campana.titulo,
+      subject: campana.mensaje,
+      status: campana.estado || 'activa',
+      recipients: 0, // El backend no almacena esto
+      descuento: campana.descuento,
+      sentDate: campana.fecha_creacion,
+      scheduledDate: campana.fecha_inicio,
+      template: 'promo',
+      content: campana.mensaje
+    }));
   }
 
   // Statistics methods
   updateStats() {
-    const sentCampaigns = this.campaigns.filter(c => c.status === 'sent');
+    const currentCampaigns = this.campaigns();
+    const activeCampaigns = currentCampaigns.filter(c => c.status === 'activa');
     
-    this.stats.totalSent = sentCampaigns.reduce((sum, c) => sum + c.recipients, 0);
-    
-    this.stats.openRate = sentCampaigns.length > 0 
-      ? Math.round(sentCampaigns.reduce((sum, c) => sum + (c.openRate || 0), 0) / sentCampaigns.length)
-      : 0;
-    
-    this.stats.clickRate = sentCampaigns.length > 0 
-      ? Math.round(sentCampaigns.reduce((sum, c) => sum + (c.clickRate || 0), 0) / sentCampaigns.length)
-      : 0;
-    
-    this.stats.scheduledCount = this.campaigns.filter(c => c.status === 'scheduled').length;
+    this.stats.totalSent = currentCampaigns.length;
+    this.stats.openRate = 0; // No lo tenemos del backend
+    this.stats.clickRate = 0; // No lo tenemos del backend
+    this.stats.scheduledCount = activeCampaigns.length;
   }
 
   // Campaign management
@@ -192,7 +196,8 @@ export class AdminEmailComponent implements OnInit {
       cta: campaign.cta || '',
       date: campaign.scheduledDate || '',
       time: '',
-      template: campaign.template
+      template: campaign.template,
+      descuento: campaign.descuento || ''
     };
     this.selectedTemplate = campaign.template;
     this.showCampaignModal = true;
@@ -211,7 +216,8 @@ export class AdminEmailComponent implements OnInit {
       cta: '',
       date: '',
       time: '',
-      template: 'promo'
+      template: 'promo',
+      descuento: ''
     };
     this.selectedUsers = [];
     this.selectedTemplate = 'promo';
@@ -309,135 +315,182 @@ export class AdminEmailComponent implements OnInit {
   }
 
   // Campaign actions
-  sendCampaign() {
+  async sendCampaign() {
     if (!this.validateForm()) {
-      alert('Por favor completa todos los campos obligatorios y selecciona al menos un destinatario.');
+      alert('Por favor completa todos los campos obligatorios.');
+      return;
+    }
+
+    const token = this.userService.getAuthToken();
+    console.log('🔑 Token obtenido:', token ? 'Sí (oculto)' : 'No encontrado');
+    
+    if (!token) {
+      alert('Debes iniciar sesión para realizar esta acción');
       return;
     }
 
     const isScheduled = !!(this.campaignForm.date && this.campaignForm.time);
     
     if (this.isEditMode) {
-      this.updateCampaign();
+      await this.updateCampaignInBackend(token);
     } else {
-      this.createCampaign(isScheduled);
+      await this.createCampaignInBackend(token, isScheduled);
     }
 
+    await this.loadCampaignsFromBackend();
     this.closeCampaignModal();
     this.updateStats();
     
     const message = isScheduled 
-      ? `¡Campaña programada exitosamente para el ${this.formatDate(this.campaignForm.date)} a las ${this.campaignForm.time}!`
-      : `¡Campaña enviada exitosamente a ${this.selectedUsers.length} usuarios!`;
+      ? `¡Campaña programada exitosamente!`
+      : `¡Campaña creada exitosamente!`;
     
     alert(message);
   }
 
-  saveDraft() {
-    const campaign: EmailCampaign = {
-      id: this.isEditMode ? this.currentCampaignId : this.campaigns.length + 1,
-      name: this.campaignForm.name || 'Borrador sin título',
-      subject: this.campaignForm.subject || 'Sin asunto',
-      status: 'draft',
-      recipients: this.selectedUsers.length,
-      template: this.selectedTemplate,
-      content: this.campaignForm.content,
-      cta: this.campaignForm.cta
+  async saveDraft() {
+    const token = this.userService.getAuthToken();
+    console.log('🔑 Token obtenido (draft):', token ? 'Sí (oculto)' : 'No encontrado');
+    
+    if (!token) {
+      alert('Debes iniciar sesión para realizar esta acción');
+      return;
+    }
+
+    const campaignData = {
+      titulo: this.campaignForm.name || 'Borrador sin título',
+      mensaje: this.campaignForm.subject || 'Sin asunto',
+      descuento: this.campaignForm.descuento,
+      estado: 'pausada'
     };
 
     if (this.isEditMode) {
-      const index = this.campaigns.findIndex(c => c.id === this.currentCampaignId);
-      if (index > -1) {
-        this.campaigns[index] = campaign;
+      const result = await this.campaignService.updateCampaignInBackend(
+        this.currentCampaignId,
+        campaignData,
+        token
+      );
+
+      if (result.success) {
+        alert('¡Borrador actualizado exitosamente!');
+      } else {
+        alert('Error al actualizar: ' + result.message);
       }
     } else {
-      this.campaigns.unshift(campaign);
+      const result = await this.campaignService.createCampaignInBackend(
+        campaignData,
+        token
+      );
+
+      if (result.success) {
+        alert('¡Borrador guardado exitosamente!');
+      } else {
+        alert('Error al guardar: ' + result.message);
+      }
     }
 
+    await this.loadCampaignsFromBackend();
     this.closeCampaignModal();
     this.updateStats();
-    alert('¡Borrador guardado exitosamente!');
+  }
+
+  private async createCampaignInBackend(token: string, isScheduled: boolean) {
+    console.log('📤 Creando campaña en backend...');
+    console.log('🔑 Token disponible:', !!token);
+    
+    const campaignData = {
+      titulo: this.campaignForm.name,
+      mensaje: this.campaignForm.subject,
+      descuento: this.campaignForm.descuento,
+      estado: 'activa',
+      fecha_inicio: isScheduled ? this.campaignForm.date : undefined,
+      fecha_fin: undefined
+    };
+
+    console.log('📦 Datos a enviar:', campaignData);
+
+    const result = await this.campaignService.createCampaignInBackend(
+      campaignData,
+      token
+    );
+
+    console.log('📥 Resultado:', result);
+
+    if (!result.success) {
+      alert('Error al crear campaña: ' + result.message);
+    }
+  }
+
+  private async updateCampaignInBackend(token: string) {
+    const campaignData = {
+      titulo: this.campaignForm.name,
+      mensaje: this.campaignForm.subject,
+      descuento: this.campaignForm.descuento,
+      estado: 'activa'
+    };
+
+    const result = await this.campaignService.updateCampaignInBackend(
+      this.currentCampaignId,
+      campaignData,
+      token
+    );
+
+    if (!result.success) {
+      alert('Error al actualizar campaña: ' + result.message);
+    }
   }
 
   private validateForm(): boolean {
     return !!(this.campaignForm.name && 
-             this.campaignForm.subject && 
-             this.campaignForm.content && 
-             this.selectedUsers.length > 0);
-  }
-
-  private createCampaign(isScheduled: boolean) {
-    const newCampaign: EmailCampaign = {
-      id: this.campaigns.length + 1,
-      name: this.campaignForm.name,
-      subject: this.campaignForm.subject,
-      status: isScheduled ? 'scheduled' : 'sent',
-      recipients: this.selectedUsers.length,
-      template: this.selectedTemplate,
-      content: this.campaignForm.content,
-      cta: this.campaignForm.cta,
-      sentDate: isScheduled ? undefined : new Date().toISOString().split('T')[0],
-      scheduledDate: isScheduled ? this.campaignForm.date : undefined,
-      openRate: isScheduled ? undefined : Math.floor(Math.random() * 30) + 60,
-      clickRate: isScheduled ? undefined : Math.floor(Math.random() * 20) + 25
-    };
-
-    this.campaigns.unshift(newCampaign);
-  }
-
-  private updateCampaign() {
-    const index = this.campaigns.findIndex(c => c.id === this.currentCampaignId);
-    if (index > -1) {
-      const campaign = this.campaigns[index];
-      campaign.name = this.campaignForm.name;
-      campaign.subject = this.campaignForm.subject;
-      campaign.content = this.campaignForm.content;
-      campaign.cta = this.campaignForm.cta;
-      campaign.template = this.selectedTemplate;
-      campaign.recipients = this.selectedUsers.length;
-      
-      if (this.campaignForm.date && this.campaignForm.time) {
-        campaign.status = 'scheduled';
-        campaign.scheduledDate = this.campaignForm.date;
-      }
-    }
+             this.campaignForm.subject);
   }
 
   duplicateCampaign(campaign: EmailCampaign) {
-    const newCampaign: EmailCampaign = {
-      ...campaign,
-      id: this.campaigns.length + 1,
-      name: `${campaign.name} (Copia)`,
-      status: 'draft',
-      recipients: 0,
-      sentDate: undefined,
-      scheduledDate: undefined,
-      openRate: undefined,
-      clickRate: undefined
-    };
-
-    this.campaigns.unshift(newCampaign);
-    this.updateStats();
-    alert('¡Campaña duplicada exitosamente!');
+    // Por ahora solo alert, ya que duplicar implica crear una nueva campaña
+    alert('Funcionalidad de duplicar en desarrollo');
   }
 
-  deleteCampaign(id: number) {
+  async deleteCampaign(id: number) {
     if (confirm('¿Estás seguro de que quieres eliminar esta campaña?')) {
-      this.campaigns = this.campaigns.filter(c => c.id !== id);
-      this.updateStats();
-      alert('Campaña eliminada exitosamente.');
+      const token = this.userService.getAuthToken();
+      if (!token) {
+        alert('Debes iniciar sesión para realizar esta acción');
+        return;
+      }
+
+      const result = await this.campaignService.deleteCampaignInBackend(id, token);
+      
+      if (result.success) {
+        alert('Campaña eliminada exitosamente.');
+        await this.loadCampaignsFromBackend();
+        this.updateStats();
+      } else {
+        alert('Error al eliminar: ' + result.message);
+      }
     }
   }
 
-  cancelScheduled(id: number) {
-    if (confirm('¿Estás seguro de que quieres cancelar esta campaña programada?')) {
-      const campaign = this.campaigns.find(c => c.id === id);
-      if (campaign) {
-        campaign.status = 'draft';
-        campaign.scheduledDate = undefined;
+  async cancelScheduled(id: number) {
+    if (confirm('¿Estás seguro de que quieres pausar esta campaña?')) {
+      const token = this.userService.getAuthToken();
+      if (!token) {
+        alert('Debes iniciar sesión para realizar esta acción');
+        return;
       }
-      this.updateStats();
-      alert('Campaña cancelada y guardada como borrador.');
+
+      const result = await this.campaignService.updateCampaignInBackend(
+        id,
+        { estado: 'pausada' },
+        token
+      );
+      
+      if (result.success) {
+        alert('Campaña pausada exitosamente.');
+        await this.loadCampaignsFromBackend();
+        this.updateStats();
+      } else {
+        alert('Error al pausar: ' + result.message);
+      }
     }
   }
 

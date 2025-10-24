@@ -5,3 +5,4 @@ from .pedidos import Pedido as PedidoModel
 from .notificaciones import Notificacion as NotificacionModel
 from .pedidos_productos import PedidoProducto as PedidoProductoModel
 from .categorias import Categoria as CategoriaModel
+from .campanas import Campana as CampanaModel

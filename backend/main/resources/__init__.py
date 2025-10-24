@@ -11,3 +11,6 @@ from .usuarios import Usuarios as UsuariosResource
 from .valoraciones import Valoracion as ValoracionResource
 from .categorias import Categorias as CategoriasResource
 from .categorias import Categoria as CategoriaResource
+from .campanas import Campanas as CampanasResource
+from .campanas import Campana as CampanaResource
+from .campanas import CampanasActivas as CampanasActivasResource

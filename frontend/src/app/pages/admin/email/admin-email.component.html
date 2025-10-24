@@ -30,23 +30,50 @@
       </div>
     </div>
 
+    <!-- Loading state -->
+    <div *ngIf="isLoading()" class="flex justify-center items-center py-16">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
+    </div>
+
+    <!-- No campaigns message -->
+    <div *ngIf="!isLoading() && campaigns().length === 0" class="bg-white rounded-xl shadow-sm p-12 text-center">
+      <p class="text-gray-500 text-lg">No hay campañas creadas aún</p>
+      <button 
+        (click)="openNewCampaignModal()"
+        class="mt-4 gradient-bg text-white px-6 py-3 rounded-lg font-medium hover-lift smooth-transition">
+        Crear Primera Campaña
+      </button>
+    </div>
+
     <!-- Campaigns List -->
-    <div class="space-y-6">
+    <div class="space-y-6" *ngIf="!isLoading() && campaigns().length > 0">
       <div 
-        *ngFor="let campaign of campaigns" 
+        *ngFor="let campaign of campaigns()" 
         class="promo-card bg-white rounded-xl shadow-sm p-6 fade-in">
         <div class="flex items-start justify-between mb-4">
           <div class="flex-1">
             <div class="flex items-center space-x-3 mb-2">
               <h3 class="text-lg font-bold text-gray-900">{{ campaign.name }}</h3>
-              <span class="text-white text-xs px-3 py-1 rounded-full font-medium bg-green-500">
-                Enviado
+              <span class="text-white text-xs px-3 py-1 rounded-full font-medium" 
+                    [ngClass]="{
+                      'bg-green-500': campaign.status === 'activa',
+                      'bg-yellow-500': campaign.status === 'pausada',
+                      'bg-gray-500': campaign.status === 'finalizada'
+                    }">
+                {{ campaign.status === 'activa' ? 'Activa' : campaign.status === 'pausada' ? 'Pausada' : 'Finalizada' }}
               </span>
             </div>
             <p class="text-gray-600 mb-2">{{ campaign.subject }}</p>
+            <p *ngIf="campaign.descuento" class="text-sm text-red-600 font-semibold">{{ campaign.descuento }}</p>
           </div>
           <div class="flex items-center space-x-2">
             <button 
+              (click)="openEditCampaignModal(campaign)" 
+              class="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm font-medium hover-lift smooth-transition">
+              Editar
+            </button>
+            <button 
+              *ngIf="campaign.status !== 'finalizada'"
               (click)="deleteCampaign(campaign.id)" 
               class="bg-red-500 text-white px-3 py-1 rounded-lg text-sm font-medium hover-lift smooth-transition">
               Eliminar
