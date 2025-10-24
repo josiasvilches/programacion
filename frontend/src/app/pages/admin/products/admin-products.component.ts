@@ -1,23 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminSidebarComponent } from '../../../components/admin/sidebar/admin-sidebar.component';
 import { AdminHeaderComponent } from '../../../components/admin/header/admin-header.component';
+import { ProductService } from '../../../services/product.service';
+import { CategoryService } from '../../../services/category.service';
+import { UserService } from '../../../services/user.service';
+import { Product } from '../../../models/product.interface';
+import { Category } from '../../../models/category.interface';
 
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  category: string;
-  price: number;
-  stock: number;
-  status: 'active' | 'inactive' | 'low-stock';
-  emoji: string;
-  available: boolean;
-  popular: boolean;
-  new: boolean;
-  prepTime: string;
-  portions: string;
+interface AdminProduct extends Product {
+  stock?: number;
+  status?: 'active' | 'inactive' | 'low-stock';
+  available?: boolean;
+  popular?: boolean;
+  new?: boolean;
+  prepTime?: string;
+  portions?: string;
+  imagen?: string;
+  disponible?: boolean;
 }
 
 @Component({
@@ -30,9 +31,91 @@ interface Product {
 export class AdminProductsComponent implements OnInit {
   showAddProductModal = false;
   showEditProductModal = false;
-  selectedProduct: Product | null = null;
+  selectedProduct: AdminProduct | null = null;
 
-  products: Product[] = [
+  // Signals para manejar productos y categorías
+  products = signal<AdminProduct[]>([]);
+  categories = signal<Category[]>([]);
+  isLoading = signal<boolean>(false);
+
+  // Producto temporal para agregar/editar
+  newProduct: AdminProduct = this.getEmptyProduct();
+
+  constructor(
+    private productService: ProductService,
+    private categoryService: CategoryService,
+    private userService: UserService
+  ) {}
+
+  async ngOnInit() {
+    await this.loadProducts();
+    await this.loadCategories();
+  }
+
+  // Cargar productos desde el backend
+  async loadProducts() {
+    this.isLoading.set(true);
+    try {
+      await this.productService.fetchProducts({ per_page: 100 });
+      
+      // Suscribirse a los productos del servicio
+      this.productService.apiProducts$.subscribe(apiProducts => {
+        const adminProducts: AdminProduct[] = apiProducts.map(p => ({
+          ...p,
+          stock: 10, // Valor por defecto
+          status: p.disponible === false ? 'inactive' : 'active',
+          available: p.disponible !== false,
+          popular: false,
+          new: false,
+          prepTime: '30-45 min',
+          portions: '2-3 personas',
+        }));
+        this.products.set(adminProducts);
+      });
+    } catch (error) {
+      console.error('Error al cargar productos:', error);
+      alert('Error al cargar los productos');
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  // Cargar categorías desde el backend
+  async loadCategories() {
+    try {
+      await this.categoryService.fetchCategoriesFromAPI();
+      
+      // Suscribirse a las categorías del servicio
+      this.categoryService.categories$.subscribe(categories => {
+        this.categories.set(categories);
+      });
+    } catch (error) {
+      console.error('Error al cargar categorías:', error);
+    }
+  }
+
+  // Obtener producto vacío
+  getEmptyProduct(): AdminProduct {
+    return {
+      id: 0,
+      name: '',
+      description: '',
+      category: '',
+      price: 0,
+      stock: 0,
+      status: 'active',
+      emoji: '🍽️',
+      available: true,
+      popular: false,
+      new: false,
+      prepTime: '30-45 min',
+      portions: '2-3 personas',
+      id_categoria: undefined,
+      disponible: true,
+    };
+  }
+
+  oldProducts: AdminProduct[] = [
     {
       id: 1,
       name: "Pollo al Spiedo Entero",
@@ -245,31 +328,20 @@ export class AdminProductsComponent implements OnInit {
     }
   ];
 
-  constructor() {}
-
-  ngOnInit() {}
-
+  // Métodos para manejar modales
   openAddProductModal() {
+    this.newProduct = this.getEmptyProduct();
     this.showAddProductModal = true;
   }
 
   closeAddProductModal() {
     this.showAddProductModal = false;
+    this.newProduct = this.getEmptyProduct();
   }
 
-  editProduct(product: Product) {
-    this.selectedProduct = { ...product }; // Crear una copia del producto
+  openEditProductModal(product: AdminProduct) {
+    this.selectedProduct = { ...product };
     this.showEditProductModal = true;
-  }
-
-  saveEditedProduct() {
-    if (this.selectedProduct) {
-      const index = this.products.findIndex(p => p.id === this.selectedProduct!.id);
-      if (index !== -1) {
-        this.products[index] = { ...this.selectedProduct };
-      }
-      this.closeEditProductModal();
-    }
   }
 
   closeEditProductModal() {
@@ -277,14 +349,135 @@ export class AdminProductsComponent implements OnInit {
     this.selectedProduct = null;
   }
 
-  deleteProduct(product: Product) {
-    console.log('Deleting product:', product);
-    // Implementar lógica de eliminación
-    if (confirm(`¿Estás seguro que deseas eliminar ${product.name}?`)) {
-      this.products = this.products.filter(p => p.id !== product.id);
+  // Crear un nuevo producto en el backend
+  async addProduct() {
+    if (!this.newProduct.name || !this.newProduct.price || !this.newProduct.id_categoria) {
+      alert('Por favor, completa todos los campos obligatorios');
+      return;
+    }
+
+    // Obtener el token de autenticación
+    const token = this.userService.getAuthToken();
+    if (!token) {
+      alert('No estás autenticado. Por favor, inicia sesión.');
+      return;
+    }
+
+    this.isLoading.set(true);
+    try {
+      const productData = {
+        nombre: this.newProduct.name,
+        descripcion: this.newProduct.description || '',
+        precio: this.newProduct.price,
+        id_categoria: this.newProduct.id_categoria,
+        stock: this.newProduct.stock || 0,
+        disponible: this.newProduct.available !== false,
+        imagen: this.newProduct.imagen || '',
+      };
+
+      const result = await this.productService.createProduct(productData, token);
+
+      if (result.success) {
+        alert('Producto creado exitosamente');
+        await this.loadProducts();
+        this.closeAddProductModal();
+      } else {
+        alert(`Error: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error al crear producto:', error);
+      alert('Error al crear el producto');
+    } finally {
+      this.isLoading.set(false);
     }
   }
 
+  // Editar un producto
+  editProduct(product: AdminProduct) {
+    this.openEditProductModal(product);
+  }
+
+  // Guardar cambios del producto editado
+  async saveEditedProduct() {
+    if (!this.selectedProduct) return;
+
+    if (!this.selectedProduct.name || !this.selectedProduct.price || !this.selectedProduct.id_categoria) {
+      alert('Por favor, completa todos los campos obligatorios');
+      return;
+    }
+
+    // Obtener el token de autenticación
+    const token = this.userService.getAuthToken();
+    if (!token) {
+      alert('No estás autenticado. Por favor, inicia sesión.');
+      return;
+    }
+
+    this.isLoading.set(true);
+    try {
+      const productData = {
+        nombre: this.selectedProduct.name,
+        descripcion: this.selectedProduct.description || '',
+        precio: this.selectedProduct.price,
+        id_categoria: this.selectedProduct.id_categoria,
+        stock: this.selectedProduct.stock || 0,
+        disponible: this.selectedProduct.available !== false,
+        imagen: this.selectedProduct.imagen || '',
+      };
+
+      const result = await this.productService.updateProduct(
+        this.selectedProduct.id,
+        productData,
+        token
+      );
+
+      if (result.success) {
+        alert('Producto actualizado exitosamente');
+        await this.loadProducts();
+        this.closeEditProductModal();
+      } else {
+        alert(`Error: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error al actualizar producto:', error);
+      alert('Error al actualizar el producto');
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  // Eliminar un producto
+  async deleteProduct(product: AdminProduct) {
+    if (!confirm(`¿Estás seguro que deseas eliminar ${product.name}?`)) {
+      return;
+    }
+
+    // Obtener el token de autenticación
+    const token = this.userService.getAuthToken();
+    if (!token) {
+      alert('No estás autenticado. Por favor, inicia sesión.');
+      return;
+    }
+
+    this.isLoading.set(true);
+    try {
+      const result = await this.productService.deleteProduct(product.id, token);
+
+      if (result.success) {
+        alert('Producto eliminado exitosamente');
+        await this.loadProducts();
+      } else {
+        alert(`Error: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error al eliminar producto:', error);
+      alert('Error al eliminar el producto');
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  // Métodos auxiliares
   getStatusClass(status: string): string {
     switch (status) {
       case 'active':
@@ -311,9 +504,10 @@ export class AdminProductsComponent implements OnInit {
     }
   }
 
-  addProduct(formData: any) {
-    // Implementar lógica para agregar producto
-    console.log('Adding product:', formData);
-    this.closeAddProductModal();
+  // Obtener nombre de categoría por ID
+  getCategoryName(categoryId: number | undefined): string {
+    if (!categoryId) return 'Sin categoría';
+    const category = this.categories().find(c => c.categoria_id === categoryId);
+    return category?.nombre_categoria || 'Sin categoría';
   }
 }

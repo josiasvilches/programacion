@@ -8,6 +8,8 @@ export interface Product {
   unit?: string;
   featured?: boolean;
   id_categoria?: number;
+  disponible?: boolean;
+  imagen?: string;
 }
 
 export interface CartItem {

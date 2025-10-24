@@ -14,7 +14,19 @@
       </div>
 
       <div class="overflow-x-auto">
-        <table class="data-table">
+        <!-- Mensaje de carga -->
+        <div *ngIf="isLoading()" class="text-center py-8">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+          <p class="mt-2 text-gray-600">Cargando productos...</p>
+        </div>
+
+        <!-- Mensaje cuando no hay productos -->
+        <div *ngIf="!isLoading() && products().length === 0" class="text-center py-8">
+          <p class="text-gray-600">No hay productos disponibles</p>
+        </div>
+
+        <!-- Tabla de productos -->
+        <table class="data-table" *ngIf="!isLoading() && products().length > 0">
           <thead>
             <tr>
               <th>Producto</th>
@@ -26,7 +38,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let product of products">
+            <tr *ngFor="let product of products()">
               <td>
                 <div class="flex items-center">
                   <span class="text-2xl mr-3">{{ product.emoji }}</span>
@@ -36,12 +48,12 @@
                   </div>
                 </div>
               </td>
-              <td class="text-sm text-gray-900">{{ product.category }}</td>
+              <td class="text-sm text-gray-900">{{ getCategoryName(product.id_categoria) }}</td>
               <td class="text-sm text-gray-900">${{ product.price | number : '1.0-0' }}</td>
-              <td class="text-sm text-gray-900">{{ product.stock }}</td>
+              <td class="text-sm text-gray-900">{{ product.stock || 0 }}</td>
               <td>
-                <span class="status-badge" [ngClass]="getStatusClass(product.status)">
-                  {{ getStatusText(product.status) }}
+                <span class="status-badge" [ngClass]="getStatusClass(product.status || 'active')">
+                  {{ getStatusText(product.status || 'active') }}
                 </span>
               </td>
               <td>
@@ -107,13 +119,13 @@
         </button>
       </div>
 
-      <form #productForm="ngForm" (ngSubmit)="addProduct(productForm.value)">
+      <form (ngSubmit)="addProduct()">
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Nombre *</label>
           <input
             type="text"
+            [(ngModel)]="newProduct.name"
             name="name"
-            ngModel
             required
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
           />
@@ -122,64 +134,75 @@
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
           <textarea
+            [(ngModel)]="newProduct.description"
             name="description"
-            ngModel
             rows="3"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
           ></textarea>
         </div>
 
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Categoría *</label>
           <select
+            [(ngModel)]="newProduct.id_categoria"
             name="category"
-            ngModel
             required
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
           >
-            <option value="">Seleccionar categoría</option>
-            <option value="Pollos">Pollos</option>
-            <option value="Milanesas">Milanesas</option>
-            <option value="Empanadas">Empanadas</option>
-            <option value="Guarniciones">Guarniciones</option>
-            <option value="Postres">Postres</option>
-            <option value="Bebidas">Bebidas</option>
+            <option [ngValue]="undefined">Seleccionar categoría</option>
+            <option *ngFor="let cat of categories()" [ngValue]="cat.categoria_id">
+              {{ cat.nombre_categoria }}
+            </option>
           </select>
         </div>
 
         <div class="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Precio</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Precio *</label>
             <input
               type="number"
+              [(ngModel)]="newProduct.price"
               name="price"
-              ngModel
               required
+              min="0"
+              step="0.01"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Stock</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Stock *</label>
             <input
               type="number"
+              [(ngModel)]="newProduct.stock"
               name="stock"
-              ngModel
               required
+              min="0"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
             />
           </div>
         </div>
 
-        <div class="mb-6">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Emoji</label>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Imagen URL (opcional)</label>
           <input
             type="text"
-            name="emoji"
-            ngModel
-            placeholder="🍗"
-            maxlength="2"
+            [(ngModel)]="newProduct.imagen"
+            name="imagen"
+            placeholder="https://ejemplo.com/imagen.jpg"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
           />
+        </div>
+
+        <div class="mb-4">
+          <label class="flex items-center">
+            <input
+              type="checkbox"
+              [(ngModel)]="newProduct.available"
+              name="available"
+              class="mr-2"
+            />
+            <span class="text-sm font-medium text-gray-700">Disponible</span>
+          </label>
         </div>
 
         <div class="flex justify-end space-x-3">
@@ -192,10 +215,10 @@
           </button>
           <button
             type="submit"
-            [disabled]="!productForm.valid"
+            [disabled]="isLoading()"
             class="px-4 py-2 text-sm font-medium text-white bg-orange-600 border border-transparent rounded-md hover:bg-orange-700 disabled:opacity-50"
           >
-            Agregar
+            {{ isLoading() ? 'Guardando...' : 'Agregar' }}
           </button>
         </div>
       </form>
@@ -230,7 +253,7 @@
 
       <form (ngSubmit)="saveEditedProduct()">
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Nombre *</label>
           <input
             type="text"
             [(ngModel)]="selectedProduct.name"
@@ -246,95 +269,72 @@
             [(ngModel)]="selectedProduct.description"
             name="editDescription"
             rows="3"
-            required
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
           ></textarea>
         </div>
 
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Categoría *</label>
           <select
-            [(ngModel)]="selectedProduct.category"
+            [(ngModel)]="selectedProduct.id_categoria"
             name="editCategory"
             required
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
           >
-            <option value="Pollos">Pollos</option>
-            <option value="Milanesas">Milanesas</option>
-            <option value="Empanadas">Empanadas</option>
-            <option value="Carnes">Carnes</option>
+            <option [ngValue]="undefined">Seleccionar categoría</option>
+            <option *ngFor="let cat of categories()" [ngValue]="cat.categoria_id">
+              {{ cat.nombre_categoria }}
+            </option>
           </select>
         </div>
 
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Precio</label>
-          <input
-            type="number"
-            [(ngModel)]="selectedProduct.price"
-            name="editPrice"
-            required
-            min="0"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-          />
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Precio *</label>
+            <input
+              type="number"
+              [(ngModel)]="selectedProduct.price"
+              name="editPrice"
+              required
+              min="0"
+              step="0.01"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Stock *</label>
+            <input
+              type="number"
+              [(ngModel)]="selectedProduct.stock"
+              name="editStock"
+              required
+              min="0"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+            />
+          </div>
         </div>
 
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Stock</label>
-          <input
-            type="number"
-            [(ngModel)]="selectedProduct.stock"
-            name="editStock"
-            required
-            min="0"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-          />
-        </div>
-
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
-          <select
-            [(ngModel)]="selectedProduct.status"
-            name="editStatus"
-            required
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-          >
-            <option value="active">Activo</option>
-            <option value="inactive">Inactivo</option>
-            <option value="low-stock">Stock Bajo</option>
-          </select>
-        </div>
-
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Tiempo de Preparación</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Imagen URL (opcional)</label>
           <input
             type="text"
-            [(ngModel)]="selectedProduct.prepTime"
-            name="editPrepTime"
-            placeholder="ej: 30-45 min"
+            [(ngModel)]="selectedProduct.imagen"
+            name="editImagen"
+            placeholder="https://ejemplo.com/imagen.jpg"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
           />
         </div>
 
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Porciones</label>
-          <input
-            type="text"
-            [(ngModel)]="selectedProduct.portions"
-            name="editPortions"
-            placeholder="ej: 2-3 personas"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-          />
-        </div>
-
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Emoji</label>
-          <input
-            type="text"
-            [(ngModel)]="selectedProduct.emoji"
-            name="editEmoji"
-            maxlength="2"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-          />
+          <label class="flex items-center">
+            <input
+              type="checkbox"
+              [(ngModel)]="selectedProduct.available"
+              name="editAvailable"
+              class="mr-2"
+            />
+            <span class="text-sm font-medium text-gray-700">Disponible</span>
+          </label>
         </div>
 
         <div class="flex justify-end space-x-3">
@@ -347,9 +347,10 @@
           </button>
           <button
             type="submit"
-            class="px-4 py-2 text-sm font-medium text-white bg-orange-600 border border-transparent rounded-md hover:bg-orange-700"
+            [disabled]="isLoading()"
+            class="px-4 py-2 text-sm font-medium text-white bg-orange-600 border border-transparent rounded-md hover:bg-orange-700 disabled:opacity-50"
           >
-            Guardar Cambios
+            {{ isLoading() ? 'Guardando...' : 'Guardar Cambios' }}
           </button>
         </div>
       </form>

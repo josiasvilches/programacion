@@ -270,4 +270,164 @@ export class ProductService {
       return null;
     }
   }
+
+  // Crear un nuevo producto en el backend
+  async createProduct(
+    productData: {
+      nombre: string;
+      descripcion: string;
+      precio: number;
+      id_categoria: number;
+      stock: number;
+      disponible?: boolean;
+      imagen?: string;
+    },
+    token?: string
+  ): Promise<{ success: boolean; data?: any; message: string }> {
+    try {
+      const url = `${this.apiUrl}/productos`;
+      console.log('Creando producto:', productData);
+
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+
+      // Agregar token de autorización si está disponible
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(productData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return {
+          success: false,
+          message: errorData.mensaje || 'Error al crear el producto',
+        };
+      }
+
+      const data = await response.json();
+      console.log('Producto creado:', data);
+
+      return {
+        success: true,
+        data: data,
+        message: 'Producto creado exitosamente',
+      };
+    } catch (error) {
+      console.error('Error al crear producto:', error);
+      return {
+        success: false,
+        message: 'Error de conexión con el servidor',
+      };
+    }
+  }
+
+  // Actualizar un producto existente en el backend
+  async updateProduct(
+    productId: number,
+    productData: {
+      nombre?: string;
+      descripcion?: string;
+      precio?: number;
+      id_categoria?: number;
+      stock?: number;
+      disponible?: boolean;
+      imagen?: string;
+    },
+    token?: string
+  ): Promise<{ success: boolean; data?: any; message: string }> {
+    try {
+      const url = `${this.apiUrl}/producto/${productId}`;
+      console.log('Actualizando producto:', { productId, productData });
+
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+
+      // Agregar token de autorización si está disponible
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: headers,
+        body: JSON.stringify(productData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return {
+          success: false,
+          message: errorData.mensaje || 'Error al actualizar el producto',
+        };
+      }
+
+      const data = await response.json();
+      console.log('Producto actualizado:', data);
+
+      return {
+        success: true,
+        data: data,
+        message: 'Producto actualizado exitosamente',
+      };
+    } catch (error) {
+      console.error('Error al actualizar producto:', error);
+      return {
+        success: false,
+        message: 'Error de conexión con el servidor',
+      };
+    }
+  }
+
+  // Eliminar un producto del backend
+  async deleteProduct(productId: number, token?: string): Promise<{ success: boolean; message: string }> {
+    try {
+      const url = `${this.apiUrl}/producto/${productId}`;
+      console.log('Eliminando producto:', productId);
+
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+
+      // Agregar token de autorización si está disponible
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: headers,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return {
+          success: false,
+          message: errorData.mensaje || 'Error al eliminar el producto',
+        };
+      }
+
+      const data = await response.json();
+      console.log('Producto eliminado:', data);
+
+      return {
+        success: true,
+        message: data.mensaje || 'Producto eliminado exitosamente',
+      };
+    } catch (error) {
+      console.error('Error al eliminar producto:', error);
+      return {
+        success: false,
+        message: 'Error de conexión con el servidor',
+      };
+    }
+  }
 }
+
