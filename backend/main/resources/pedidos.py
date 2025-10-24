@@ -105,6 +105,50 @@ class Pedido(Resource):
         pedido = PedidoModel.query.get_or_404(id)
         return pedido.to_json(), 200
 
+    def put(self, id):
+        """
+        Permite modificar el estado de un pedido
+        Estados válidos: pendiente, preparando, listo, entregado, cancelado
+        """
+        pedido = PedidoModel.query.get_or_404(id)
+        data = request.get_json() or {}
+
+        # Verificar que se envió el campo estado_pedido
+        if 'estado_pedido' not in data:
+            return {"mensaje": "Falta el campo 'estado_pedido'"}, 400
+
+        # Definir estados válidos
+        estados_validos = ['pendiente', 'preparando', 'listo', 'entregado', 'cancelado']
+        nuevo_estado = data['estado_pedido'].lower()
+
+        # Verificar que el nuevo estado sea válido
+        if nuevo_estado not in estados_validos:
+            return {
+                "mensaje": f"Estado inválido. Estados permitidos: {', '.join(estados_validos)}"
+            }, 400
+
+        # Verificar que el estado sea diferente al actual
+        if pedido.estado_pedido == nuevo_estado:
+            return {"mensaje": f"El pedido ya tiene el estado '{nuevo_estado}'"}, 400
+
+        # Validación de lógica de negocio: no permitir cambios desde 'entregado' o 'cancelado'
+        if pedido.estado_pedido in ['entregado', 'cancelado']:
+            return {
+                "mensaje": f"No se puede modificar un pedido que está '{pedido.estado_pedido}'"
+            }, 400
+
+        try:
+            # Actualizar el estado del pedido
+            pedido.estado_pedido = nuevo_estado
+            db.session.commit()
+            return {
+                "mensaje": f"Estado del pedido actualizado a '{nuevo_estado}' exitosamente",
+                "pedido": pedido.to_json()
+            }, 200
+        except Exception as e:
+            db.session.rollback()
+            return {"mensaje": f"Error al actualizar el pedido: {str(e)}"}, 500
+
     def delete(self, id):
         pedido = PedidoModel.query.get_or_404(id)
         try:
@@ -114,3 +158,52 @@ class Pedido(Resource):
             db.session.rollback()
             return {"mensaje": f"Error al eliminar el pedido: {str(e)}"}, 500
         return {"mensaje": "Pedido eliminado con éxito"}, 200
+
+
+class PedidosUsuario(Resource):
+    """
+    Recurso para obtener los pedidos de un usuario específico
+    """
+    def get(self, id_usuario):
+        # PAGINADO
+        page = 1
+        per_page = 10
+
+        # Tomo la paginación del request si está especificada
+        if request.args.get('page'):
+            page = int(request.args.get('page'))
+        if request.args.get('per_page'):
+            per_page = int(request.args.get('per_page'))
+
+        # Verificar que el usuario existe
+        usuario = UsuarioModel.query.get_or_404(id_usuario)
+
+        # Obtener pedidos del usuario
+        pedidos = db.session.query(PedidoModel).filter(PedidoModel.id_cliente == id_usuario)
+
+        # Filtros opcionales
+        # Filtrar por fecha del pedido
+        if request.args.get('fecha'):
+            pedidos = pedidos.filter(PedidoModel.fecha_pedido.like("%"+request.args.get('fecha')+"%"))
+        
+        # Filtrar por estado del pedido
+        if request.args.get('estado'):
+            pedidos = pedidos.filter(PedidoModel.estado_pedido == request.args.get('estado'))
+        
+        # Filtrar por el método de pago
+        if request.args.get('metodo_pago'):
+            pedidos = pedidos.filter(PedidoModel.metodo_pago == request.args.get('metodo_pago'))
+
+        # Ordenar por fecha más reciente primero
+        pedidos = pedidos.order_by(PedidoModel.fecha_pedido.desc())
+
+        # Paginar
+        pedidos = pedidos.paginate(page=page, per_page=per_page, error_out=True)
+
+        return jsonify({
+            'pedidos': [pedido.to_json() for pedido in pedidos],
+            'total': pedidos.total,
+            'pages': pedidos.pages,
+            'page': page,
+            'usuario': usuario.nombre
+        })

@@ -3,6 +3,7 @@ from .autenticacion import Logout as LogoutResource
 from .notificaciones import Notificacion as NotificacionesResource
 from .pedidos import Pedido as PedidoResource
 from .pedidos import Pedidos as PedidosResource
+from .pedidos import PedidosUsuario as PedidosUsuarioResource
 from .productos import Producto as ProductoResource
 from .productos import Productos as ProductosResource
 from .usuarios import Usuario as UsuarioResource

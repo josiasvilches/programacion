@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { CartItem } from '../models/product.interface';
+import { environment } from '../../enviroments/enviroments.development';
 
 export interface OrderItem {
   name: string;
@@ -19,9 +20,11 @@ export interface Order {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class OrderService {
+  private readonly apiUrl = environment.apiUrl;
+
   private orders = signal<Order[]>([
     {
       id: 1001,
@@ -30,23 +33,21 @@ export class OrderService {
       total: 4500,
       items: [
         { name: 'Pollo al Spiedo Entero', quantity: 1, price: 3500 },
-        { name: 'Papas Fritas Caseras', quantity: 1, price: 1000 }
+        { name: 'Papas Fritas Caseras', quantity: 1, price: 1000 },
       ],
       deliveryAddress: 'Retiro en local - Av. Corrientes 1234, CABA',
       paymentMethod: 'Efectivo',
-      notes: 'Sin cebolla en las papas'
+      notes: 'Sin cebolla en las papas',
     },
     {
       id: 1002,
       date: new Date('2024-01-14T20:15:00'),
       status: 'cancelled',
       total: 2700,
-      items: [
-        { name: 'Empanadas de Carne (6 unidades)', quantity: 1, price: 2700 }
-      ],
+      items: [{ name: 'Empanadas de Carne (6 unidades)', quantity: 1, price: 2700 }],
       deliveryAddress: 'Retiro en local - Av. Corrientes 1234, CABA',
       paymentMethod: 'Tarjeta',
-      notes: 'Cancelado por el cliente'
+      notes: 'Cancelado por el cliente',
     },
     {
       id: 1003,
@@ -56,11 +57,11 @@ export class OrderService {
       items: [
         { name: 'Milanesas de Pollo (4 unidades)', quantity: 1, price: 2800 },
         { name: 'Ensalada Mixta', quantity: 1, price: 1500 },
-        { name: 'Gaseosa Coca Cola 1.5L', quantity: 2, price: 950 }
+        { name: 'Gaseosa Coca Cola 1.5L', quantity: 2, price: 950 },
       ],
       deliveryAddress: 'Retiro en local - Av. Corrientes 1234, CABA',
       paymentMethod: 'Transferencia',
-      notes: 'Retiro: Hoy a las 19:00'
+      notes: 'Retiro: Hoy a las 19:00',
     },
     {
       id: 1004,
@@ -70,11 +71,11 @@ export class OrderService {
       items: [
         { name: 'Pollo al Spiedo Entero', quantity: 2, price: 3500 },
         { name: 'Papas Fritas Caseras', quantity: 2, price: 1000 },
-        { name: 'Ensalada Rusa', quantity: 1, price: 900 }
+        { name: 'Ensalada Rusa', quantity: 1, price: 900 },
       ],
       deliveryAddress: 'Retiro en local - Av. Corrientes 1234, CABA',
       paymentMethod: 'Efectivo',
-      notes: 'Retiro: Mañana a las 21:30'
+      notes: 'Retiro: Mañana a las 21:30',
     },
     {
       id: 1005,
@@ -83,11 +84,11 @@ export class OrderService {
       total: 3700,
       items: [
         { name: 'Empanadas de Pollo (6 unidades)', quantity: 1, price: 2500 },
-        { name: 'Flan Casero', quantity: 1, price: 1200 }
+        { name: 'Flan Casero', quantity: 1, price: 1200 },
       ],
       deliveryAddress: 'Retiro en local - Av. Corrientes 1234, CABA',
       paymentMethod: 'Tarjeta',
-      notes: 'Retiro: Viernes a las 20:00'
+      notes: 'Retiro: Viernes a las 20:00',
     },
     {
       id: 1006,
@@ -98,11 +99,11 @@ export class OrderService {
         { name: 'Pollo al Spiedo Entero', quantity: 3, price: 3500 },
         { name: 'Empanadas de Carne (6 unidades)', quantity: 1, price: 2700 },
         { name: 'Papas Fritas Caseras', quantity: 2, price: 1000 },
-        { name: 'Gaseosa Coca Cola 1.5L', quantity: 2, price: 950 }
+        { name: 'Gaseosa Coca Cola 1.5L', quantity: 2, price: 950 },
       ],
       deliveryAddress: 'Retiro en local - Av. Corrientes 1234, CABA',
       paymentMethod: 'Efectivo',
-      notes: 'Pedido familiar - Retiro completado'
+      notes: 'Pedido familiar - Retiro completado',
     },
     {
       id: 1007,
@@ -112,11 +113,11 @@ export class OrderService {
       items: [
         { name: 'Milanesas de Carne (4 unidades)', quantity: 1, price: 3200 },
         { name: 'Puré de Papas', quantity: 1, price: 1000 },
-        { name: 'Flan Casero', quantity: 1, price: 1200 }
+        { name: 'Flan Casero', quantity: 1, price: 1200 },
       ],
       deliveryAddress: 'Retiro en local - Av. Corrientes 1234, CABA',
       paymentMethod: 'Transferencia',
-      notes: 'Descuento aplicado - Retiro completado'
+      notes: 'Descuento aplicado - Retiro completado',
     },
     {
       id: 1008,
@@ -126,11 +127,11 @@ export class OrderService {
       items: [
         { name: 'Empanadas de Jamón y Queso (6 unidades)', quantity: 1, price: 2400 },
         { name: 'Ensalada Mixta', quantity: 1, price: 1500 },
-        { name: 'Agua Mineral 1.5L', quantity: 1, price: 200 }
+        { name: 'Agua Mineral 1.5L', quantity: 1, price: 200 },
       ],
       deliveryAddress: 'Retiro en local - Av. Corrientes 1234, CABA',
       paymentMethod: 'Efectivo',
-      notes: 'Retiro completado'
+      notes: 'Retiro completado',
     },
     {
       id: 1009,
@@ -142,11 +143,11 @@ export class OrderService {
         { name: 'Milanesas de Pollo (4 unidades)', quantity: 1, price: 2800 },
         { name: 'Ensalada Rusa', quantity: 1, price: 900 },
         { name: 'Papas Fritas Caseras', quantity: 2, price: 1000 },
-        { name: 'Gaseosa Sprite 1.5L', quantity: 1, price: 950 }
+        { name: 'Gaseosa Sprite 1.5L', quantity: 1, price: 950 },
       ],
       deliveryAddress: 'Retiro en local - Av. Corrientes 1234, CABA',
       paymentMethod: 'Billetera Digital',
-      notes: 'Almuerzo familiar - Retiro completado'
+      notes: 'Almuerzo familiar - Retiro completado',
     },
     {
       id: 1010,
@@ -156,11 +157,11 @@ export class OrderService {
       items: [
         { name: 'Empanadas de Carne (6 unidades)', quantity: 1, price: 2700 },
         { name: 'Agua Mineral 1.5L', quantity: 1, price: 200 },
-        { name: 'Helado 1L', quantity: 1, price: 1500 }
+        { name: 'Helado 1L', quantity: 1, price: 1500 },
       ],
       deliveryAddress: 'Retiro en local - Av. Corrientes 1234, CABA',
       paymentMethod: 'Efectivo',
-      notes: 'Cena rápida - Retiro completado'
+      notes: 'Cena rápida - Retiro completado',
     },
     {
       id: 1011,
@@ -172,11 +173,11 @@ export class OrderService {
         { name: 'Milanesas de Carne (4 unidades)', quantity: 2, price: 3200 },
         { name: 'Empanadas de Pollo (6 unidades)', quantity: 1, price: 2500 },
         { name: 'Ensalada Mixta', quantity: 2, price: 1500 },
-        { name: 'Papas Fritas Caseras', quantity: 2, price: 1000 }
+        { name: 'Papas Fritas Caseras', quantity: 2, price: 1000 },
       ],
       deliveryAddress: 'Retiro en local - Av. Corrientes 1234, CABA',
       paymentMethod: 'Transferencia',
-      notes: 'Pedido grande para evento - Descuento aplicado - Retiro completado'
+      notes: 'Pedido grande para evento - Descuento aplicado - Retiro completado',
     },
     {
       id: 1012,
@@ -185,11 +186,11 @@ export class OrderService {
       total: 2800,
       items: [
         { name: 'Empanadas de Jamón y Queso (6 unidades)', quantity: 1, price: 2400 },
-        { name: 'Flan Casero', quantity: 1, price: 1200 }
+        { name: 'Flan Casero', quantity: 1, price: 1200 },
       ],
       deliveryAddress: 'Retiro en local - Av. Corrientes 1234, CABA',
       paymentMethod: 'Tarjeta',
-      notes: 'Merienda - Retiro completado'
+      notes: 'Merienda - Retiro completado',
     },
     {
       id: 1013,
@@ -198,11 +199,11 @@ export class OrderService {
       total: 4500,
       items: [
         { name: 'Pollo al Spiedo Entero', quantity: 1, price: 3500 },
-        { name: 'Ensalada Rusa', quantity: 1, price: 900 }
+        { name: 'Ensalada Rusa', quantity: 1, price: 900 },
       ],
       deliveryAddress: 'Retiro en local - Av. Corrientes 1234, CABA',
       paymentMethod: 'Efectivo',
-      notes: 'Cancelado por demora en la preparación'
+      notes: 'Cancelado por demora en la preparación',
     },
     {
       id: 1014,
@@ -212,11 +213,11 @@ export class OrderService {
       items: [
         { name: 'Milanesas de Pollo (4 unidades)', quantity: 1, price: 2800 },
         { name: 'Milanesas de Carne (4 unidades)', quantity: 1, price: 3200 },
-        { name: 'Puré de Papas', quantity: 2, price: 1000 }
+        { name: 'Puré de Papas', quantity: 2, price: 1000 },
       ],
       deliveryAddress: 'Retiro en local - Av. Corrientes 1234, CABA',
       paymentMethod: 'Billetera Digital',
-      notes: 'Comparación de milanesas - Retiro completado'
+      notes: 'Comparación de milanesas - Retiro completado',
     },
     {
       id: 1015,
@@ -229,12 +230,12 @@ export class OrderService {
         { name: 'Ensalada Mixta', quantity: 3, price: 1500 },
         { name: 'Papas Fritas Caseras', quantity: 3, price: 1000 },
         { name: 'Gaseosa Coca Cola 1.5L', quantity: 3, price: 950 },
-        { name: 'Helado 1L', quantity: 2, price: 1500 }
+        { name: 'Helado 1L', quantity: 2, price: 1500 },
       ],
       deliveryAddress: 'Retiro en local - Av. Corrientes 1234, CABA',
       paymentMethod: 'Efectivo',
-      notes: 'Cena de Año Nuevo - Pedido especial - Retiro completado'
-    }
+      notes: 'Cena de Año Nuevo - Pedido especial - Retiro completado',
+    },
   ]);
 
   constructor() {}
@@ -244,26 +245,26 @@ export class OrderService {
   }
 
   getOrderById(id: number): Order | undefined {
-    return this.orders().find(order => order.id === id);
+    return this.orders().find((order) => order.id === id);
   }
 
   addOrder(order: Omit<Order, 'id'>): Order {
-    const newId = Math.max(...this.orders().map(o => o.id)) + 1;
+    const newId = Math.max(...this.orders().map((o) => o.id)) + 1;
     const newOrder = { ...order, id: newId };
-    this.orders.update(orders => [...orders, newOrder]);
+    this.orders.update((orders) => [...orders, newOrder]);
     return newOrder;
   }
 
   updateOrderStatus(id: number, status: Order['status'], notes?: string): boolean {
-    const orderIndex = this.orders().findIndex(order => order.id === id);
+    const orderIndex = this.orders().findIndex((order) => order.id === id);
     if (orderIndex === -1) return false;
 
-    this.orders.update(orders => {
+    this.orders.update((orders) => {
       const updatedOrders = [...orders];
       updatedOrders[orderIndex] = {
         ...updatedOrders[orderIndex],
         status,
-        notes: notes || updatedOrders[orderIndex].notes
+        notes: notes || updatedOrders[orderIndex].notes,
       };
       return updatedOrders;
     });
@@ -276,47 +277,45 @@ export class OrderService {
   }
 
   getOrdersByStatus(status: Order['status']): Order[] {
-    return this.orders().filter(order => order.status === status);
+    return this.orders().filter((order) => order.status === status);
   }
 
   getOrderStatistics() {
     const orders = this.orders();
     const totalOrders = orders.length;
     const totalSpent = orders
-      .filter(o => o.status !== 'cancelled')
+      .filter((o) => o.status !== 'cancelled')
       .reduce((sum, o) => sum + o.total, 0);
-    const pendingOrders = orders.filter(o => 
+    const pendingOrders = orders.filter((o) =>
       ['pending', 'preparing', 'ready'].includes(o.status)
     ).length;
 
     const statusCounts = {
       all: totalOrders,
-      pending: orders.filter(o => o.status === 'pending').length,
-      preparing: orders.filter(o => o.status === 'preparing').length,
-      ready: orders.filter(o => o.status === 'ready').length,
-      delivered: orders.filter(o => o.status === 'delivered').length,
-      cancelled: orders.filter(o => o.status === 'cancelled').length
+      pending: orders.filter((o) => o.status === 'pending').length,
+      preparing: orders.filter((o) => o.status === 'preparing').length,
+      ready: orders.filter((o) => o.status === 'ready').length,
+      delivered: orders.filter((o) => o.status === 'delivered').length,
+      cancelled: orders.filter((o) => o.status === 'cancelled').length,
     };
 
     return {
       totalOrders,
       totalSpent,
       pendingOrders,
-      statusCounts
+      statusCounts,
     };
   }
 
   // Método para crear pedido desde carrito (local - para UI)
   createOrderFromCart(cartItems: CartItem[], paymentInfo: any, pickupInfo: any): Order {
-    const orderItems: OrderItem[] = cartItems.map(item => ({
+    const orderItems: OrderItem[] = cartItems.map((item) => ({
       name: item.product.name,
       quantity: item.quantity,
-      price: item.product.price
+      price: item.product.price,
     }));
 
-    const total = cartItems.reduce((sum, item) => 
-      sum + (item.product.price * item.quantity), 0
-    );
+    const total = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
     const newOrder: Omit<Order, 'id'> = {
       date: new Date(),
@@ -325,7 +324,7 @@ export class OrderService {
       items: orderItems,
       deliveryAddress: 'Retiro en local - Av. Corrientes 1234, CABA',
       paymentMethod: paymentInfo.name || 'Efectivo',
-      notes: `Retiro: ${pickupInfo.day} a las ${pickupInfo.time}`
+      notes: `Retiro: ${pickupInfo.day} a las ${pickupInfo.time}`,
     };
 
     return this.addOrder(newOrder);
@@ -341,26 +340,26 @@ export class OrderService {
   ): Promise<{ success: boolean; data?: any; message: string }> {
     try {
       // Formatear fecha en formato YYYY-MM-DD
-      const fechaPedido = pickupDate 
-        ? pickupDate.toISOString().split('T')[0] 
+      const fechaPedido = pickupDate
+        ? pickupDate.toISOString().split('T')[0]
         : new Date().toISOString().split('T')[0];
 
       // Mapear método de pago al formato esperado por el backend
       const metodoPagoMap: { [key: string]: string } = {
-        'Efectivo': 'efectivo',
+        Efectivo: 'efectivo',
         'Tarjeta de Débito/Crédito': 'tarjeta',
         'Transferencia Bancaria': 'transferencia',
-        'Billeteras Digitales': 'digital'
+        'Billeteras Digitales': 'digital',
       };
 
       const metodoPago = metodoPagoMap[paymentMethod] || 'efectivo';
 
       // Construir array de productos
-      const productos = cartItems.map(item => ({
+      const productos = cartItems.map((item) => ({
         id_producto: item.product.id,
         cantidad: item.quantity,
         precio_unitario: item.product.price,
-        subtotal: item.product.price * item.quantity
+        subtotal: item.product.price * item.quantity,
       }));
 
       // Construir el body del request
@@ -370,7 +369,7 @@ export class OrderService {
         metodo_pago: metodoPago,
         fecha_pedido: fechaPedido,
         hora_retiro: pickupTime,
-        productos: productos
+        productos: productos,
       };
 
       console.log('Enviando pedido al backend:', body);
@@ -381,14 +380,14 @@ export class OrderService {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
         return {
           success: false,
-          message: errorData.mensaje || 'Error al crear el pedido'
+          message: errorData.mensaje || 'Error al crear el pedido',
         };
       }
 
@@ -398,14 +397,117 @@ export class OrderService {
       return {
         success: true,
         data: data,
-        message: 'Pedido creado exitosamente'
+        message: 'Pedido creado exitosamente',
       };
-
     } catch (error) {
       console.error('Error al crear pedido en backend:', error);
       return {
         success: false,
-        message: 'Error de conexión con el servidor'
+        message: 'Error de conexión con el servidor',
+      };
+    }
+  }
+
+  // Método para obtener pedidos de un usuario específico desde el backend
+  async getUserOrdersFromBackend(
+    idUsuario: number,
+    page: number = 1,
+    perPage: number = 10,
+    filters?: {
+      fecha?: string;
+      estado?: string;
+      metodo_pago?: string;
+    }
+  ): Promise<{ success: boolean; data?: any; message: string }> {
+    try {
+      // Construir query params
+      const params = new URLSearchParams({
+        page: page.toString(),
+        per_page: perPage.toString(),
+      });
+
+      // Agregar filtros opcionales
+      if (filters?.fecha) params.append('fecha', filters.fecha);
+      if (filters?.estado) params.append('estado', filters.estado);
+      if (filters?.metodo_pago) params.append('metodo_pago', filters.metodo_pago);
+
+      const url = `${this.apiUrl}/pedidos/usuario/${idUsuario}?${params.toString()}`;
+      console.log('Obteniendo pedidos del usuario desde:', url);
+
+      // Realizar el GET al backend
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return {
+          success: false,
+          message: errorData.mensaje || 'Error al obtener los pedidos',
+        };
+      }
+
+      const data = await response.json();
+      console.log('Pedidos del usuario obtenidos:', data);
+
+      return {
+        success: true,
+        data: data,
+        message: 'Pedidos obtenidos exitosamente',
+      };
+    } catch (error) {
+      console.error('Error al obtener pedidos del usuario:', error);
+      return {
+        success: false,
+        message: 'Error de conexión con el servidor',
+      };
+    }
+  }
+
+  // Método para actualizar el estado de un pedido en el backend
+  async updateOrderStatusInBackend(
+    pedidoId: number,
+    nuevoEstado: 'pendiente' | 'preparando' | 'listo' | 'entregado' | 'cancelado'
+  ): Promise<{ success: boolean; data?: any; message: string }> {
+    try {
+      const url = `${this.apiUrl}/pedido/${pedidoId}`;
+      console.log('Actualizando estado del pedido:', { pedidoId, nuevoEstado });
+
+      // Realizar el PUT al backend
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          estado_pedido: nuevoEstado,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return {
+          success: false,
+          message: errorData.mensaje || 'Error al actualizar el estado del pedido',
+        };
+      }
+
+      const data = await response.json();
+      console.log('Estado del pedido actualizado:', data);
+
+      return {
+        success: true,
+        data: data,
+        message: data.mensaje || 'Estado actualizado exitosamente',
+      };
+    } catch (error) {
+      console.error('Error al actualizar estado del pedido:', error);
+      return {
+        success: false,
+        message: 'Error de conexión con el servidor',
       };
     }
   }

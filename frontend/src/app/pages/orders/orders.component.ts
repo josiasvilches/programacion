@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { OrderService, Order } from '../../services/order.service';
+import { UserService } from '../../services/user.service';
 import { CartService } from '../../services/cart.service';
 import { ProductService } from '../../services/product.service';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 
 type OrderStatus = 'all' | 'pending' | 'preparing' | 'ready' | 'delivered' | 'cancelled';
-type DateFilter = 'all' | 'today' | 'week' | 'month' | 'custom';
+type DateFilter = 'all' | 'today' | 'tomorrow' | 'week' | 'month' | 'custom';
 type AmountFilter = 'all' | '0-2000' | '2000-5000' | '5000-10000' | '10000+';
 type SortOption = 'date-desc' | 'date-asc' | 'amount-desc' | 'amount-asc' | 'status';
 
@@ -25,6 +26,8 @@ export class OrdersComponent implements OnInit {
   filteredOrders = signal<Order[]>([]);
   selectedOrder = signal<Order | null>(null);
   isModalOpen = signal<boolean>(false);
+  isLoading = signal<boolean>(false);
+  errorMessage = signal<string>('');
   
   // Filter states
   currentStatus = signal<OrderStatus>('all');
@@ -43,19 +46,98 @@ export class OrdersComponent implements OnInit {
   resultsCount = computed(() => this.filteredOrders().length);
 
   constructor(
-    private orderService: OrderService, 
+    private orderService: OrderService,
+    private userService: UserService,
     private cartService: CartService,
     private productService: ProductService,
     private router: Router
   ) {}
 
   ngOnInit() {
-    this.loadOrders();
+    this.loadOrdersFromBackend();
+  }
+
+  private async loadOrdersFromBackend() {
+    // Verificar que el usuario esté logueado
+    const currentUser = this.userService.getCurrentUser();
+    
+    if (!currentUser) {
+      this.errorMessage.set('Debes iniciar sesión para ver tus pedidos');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    try {
+      // Obtener pedidos del usuario desde el backend
+      const result = await this.orderService.getUserOrdersFromBackend(
+        currentUser.id,
+        1,  // página inicial
+        50  // traer más pedidos por defecto
+      );
+
+      if (result.success && result.data) {
+        // Convertir los pedidos del backend al formato de la UI
+        const backendOrders = this.convertBackendOrdersToUI(result.data.pedidos);
+        this.orders.set(backendOrders);
+        this.applyFilters();
+      } else {
+        this.errorMessage.set(result.message || 'Error al cargar los pedidos');
+        // Cargar pedidos locales como fallback
+        this.loadLocalOrders();
+      }
+    } catch (error) {
+      console.error('Error al cargar pedidos:', error);
+      this.errorMessage.set('Error de conexión al cargar los pedidos');
+      // Cargar pedidos locales como fallback
+      this.loadLocalOrders();
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  private loadLocalOrders() {
+    // Cargar pedidos locales (los que están en el servicio) como fallback
+    this.orders.set(this.orderService.getOrders());
     this.applyFilters();
   }
 
-  private loadOrders() {
-    this.orders.set(this.orderService.getOrders());
+  private convertBackendOrdersToUI(backendOrders: any[]): Order[] {
+    return backendOrders.map(order => {
+      // Mapear estados del backend al formato de la UI
+      const statusMap: { [key: string]: Order['status'] } = {
+        'pendiente': 'pending',
+        'preparando': 'preparing',
+        'listo': 'ready',
+        'entregado': 'delivered',
+        'cancelado': 'cancelled'
+      };
+
+      // Mapear métodos de pago
+      const paymentMethodMap: { [key: string]: string } = {
+        'efectivo': 'Efectivo',
+        'tarjeta': 'Tarjeta de Débito/Crédito',
+        'transferencia': 'Transferencia Bancaria',
+        'digital': 'Billeteras Digitales'
+      };
+
+      return {
+        id: order.pedido_id,
+        date: new Date(order.fecha_pedido),
+        status: statusMap[order.estado_pedido] || 'pending',
+        total: parseFloat(order.total),
+        items: order.producto.map((p: any) => ({
+          name: p.nombre_producto || `Producto ${p.id_producto}`,
+          quantity: p.cantidad,
+          price: parseFloat(p.precio_unitario)
+        })),
+        deliveryAddress: 'Retiro en local - Av. Corrientes 1234, CABA',
+        paymentMethod: paymentMethodMap[order.metodo_pago] || order.metodo_pago,
+        notes: order.hora_retiro ? `Retiro: ${order.hora_retiro}` : ''
+      };
+    });
   }
 
   // Filter methods
@@ -146,12 +228,16 @@ export class OrdersComponent implements OnInit {
   private passesDateFilter(orderDate: Date): boolean {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+    const dayAfterTomorrow = new Date(tomorrow.getTime() + 24 * 60 * 60 * 1000);
 
     switch (this.dateFilter()) {
       case 'all':
         return true;
       case 'today':
-        return orderDate >= today;
+        return orderDate >= today && orderDate < tomorrow;
+      case 'tomorrow':
+        return orderDate >= tomorrow && orderDate < dayAfterTomorrow;
       case 'week':
         const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
         return orderDate >= weekAgo;
@@ -222,12 +308,16 @@ export class OrdersComponent implements OnInit {
 
   async cancelOrder(orderId: number) {
     if (confirm('¿Estás seguro que querés cancelar este pedido?')) {
-      const success = this.orderService.cancelOrder(orderId);
-      if (success) {
-        this.loadOrders();
-        this.applyFilters();
+      // Llamar al backend para actualizar el estado a 'cancelado'
+      const result = await this.orderService.updateOrderStatusInBackend(orderId, 'cancelado');
+      
+      if (result.success) {
+        // Recargar los pedidos desde el backend para reflejar el cambio
+        await this.loadOrdersFromBackend();
         this.closeModal();
         alert('Pedido cancelado correctamente');
+      } else {
+        alert(`Error al cancelar el pedido: ${result.message}`);
       }
     }
   }
