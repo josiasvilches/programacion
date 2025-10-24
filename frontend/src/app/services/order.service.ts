@@ -467,6 +467,66 @@ export class OrderService {
     }
   }
 
+  // Método para obtener todos los pedidos desde el backend (admin)
+  async getAllOrdersFromBackend(
+    page: number = 1,
+    perPage: number = 10,
+    filters?: {
+      fecha?: string;
+      estado?: string;
+      metodo_pago?: string;
+      usuario?: string;
+    }
+  ): Promise<{ success: boolean; data?: any; message: string }> {
+    try {
+      // Construir query params
+      const params = new URLSearchParams({
+        page: page.toString(),
+        per_page: perPage.toString(),
+      });
+
+      // Agregar filtros opcionales
+      if (filters?.fecha) params.append('fecha', filters.fecha);
+      if (filters?.estado) params.append('estado', filters.estado);
+      if (filters?.metodo_pago) params.append('metodo_pago', filters.metodo_pago);
+      if (filters?.usuario) params.append('usuario', filters.usuario);
+
+      const url = `${this.apiUrl}/pedidos?${params.toString()}`;
+      console.log('Obteniendo todos los pedidos desde:', url);
+
+      // Realizar el GET al backend
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return {
+          success: false,
+          message: errorData.mensaje || 'Error al obtener los pedidos',
+        };
+      }
+
+      const data = await response.json();
+      console.log('Todos los pedidos obtenidos:', data);
+
+      return {
+        success: true,
+        data: data,
+        message: 'Pedidos obtenidos exitosamente',
+      };
+    } catch (error) {
+      console.error('Error al obtener todos los pedidos:', error);
+      return {
+        success: false,
+        message: 'Error de conexión con el servidor',
+      };
+    }
+  }
+
   // Método para actualizar el estado de un pedido en el backend
   async updateOrderStatusInBackend(
     pedidoId: number,

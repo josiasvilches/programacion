@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminSidebarComponent } from '../../../components/admin/sidebar/admin-sidebar.component';
 import { AdminHeaderComponent } from '../../../components/admin/header/admin-header.component';
+import { OrderService } from '../../../services/order.service';
+import { UserService } from '../../../services/user.service';
 
 interface OrderItem {
   name: string;
@@ -50,13 +52,114 @@ export class AdminOrdersComponent implements OnInit {
   dateFilter = 'all';
   paymentFilter = 'all';
 
+  // Signals para estado
+  orders = signal<Order[]>([]);
+  isLoading = signal<boolean>(false);
+
   // Cancel modal data
   cancelOrderData = {
     reason: '',
     comments: ''
   };
 
-  orders: Order[] = [
+  constructor(
+    private orderService: OrderService,
+    private userService: UserService
+  ) {}
+
+  async ngOnInit() {
+    await this.loadOrdersFromBackend();
+  }
+
+  // Cargar pedidos desde el backend
+  async loadOrdersFromBackend() {
+    this.isLoading.set(true);
+    try {
+      // Obtener todos los pedidos desde el backend (endpoint admin)
+      const result = await this.orderService.getAllOrdersFromBackend(1, 100);
+      
+      if (result.success && result.data) {
+        const backendOrders = result.data['pedidos:'] || result.data.pedidos || [];
+        const convertedOrders = this.convertBackendOrdersToUI(backendOrders);
+        this.orders.set(convertedOrders);
+        console.log('Pedidos cargados desde backend:', convertedOrders);
+      } else {
+        console.error('Error al cargar pedidos:', result.message);
+        alert('Error al cargar pedidos del servidor');
+      }
+    } catch (error) {
+      console.error('Error al cargar pedidos desde backend:', error);
+      alert('Error de conexión al cargar pedidos');
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  // Convertir pedidos del backend al formato de la UI
+  convertBackendOrdersToUI(backendOrders: any[]): Order[] {
+    console.log('=== CONVIRTIENDO PEDIDOS DEL BACKEND ===');
+    console.log('Total pedidos recibidos:', backendOrders.length);
+    
+    return backendOrders.map(pedido => {
+      console.log('Procesando pedido:', pedido.pedido_id);
+      console.log('Pedido completo:', JSON.stringify(pedido, null, 2));
+      
+      // Mapear estado del backend al formato UI
+      const statusMap: { [key: string]: Order['status'] } = {
+        'pendiente': 'pending',
+        'preparando': 'preparing',
+        'listo': 'ready',
+        'entregado': 'delivered',
+        'cancelado': 'cancelled'
+      };
+
+      // Mapear método de pago
+      const paymentMap: { [key: string]: Order['paymentMethod'] } = {
+        'efectivo': 'cash',
+        'tarjeta': 'card',
+        'transferencia': 'transfer',
+        'digital': 'transfer'
+      };
+
+      // Construir items del pedido - el backend devuelve 'producto' (singular)
+      const productosArray = pedido.producto || pedido.productos || [];
+      console.log('Array de productos encontrado:', productosArray);
+      console.log('Cantidad de productos:', productosArray.length);
+      
+      const items: OrderItem[] = productosArray.map((prod: any) => {
+        console.log('Mapeando producto:', prod);
+        return {
+          name: prod.nombre_producto || 'Producto sin nombre',
+          quantity: prod.cantidad || 1,
+          price: prod.precio_unitario || 0
+        };
+      });
+      
+      console.log('Items finales:', items);
+
+      return {
+        id: pedido.pedido_id,
+        customer: `Cliente #${pedido.id_cliente}`,
+        phone: '-',
+        email: '-',
+        status: statusMap[pedido.estado_pedido?.toLowerCase()] || 'pending',
+        total: pedido.total || 0,
+        paymentMethod: paymentMap[pedido.metodo_pago?.toLowerCase()] || 'cash',
+        orderDate: pedido.fecha_pedido || new Date().toISOString(),
+        estimatedTime: 30,
+        deliveryType: 'pickup',
+        items: items,
+        timeline: [{
+          status: statusMap[pedido.estado_pedido?.toLowerCase()] || 'pending',
+          timestamp: pedido.fecha_pedido || new Date().toISOString(),
+          user: 'Sistema'
+        }],
+        notes: pedido.hora_retiro || ''
+      };
+    });
+  }
+
+  oldOrders: Order[] = [
     {
       id: 1001,
       customer: "María González",
@@ -390,14 +493,9 @@ export class AdminOrdersComponent implements OnInit {
     }
   ];
 
-  constructor() {}
-
-  ngOnInit() {
-  }
-
   // Filter and search methods
   getFilteredOrders(): Order[] {
-    let filtered = this.orders;
+    let filtered = this.orders();
     
     // Filter by status
     if (this.currentFilter !== 'all') {
@@ -468,9 +566,9 @@ export class AdminOrdersComponent implements OnInit {
   }
 
   // Order actions
-  changeOrderStatus(orderId: number, event: Event) {
+  async changeOrderStatus(orderId: number, event: Event) {
     event.stopPropagation();
-    const order = this.orders.find(o => o.id === orderId);
+    const order = this.orders().find(o => o.id === orderId);
     if (!order) return;
     
     const statusFlow = {
@@ -480,15 +578,49 @@ export class AdminOrdersComponent implements OnInit {
     };
     
     const nextStatus = statusFlow[order.status as keyof typeof statusFlow];
-    if (nextStatus) {
-      order.status = nextStatus as any;
-      order.timeline.push({
-        status: nextStatus,
-        timestamp: new Date().toISOString(),
-        user: 'Admin'
-      });
-      
-      alert(`Pedido #${orderId} actualizado a: ${this.getStatusName(nextStatus)}`);
+    if (!nextStatus) {
+      alert('Este pedido no puede avanzar más en el flujo.');
+      return;
+    }
+
+    // Mapear estado UI a backend
+    const backendStatusMap: { [key: string]: string } = {
+      'pending': 'pendiente',
+      'preparing': 'preparando',
+      'ready': 'listo',
+      'delivered': 'entregado',
+      'cancelled': 'cancelado'
+    };
+
+    this.isLoading.set(true);
+    try {
+      // Actualizar estado en el backend
+      const result = await this.orderService.updateOrderStatusInBackend(
+        orderId,
+        backendStatusMap[nextStatus] as any
+      );
+
+      if (result.success) {
+        // Actualizar localmente
+        order.status = nextStatus as any;
+        order.timeline.push({
+          status: nextStatus,
+          timestamp: new Date().toISOString(),
+          user: 'Admin'
+        });
+
+        // Actualizar el signal
+        this.orders.set([...this.orders()]);
+        
+        alert(`Pedido #${orderId} actualizado a: ${this.getStatusName(nextStatus)}`);
+      } else {
+        alert(`Error al actualizar el pedido: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error al actualizar estado del pedido:', error);
+      alert('Error al actualizar el estado del pedido');
+    } finally {
+      this.isLoading.set(false);
     }
   }
 
@@ -505,31 +637,53 @@ export class AdminOrdersComponent implements OnInit {
     this.currentOrderId = null;
   }
 
-  confirmCancelOrder() {
+  async confirmCancelOrder() {
     if (!this.cancelOrderData.reason) {
       alert('Por favor selecciona un motivo de cancelación.');
       return;
     }
     
-    const order = this.orders.find(o => o.id === this.currentOrderId);
-    if (order) {
-      order.status = 'cancelled';
-      order.timeline.push({
-        status: 'cancelled',
-        timestamp: new Date().toISOString(),
-        user: 'Admin',
-        reason: this.cancelOrderData.reason,
-        comments: this.cancelOrderData.comments
-      });
-      
-      this.closeCancelModal();
-      alert(`Pedido #${this.currentOrderId} cancelado exitosamente.`);
+    const order = this.orders().find(o => o.id === this.currentOrderId);
+    if (!order) return;
+
+    this.isLoading.set(true);
+    try {
+      // Actualizar estado en el backend
+      const result = await this.orderService.updateOrderStatusInBackend(
+        this.currentOrderId!,
+        'cancelado'
+      );
+
+      if (result.success) {
+        // Actualizar localmente
+        order.status = 'cancelled';
+        order.timeline.push({
+          status: 'cancelled',
+          timestamp: new Date().toISOString(),
+          user: 'Admin',
+          reason: this.cancelOrderData.reason,
+          comments: this.cancelOrderData.comments
+        });
+
+        // Actualizar el signal
+        this.orders.set([...this.orders()]);
+        
+        this.closeCancelModal();
+        alert(`Pedido #${this.currentOrderId} cancelado exitosamente.`);
+      } else {
+        alert(`Error al cancelar el pedido: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error al cancelar pedido:', error);
+      alert('Error al cancelar el pedido');
+    } finally {
+      this.isLoading.set(false);
     }
   }
 
   // Modal functions
   openOrderModal(orderId: number) {
-    const order = this.orders.find(o => o.id === orderId);
+    const order = this.orders().find(o => o.id === orderId);
     if (!order) return;
     
     this.currentOrderId = orderId;
@@ -542,7 +696,7 @@ export class AdminOrdersComponent implements OnInit {
   }
 
   getCurrentOrder(): Order | null {
-    return this.orders.find(o => o.id === this.currentOrderId) || null;
+    return this.orders().find(o => o.id === this.currentOrderId) || null;
   }
 
   // Utility methods
@@ -597,7 +751,8 @@ export class AdminOrdersComponent implements OnInit {
       : 'filter-btn px-4 py-2 rounded-lg font-medium transition-all duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200';
   }
 
-  refreshOrders() {
+  async refreshOrders() {
+    await this.loadOrdersFromBackend();
     alert('Datos actualizados exitosamente.');
   }
 
