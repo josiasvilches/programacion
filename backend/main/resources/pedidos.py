@@ -54,9 +54,26 @@ class Pedidos(Resource):
         try:
             total = sum(p['subtotal'] for p in productos)
 
+            # Procesar fecha_pedido: si viene en data, parsearla; sino usar datetime.now()
+            fecha_pedido = datetime.now()
+            if 'fecha_pedido' in data and data['fecha_pedido']:
+                try:
+                    # Intentar parsear la fecha en formato ISO (YYYY-MM-DD o YYYY-MM-DDTHH:MM:SS)
+                    fecha_pedido = datetime.fromisoformat(data['fecha_pedido'].replace('Z', '+00:00'))
+                except ValueError:
+                    # Si falla, intentar otros formatos comunes
+                    try:
+                        fecha_pedido = datetime.strptime(data['fecha_pedido'], '%Y-%m-%d')
+                    except ValueError:
+                        try:
+                            fecha_pedido = datetime.strptime(data['fecha_pedido'], '%d/%m/%Y')
+                        except ValueError:
+                            # Si todos los formatos fallan, usar datetime.now()
+                            fecha_pedido = datetime.now()
+
             nuevo_pedido = PedidoModel(
                 id_cliente=data['id_cliente'],
-                fecha_pedido=datetime.now(),
+                fecha_pedido=fecha_pedido,
                 estado_pedido=data['estado_pedido'],
                 metodo_pago=data['metodo_pago'],
                 total=total,

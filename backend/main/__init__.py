@@ -33,7 +33,7 @@ def create_app():
     db_folder = os.path.join(base_dir, 'DB')
     db_name = os.getenv('DATABASE_NAME', 'grupof.db')
     db_full_path = os.path.join(db_folder, db_name)
-
+    print(f"Ruta completa de la base de datos: {db_full_path}")
     # Crear carpeta DB si no existe
     if not os.path.exists(db_folder):
         os.makedirs(db_folder)
