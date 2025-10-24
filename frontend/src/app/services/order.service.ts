@@ -306,7 +306,7 @@ export class OrderService {
     };
   }
 
-  // Método para crear pedido desde carrito
+  // Método para crear pedido desde carrito (local - para UI)
   createOrderFromCart(cartItems: CartItem[], paymentInfo: any, pickupInfo: any): Order {
     const orderItems: OrderItem[] = cartItems.map(item => ({
       name: item.product.name,
@@ -329,5 +329,84 @@ export class OrderService {
     };
 
     return this.addOrder(newOrder);
+  }
+
+  // Método para crear pedido en el backend
+  async createOrderInBackend(
+    idCliente: number,
+    cartItems: CartItem[],
+    paymentMethod: string,
+    pickupTime: string,
+    pickupDate?: Date
+  ): Promise<{ success: boolean; data?: any; message: string }> {
+    try {
+      // Formatear fecha en formato YYYY-MM-DD
+      const fechaPedido = pickupDate 
+        ? pickupDate.toISOString().split('T')[0] 
+        : new Date().toISOString().split('T')[0];
+
+      // Mapear método de pago al formato esperado por el backend
+      const metodoPagoMap: { [key: string]: string } = {
+        'Efectivo': 'efectivo',
+        'Tarjeta de Débito/Crédito': 'tarjeta',
+        'Transferencia Bancaria': 'transferencia',
+        'Billeteras Digitales': 'digital'
+      };
+
+      const metodoPago = metodoPagoMap[paymentMethod] || 'efectivo';
+
+      // Construir array de productos
+      const productos = cartItems.map(item => ({
+        id_producto: item.product.id,
+        cantidad: item.quantity,
+        precio_unitario: item.product.price,
+        subtotal: item.product.price * item.quantity
+      }));
+
+      // Construir el body del request
+      const body = {
+        id_cliente: idCliente,
+        estado_pedido: 'pendiente',
+        metodo_pago: metodoPago,
+        fecha_pedido: fechaPedido,
+        hora_retiro: pickupTime,
+        productos: productos
+      };
+
+      console.log('Enviando pedido al backend:', body);
+
+      // Realizar el POST al backend
+      const response = await fetch('http://127.0.0.1:5001/pedidos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return {
+          success: false,
+          message: errorData.mensaje || 'Error al crear el pedido'
+        };
+      }
+
+      const data = await response.json();
+      console.log('Respuesta del backend:', data);
+
+      return {
+        success: true,
+        data: data,
+        message: 'Pedido creado exitosamente'
+      };
+
+    } catch (error) {
+      console.error('Error al crear pedido en backend:', error);
+      return {
+        success: false,
+        message: 'Error de conexión con el servidor'
+      };
+    }
   }
 }

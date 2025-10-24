@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { CartService } from '../../services/cart.service';
 import { OrderService } from '../../services/order.service';
+import { UserService } from '../../services/user.service';
 import { CartItem } from '../../models/product.interface';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
@@ -107,7 +108,12 @@ export class PaymentComponent implements OnInit {
   private dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
   private monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
-  constructor(private cartService: CartService, private orderService: OrderService, private router: Router) {}
+  constructor(
+    private cartService: CartService, 
+    private orderService: OrderService, 
+    private userService: UserService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     // Subscribe to cart items
@@ -225,16 +231,41 @@ export class PaymentComponent implements OnInit {
     this.isLoadingOrder.set(true);
 
     try {
-      // Simulate order processing
-      await new Promise(resolve => setTimeout(resolve, 3000));
-
-      // Create order using OrderService
       const paymentInfo = this.getSelectedPaymentMethodInfo();
       const pickupInfo = {
         day: this.getSelectedDayDisplay(),
         time: this.selectedTime()
       };
 
+      // Obtener la fecha del día seleccionado
+      const selectedDayOption = this.dayOptions.find(day => day.id === this.selectedDay());
+      const pickupDate = selectedDayOption?.fullDate;
+
+      // Obtener el ID del cliente desde el servicio de usuario autenticado
+      const currentUser = this.userService.getCurrentUser();
+      console.log('Usuario actual al crear pedido:', currentUser);
+      if (!currentUser) {
+        alert('Debes iniciar sesión para realizar un pedido');
+        this.router.navigate(['/login']);
+        return;
+      }
+      const idCliente = currentUser.id;
+
+      // Crear el pedido en el backend
+      const result = await this.orderService.createOrderInBackend(
+        idCliente,
+        this.cartItems(),
+        paymentInfo?.name || 'Efectivo',
+        this.selectedTime(),
+        pickupDate
+      );
+      console.log('Resultado de creación de pedido en backend:', result);
+      if (!result.success) {
+        alert(`Error al crear el pedido: ${result.message}`);
+        return;
+      }
+
+      // También crear el pedido localmente para la UI
       const newOrder = this.orderService.createOrderFromCart(
         this.cartItems(),
         paymentInfo,
@@ -242,7 +273,7 @@ export class PaymentComponent implements OnInit {
       );
       
       let orderSummary = `¡Pedido confirmado!\n\n`;
-      orderSummary += `Número de pedido: #${newOrder.id}\n`;
+      orderSummary += `Número de pedido: #${result.data?.pedido_id || newOrder.id}\n`;
       orderSummary += `Total: $${this.finalTotal().toLocaleString()}\n\n`;
       orderSummary += `Retiro: ${this.getSelectedDayDisplay()} a las ${this.selectedTime()}\n`;
       orderSummary += `Local: Rotisería Cacho - Av. Corrientes 1234\n\n`;
@@ -261,6 +292,7 @@ export class PaymentComponent implements OnInit {
       this.router.navigate(['/orders']);
       
     } catch (error) {
+      console.error('Error al procesar el pedido:', error);
       alert('Hubo un error al procesar tu pedido. Por favor, intentá nuevamente.');
     } finally {
       this.isLoadingOrder.set(false);
