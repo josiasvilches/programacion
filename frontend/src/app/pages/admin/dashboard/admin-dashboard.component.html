@@ -34,9 +34,21 @@
         <!-- Recent Orders -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h3 class="text-lg font-bold text-gray-900 mb-4">Pedidos Recientes</h3>
-          <div class="space-y-3">
+          
+          <!-- Loading state -->
+          <div *ngIf="isLoadingOrders()" class="flex justify-center items-center py-8">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500"></div>
+          </div>
+          
+          <!-- No orders message -->
+          <div *ngIf="!isLoadingOrders() && recentOrders().length === 0" class="py-8 text-center text-gray-500">
+            No hay pedidos recientes
+          </div>
+          
+          <!-- Orders list -->
+          <div class="space-y-3" *ngIf="!isLoadingOrders() && recentOrders().length > 0">
             <div 
-              *ngFor="let order of recentOrders"
+              *ngFor="let order of recentOrders()"
               class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <div>
                 <p class="font-medium text-gray-900">{{ order.id }} - {{ order.customer }}</p>

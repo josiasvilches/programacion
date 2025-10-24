@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminSidebarComponent } from '../../../components/admin/sidebar/admin-sidebar.component';
 import { AdminHeaderComponent } from '../../../components/admin/header/admin-header.component';
+import { UserService } from '../../../services/user.service';
 
 interface User {
   id: number;
@@ -31,6 +32,10 @@ export class AdminUsersComponent implements OnInit {
   actionType: string | null = null;
   currentFilter = 'all';
 
+  // Signals para estado
+  users = signal<User[]>([]);
+  isLoading = signal<boolean>(false);
+
   // Modal configuration
   modalConfig = {
     title: 'Agregar Usuario',
@@ -42,96 +47,78 @@ export class AdminUsersComponent implements OnInit {
     actionButtonClass: ''
   };
 
-  users: User[] = [
-    {
-      id: 1,
-      name: "Juan Pérez",
-      email: "juan@email.com",
-      phone: "+54 9 11 1234-5678",
-      role: "ADMIN",
-      status: "active",
-      registrationDate: "2024-01-15",
-      lastLogin: "2024-01-20",
-      notes: "Administrador principal"
-    },
-    {
-      id: 2,
-      name: "María González",
-      email: "maria@email.com",
-      phone: "+54 9 11 2345-6789",
-      role: "USER",
-      status: "active",
-      registrationDate: "2024-01-18",
-      lastLogin: "2024-01-19",
-      notes: "Cliente frecuente"
-    },
-    {
-      id: 3,
-      name: "Carlos Rodríguez",
-      email: "carlos@email.com",
-      phone: "+54 9 11 3456-7890",
-      role: "USER",
-      status: "pending",
-      registrationDate: "2024-01-20",
-      lastLogin: null,
-      notes: "Pendiente de validación"
-    },
-    {
-      id: 4,
-      name: "Ana Martínez",
-      email: "ana@email.com",
-      phone: "+54 9 11 4567-8901",
-      role: "USER",
-      status: "active",
-      registrationDate: "2024-01-16",
-      lastLogin: "2024-01-18",
-      notes: ""
-    },
-    {
-      id: 5,
-      name: "Luis Torres",
-      email: "luis@email.com",
-      phone: "+54 9 11 5678-9012",
-      role: "USER",
-      status: "pending",
-      registrationDate: "2024-01-21",
-      lastLogin: null,
-      notes: "Registro reciente"
-    },
-    {
-      id: 6,
-      name: "Sofia López",
-      email: "sofia@email.com",
-      phone: "+54 9 11 6789-0123",
-      role: "ADMIN",
-      status: "active",
-      registrationDate: "2024-01-10",
-      lastLogin: "2024-01-20",
-      notes: "Administrador de contenido"
-    },
-    {
-      id: 7,
-      name: "Diego Fernández",
-      email: "diego@email.com",
-      phone: "+54 9 11 7890-1234",
-      role: "USER",
-      status: "inactive",
-      registrationDate: "2024-01-12",
-      lastLogin: "2024-01-14",
-      notes: "Usuario inactivo por solicitud propia"
-    },
-    {
-      id: 8,
-      name: "Laura Sánchez",
-      email: "laura@email.com",
-      phone: "+54 9 11 8901-2345",
-      role: "USER",
-      status: "pending",
-      registrationDate: "2024-01-22",
-      lastLogin: null,
-      notes: "Esperando validación de documentos"
+  constructor(private userService: UserService) {}
+
+  async ngOnInit() {
+    await this.loadUsersFromBackend();
+  }
+
+  // Cargar usuarios desde el backend
+  async loadUsersFromBackend() {
+    console.log('🔄 Iniciando carga de usuarios desde backend...');
+    this.isLoading.set(true);
+    try {
+      const result = await this.userService.getAllUsersFromBackend(1, 100);
+      console.log('📦 Respuesta del servicio:', result);
+      
+      if (result.success && result.data) {
+        const backendUsers = result.data.usuarios || [];
+        console.log('👥 Usuarios recibidos del backend:', backendUsers.length, backendUsers);
+        
+        const convertedUsers = this.convertBackendUsersToUI(backendUsers);
+        console.log('✅ Usuarios convertidos al formato UI:', convertedUsers.length, convertedUsers);
+        
+        this.users.set(convertedUsers);
+        console.log('✅ Signal actualizado. Usuarios actuales:', this.users());
+      } else {
+        console.error('❌ Error al cargar usuarios:', result.message);
+        alert('Error al cargar usuarios del servidor: ' + (result.message || 'Error desconocido'));
+      }
+    } catch (error) {
+      console.error('❌ Error al cargar usuarios desde backend:', error);
+      alert('Error de conexión al cargar usuarios');
+    } finally {
+      this.isLoading.set(false);
+      console.log('🏁 Carga de usuarios finalizada. isLoading:', this.isLoading());
     }
-  ];
+  }
+
+  // Convertir usuarios del backend al formato de la UI
+  convertBackendUsersToUI(backendUsers: any[]): User[] {
+    return backendUsers.map(usuario => {
+      // Mapear rol del backend al formato UI
+      const roleMap: { [key: string]: User['role'] } = {
+        'ADMIN': 'ADMIN',
+        'cliente': 'USER',
+        'trabajador': 'EMPLOYER',
+        'USER': 'USER',
+        'EMPLOYER': 'EMPLOYER'
+      };
+
+      // Mapear estado del backend al formato UI
+      const statusMap: { [key: string]: User['status'] } = {
+        'activo': 'active',
+        'inactivo': 'inactive',
+        'pendiente': 'pending',
+        'suspendido': 'inactive',
+        'active': 'active',
+        'inactive': 'inactive',
+        'pending': 'pending'
+      };
+
+      return {
+        id: usuario.usuario_id || usuario.id,
+        name: usuario.nombre || 'Sin nombre',
+        email: usuario.email || '',
+        phone: usuario.numero || '',
+        role: roleMap[usuario.rol] || 'USER',
+        status: statusMap[usuario.estado?.toLowerCase()] || 'pending',
+        registrationDate: usuario.fecha_registro || new Date().toISOString().split('T')[0],
+        lastLogin: usuario.ultimo_acceso || null,
+        notes: ''
+      };
+    });
+  }
 
   // Form data for user modal
   userForm = {
@@ -144,20 +131,15 @@ export class AdminUsersComponent implements OnInit {
     notes: ''
   };
 
-  constructor() {}
-
-  ngOnInit() {
-  }
-
   // Filter methods
   filterUsers(filter: string) {
     this.currentFilter = filter;
   }
 
   getFilteredUsers(): User[] {
-    if (this.currentFilter === 'all') return this.users;
-    if (this.currentFilter === 'admin') return this.users.filter(u => u.role === 'ADMIN');
-    return this.users.filter(u => u.status === this.currentFilter);
+    if (this.currentFilter === 'all') return this.users();
+    if (this.currentFilter === 'admin') return this.users().filter(u => u.role === 'ADMIN');
+    return this.users().filter(u => u.status === this.currentFilter);
   }
 
   // User actions
@@ -214,7 +196,7 @@ export class AdminUsersComponent implements OnInit {
   }
 
   editUser(id: number) {
-    const user = this.users.find(u => u.id === id);
+    const user = this.users().find(u => u.id === id);
     if (!user) return;
 
     this.editingUserId = id;
@@ -270,60 +252,140 @@ export class AdminUsersComponent implements OnInit {
     this.actionUserId = null;
   }
 
-  confirmAction() {
+  async confirmAction() {
     if (!this.actionType || !this.actionUserId) return;
 
-    const userIndex = this.users.findIndex(u => u.id === this.actionUserId);
+    const userIndex = this.users().findIndex(u => u.id === this.actionUserId);
     if (userIndex === -1) return;
 
+    const currentUsers = this.users();
+    const user = currentUsers[userIndex];
+    const token = this.userService.getAuthToken();
+
+    if (!token) {
+      console.error('No se encontró token de autenticación');
+      alert('Debes iniciar sesión para realizar esta acción');
+      return;
+    }
+
+    let newStatus: string;
     switch (this.actionType) {
       case 'validate':
-        this.users[userIndex].status = 'active';
+        newStatus = 'activo';
         break;
       case 'deactivate':
-        this.users[userIndex].status = 'inactive';
+        newStatus = 'inactivo';
         break;
       case 'activate':
-        this.users[userIndex].status = 'active';
+        newStatus = 'activo';
         break;
+      default:
+        return;
+    }
+
+    // Actualizar en el backend
+    const result = await this.userService.updateUserInBackend(
+      this.actionUserId,
+      { estado: newStatus },
+      token
+    );
+
+    if (result.success) {
+      // Actualizar el signal
+      const updatedUsers = [...currentUsers];
+      updatedUsers[userIndex] = {
+        ...user,
+        status: newStatus === 'activo' ? 'active' : 'inactive'
+      };
+      this.users.set(updatedUsers);
+      console.log('Usuario actualizado exitosamente');
+    } else {
+      console.error('Error al actualizar usuario:', result.message);
+      alert('Error al actualizar el usuario: ' + result.message);
     }
 
     this.closeActionModal();
   }
 
   // Form submission
-  onSubmitUser() {
-    if (this.editingUserId) {
-      // Edit existing user
-      const index = this.users.findIndex(u => u.id === this.editingUserId);
-      if (index !== -1) {
-        this.users[index] = {
-          ...this.users[index],
-          name: this.userForm.name,
-          email: this.userForm.email,
-          phone: this.userForm.phone,
-          role: this.userForm.role,
-          status: this.userForm.status,
-          notes: this.userForm.notes
-        };
-      }
-    } else {
-      // Add new user
-      const newId = Math.max(...this.users.map(u => u.id)) + 1;
-      this.users.push({
-        id: newId,
-        name: this.userForm.name,
-        email: this.userForm.email,
-        phone: this.userForm.phone,
-        role: this.userForm.role,
-        status: this.userForm.status,
-        registrationDate: new Date().toISOString().split('T')[0],
-        notes: this.userForm.notes,
-        lastLogin: null
-      });
+  async onSubmitUser() {
+    const token = this.userService.getAuthToken();
+
+    if (!token) {
+      console.error('No se encontró token de autenticación');
+      alert('Debes iniciar sesión para realizar esta acción');
+      return;
     }
 
-    this.closeUserModal();
+    if (this.editingUserId) {
+      // Edit existing user
+      const currentUsers = this.users();
+      const index = currentUsers.findIndex(u => u.id === this.editingUserId);
+      
+      if (index !== -1) {
+        // Mapear rol y estado al formato del backend
+        const rolBackend = this.userForm.role === 'ADMIN' ? 'ADMIN' : 
+                          this.userForm.role === 'EMPLOYER' ? 'trabajador' : 'cliente';
+        const estadoBackend = this.userForm.status === 'active' ? 'activo' :
+                             this.userForm.status === 'pending' ? 'pendiente' : 'inactivo';
+
+        // Preparar datos para enviar (solo incluir campos con valor)
+        const updateData: any = {
+          rol: rolBackend,
+          estado: estadoBackend
+        };
+
+        // Solo incluir campos que tienen valor y no están vacíos
+        if (this.userForm.name && this.userForm.name.trim() !== '') {
+          updateData.nombre = this.userForm.name.trim();
+        }
+        
+        if (this.userForm.email && this.userForm.email.trim() !== '') {
+          updateData.email = this.userForm.email.trim();
+        }
+
+        if (this.userForm.phone && this.userForm.phone.trim() !== '') {
+          updateData.numero = this.userForm.phone.trim();
+        }
+
+        console.log('📤 Datos a enviar al backend:', updateData);
+        console.log('🆔 ID del usuario a actualizar:', this.editingUserId);
+
+        const result = await this.userService.updateUserInBackend(
+          this.editingUserId,
+          updateData,
+          token
+        );
+
+        console.log('📨 Resultado de la actualización:', result);
+
+        if (result.success) {
+          const updatedUsers = [...currentUsers];
+          updatedUsers[index] = {
+            ...currentUsers[index],
+            name: this.userForm.name,
+            email: this.userForm.email,
+            phone: this.userForm.phone,
+            role: this.userForm.role,
+            status: this.userForm.status,
+            notes: this.userForm.notes
+          };
+          this.users.set(updatedUsers);
+          console.log('✅ Usuario actualizado exitosamente en el frontend');
+          alert('Usuario actualizado exitosamente');
+          this.closeUserModal();
+          // Recargar usuarios para asegurar sincronización
+          await this.loadUsersFromBackend();
+        } else {
+          console.error('❌ Error al actualizar usuario:', result);
+          alert('Error al actualizar el usuario:\n\n' + result.message + '\n\nRevisa la consola para más detalles.');
+        }
+      }
+    } else {
+      // Add new user - esto requeriría un endpoint POST en el backend
+      alert('La creación de usuarios debe hacerse desde el endpoint de registro');
+      this.closeUserModal();
+    }
   }
 
   // Utility methods

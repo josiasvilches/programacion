@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AdminSidebarComponent } from '../../../components/admin/sidebar/admin-sidebar.component';
 import { AdminHeaderComponent } from '../../../components/admin/header/admin-header.component';
+import { OrderService } from '../../../services/order.service';
 
 interface DashboardStats {
   label: string;
@@ -40,6 +41,10 @@ interface RecentActivity {
 })
 export class AdminDashboardComponent implements OnInit {
 
+  // Signal para los pedidos recientes
+  recentOrders = signal<RecentOrder[]>([]);
+  isLoadingOrders = signal<boolean>(false);
+
   stats: DashboardStats[] = [
     {
       label: 'Pedidos Hoy',
@@ -76,36 +81,6 @@ export class AdminDashboardComponent implements OnInit {
       icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
       bgColor: 'bg-orange-100',
       textColor: 'text-orange-600'
-    }
-  ];
-
-  recentOrders: RecentOrder[] = [
-    {
-      id: '#1001',
-      customer: 'María González',
-      items: 'Pollo al Spiedo + 2 más',
-      total: 2850,
-      status: 'preparing',
-      statusText: 'En Preparación',
-      statusClass: 'bg-blue-100 text-blue-800'
-    },
-    {
-      id: '#1002',
-      customer: 'Carlos Rodríguez',
-      items: 'Milanesa Napolitana + 1 más',
-      total: 1950,
-      status: 'ready',
-      statusText: 'Listo',
-      statusClass: 'bg-purple-100 text-purple-800'
-    },
-    {
-      id: '#1003',
-      customer: 'Ana Martínez',
-      items: 'Parrillada para 2 + 1 más',
-      total: 3200,
-      status: 'pending',
-      statusText: 'Pendiente',
-      statusClass: 'bg-yellow-100 text-yellow-800'
     }
   ];
 
@@ -161,9 +136,92 @@ export class AdminDashboardComponent implements OnInit {
     }
   ];
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private orderService: OrderService
+  ) {}
 
-  ngOnInit() {}
+  async ngOnInit() {
+    await this.loadRecentOrders();
+  }
+
+  async loadRecentOrders() {
+    console.log('🔄 Cargando últimos 3 pedidos...');
+    this.isLoadingOrders.set(true);
+    
+    try {
+      // Obtener los últimos 3 pedidos del backend
+      const result = await this.orderService.getAllOrdersFromBackend(1, 3);
+      console.log('📦 Respuesta del servicio:', result.data);
+      if (result.success && result.data) {
+        const backendOrders = result.data.pedidos || [];
+        console.log('📦 Pedidos recibidos del backend:', backendOrders);
+        
+        // Convertir los pedidos al formato de la UI
+        const convertedOrders = this.convertBackendOrdersToUI(backendOrders);
+        this.recentOrders.set(convertedOrders);
+        console.log('✅ Pedidos convertidos:', convertedOrders);
+      } else {
+        console.error('❌ Error al cargar pedidos:', result.message);
+      }
+    } catch (error) {
+      console.error('❌ Error al cargar pedidos recientes:', error);
+    } finally {
+      this.isLoadingOrders.set(false);
+    }
+  }
+
+  convertBackendOrdersToUI(backendOrders: any[]): RecentOrder[] {
+    return backendOrders.map(pedido => {
+      // Mapear estados del backend al formato UI
+      const statusMap: { [key: string]: RecentOrder['status'] } = {
+        'pendiente': 'pending',
+        'preparando': 'preparing',
+        'listo': 'ready',
+        'entregado': 'ready',
+        'cancelado': 'pending'
+      };
+
+      const statusTextMap: { [key: string]: string } = {
+        'pendiente': 'Pendiente',
+        'preparando': 'En Preparación',
+        'listo': 'Listo',
+        'entregado': 'Entregado',
+        'cancelado': 'Cancelado'
+      };
+
+      const statusClassMap: { [key: string]: string } = {
+        'pendiente': 'bg-yellow-100 text-yellow-800',
+        'preparando': 'bg-blue-100 text-blue-800',
+        'listo': 'bg-purple-100 text-purple-800',
+        'entregado': 'bg-green-100 text-green-800',
+        'cancelado': 'bg-red-100 text-red-800'
+      };
+
+      // Obtener información del cliente
+      const clienteNombre = pedido.cliente?.nombre || pedido.usuario?.nombre || 'Cliente Desconocido';
+      
+      // Obtener productos
+      const productos = pedido.producto || pedido.productos || [];
+      const primeraLinea = productos.length > 0 ? productos[0].nombre_producto || 'Sin productos' : 'Sin productos';
+      const cantidadProductos = productos.length;
+      const itemsText = cantidadProductos > 1 
+        ? `${primeraLinea} + ${cantidadProductos - 1} más`
+        : primeraLinea;
+
+      const estado = pedido.estado?.toLowerCase() || 'pendiente';
+
+      return {
+        id: `#${pedido.pedido_id}`,
+        customer: clienteNombre,
+        items: itemsText,
+        total: pedido.total || 0,
+        status: statusMap[estado] || 'pending',
+        statusText: statusTextMap[estado] || 'Pendiente',
+        statusClass: statusClassMap[estado] || 'bg-gray-100 text-gray-800'
+      };
+    });
+  }
 
   navigateTo(route: string) {
     this.router.navigate([route]);

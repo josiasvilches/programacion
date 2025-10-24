@@ -36,8 +36,8 @@ class Pedidos(Resource):
 
         #pedidos = PedidoModel.query.all()
         pedidos = pedidos.paginate(page=page, per_page=per_page, error_out=True)
-        return jsonify({'pedidos:': [pedido.to_json() for pedido in pedidos],
-                        'total:': pedidos.total,
+        return jsonify({'pedidos': [pedido.to_json() for pedido in pedidos],
+                        'total': pedidos.total,
                         'pages': pedidos.pages,
                         'page':page})
 

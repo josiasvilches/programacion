@@ -106,8 +106,11 @@ class Usuario(Resource):
             if 'email' in data:
                 usuario.email = data['email']
             if 'numero' in data:
-                # numero es un string en el modelo
-                usuario.numero = str(data['numero'])
+                # Solo actualizar si no es vacío
+                numero_value = data['numero']
+                if numero_value and str(numero_value).strip():
+                    usuario.numero = str(numero_value).strip()
+                # Si es vacío, no actualizar el campo (mantener el valor anterior)
             if 'password' in data and data['password']:
                 # Usar el setter para que se guarde el hash
                 usuario.plain_password = data['password']

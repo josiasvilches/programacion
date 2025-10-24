@@ -463,4 +463,192 @@ export class UserService {
     this.clearTokens();
     console.log('Usuario deslogueado');
   }
+
+  // Obtener todos los usuarios desde el backend (para admin)
+  async getAllUsersFromBackend(
+    page: number = 1,
+    perPage: number = 10,
+    filters?: {
+      nombre?: string;
+      rol?: string;
+      estado?: string;
+    }
+  ): Promise<{ success: boolean; data?: any; message: string }> {
+    try {
+      // Construir query params
+      const params = new URLSearchParams({
+        page: page.toString(),
+        per_page: perPage.toString(),
+      });
+
+      // Agregar filtros opcionales
+      if (filters?.nombre) params.append('nombre', filters.nombre);
+      if (filters?.rol) params.append('rol', filters.rol);
+      if (filters?.estado) params.append('estado', filters.estado);
+
+      const url = `${this.apiUrl}/usuarios?${params.toString()}`;
+      console.log('🔍 Obteniendo usuarios desde:', url);
+
+      // Obtener token de autenticación
+      const token = this.getAuthToken();
+      const headers: any = {
+        'Content-Type': 'application/json',
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+        console.log('🔑 Token agregado al request');
+      } else {
+        console.warn('⚠️ No se encontró token de autenticación');
+      }
+
+      // Realizar el GET al backend
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: headers,
+      });
+
+      if (!response.ok) {
+        console.error('❌ Error en respuesta HTTP:', response.status, response.statusText);
+        const errorData = await response.json();
+        console.error('❌ Detalles del error:', errorData);
+        return {
+          success: false,
+          message: errorData.mensaje || 'Error al obtener los usuarios',
+        };
+      }
+
+      const data = await response.json();
+      console.log('✅ Usuarios obtenidos del backend:', data);
+      console.log('📊 Total de usuarios:', data.total, '| Página:', data.page, '| Páginas totales:', data.pages);
+
+      return {
+        success: true,
+        data: data,
+        message: 'Usuarios obtenidos exitosamente',
+      };
+    } catch (error) {
+      console.error('❌ Error al obtener usuarios:', error);
+      return {
+        success: false,
+        message: 'Error de conexión con el servidor',
+      };
+    }
+  }
+
+  // Actualizar un usuario en el backend
+  async updateUserInBackend(
+    userId: number,
+    userData: {
+      nombre?: string;
+      email?: string;
+      numero?: string;
+      rol?: string;
+      estado?: string;
+      password?: string;
+    },
+    token?: string
+  ): Promise<{ success: boolean; data?: any; message: string }> {
+    try {
+      const url = `${this.apiUrl}/usuario/${userId}`;
+      console.log('Actualizando usuario:', { userId, userData });
+
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+
+      // Agregar token de autorización si está disponible
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: headers,
+        body: JSON.stringify(userData),
+      });
+
+      const data = await response.json();
+      console.log('📥 Respuesta completa del backend:', data);
+      console.log('📊 Status HTTP:', response.status);
+
+      if (!response.ok) {
+        console.error('❌ Error HTTP:', response.status, data);
+        return {
+          success: false,
+          message: data.mensaje || data.message || data.error || 'Error al actualizar el usuario',
+        };
+      }
+
+      // Verificar si el backend devolvió un error en un 200 OK
+      if (data.error || (data.mensaje && data.mensaje.toLowerCase().includes('error'))) {
+        console.error('❌ Backend devolvió error:', data);
+        return {
+          success: false,
+          message: data.error || data.mensaje || 'Error al actualizar el usuario',
+        };
+      }
+
+      console.log('✅ Usuario actualizado exitosamente:', data);
+
+      return {
+        success: true,
+        data: data,
+        message: data.mensaje || 'Usuario actualizado exitosamente',
+      };
+    } catch (error) {
+      console.error('Error al actualizar usuario:', error);
+      return {
+        success: false,
+        message: 'Error de conexión con el servidor',
+      };
+    }
+  }
+
+  // Suspender un usuario (cambiar estado)
+  async suspendUserInBackend(
+    userId: number,
+    token?: string
+  ): Promise<{ success: boolean; message: string }> {
+    try {
+      const url = `${this.apiUrl}/usuario/${userId}`;
+      console.log('Suspendiendo usuario:', userId);
+
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+
+      // Agregar token de autorización si está disponible
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: headers,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return {
+          success: false,
+          message: errorData.mensaje || 'Error al suspender el usuario',
+        };
+      }
+
+      const data = await response.json();
+      console.log('Usuario suspendido:', data);
+
+      return {
+        success: true,
+        message: data.mensaje || 'Usuario suspendido exitosamente',
+      };
+    } catch (error) {
+      console.error('Error al suspender usuario:', error);
+      return {
+        success: false,
+        message: 'Error de conexión con el servidor',
+      };
+    }
+  }
 }

@@ -31,12 +31,21 @@ class Usuario(db.Model):
         notificaciones = [notificaciones.to_json() for notificaciones in self.notificaciones]
         pedidos = [pedido.to_json() for pedido in self.pedidos]
         valoraciones = [valoracion.to_json() for valoracion in self.valoraciones]
+        
+        # Convertir numero a int solo si tiene valor, sino dejarlo como string vacío o None
+        numero_valor = None
+        if self.numero and self.numero.strip():
+            try:
+                numero_valor = int(self.numero)
+            except (ValueError, AttributeError):
+                numero_valor = self.numero
+        
         user_json = {
             'usuario_id': self.usuario_id,
             'nombre': str(self.nombre),
             'rol': self.rol,
             'estado': self.estado,
-            'numero': int(self.numero),
+            'numero': numero_valor,
             'email': str(self.email),
             'notificaciones': notificaciones,
             'pedidos': pedidos,
