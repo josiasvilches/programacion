@@ -49,7 +49,6 @@
 !**/.env.example
 
 # Database files
-**/*.db
 **/*.sqlite
 **/*.sqlite3
 
