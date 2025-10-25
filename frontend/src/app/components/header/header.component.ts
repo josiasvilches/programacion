@@ -14,7 +14,7 @@ import { UserService, User } from '../../services/user.service';
 export class HeaderComponent implements OnInit {
   @Input() showUserMenu: boolean = true;
   @Input() showCart: boolean = true;
-  @Input() showNavLinks: boolean = true;
+  @Input() showNavLinks: boolean = false;
   
   private userService = inject(UserService);
   

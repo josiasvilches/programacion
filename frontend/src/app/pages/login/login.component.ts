@@ -159,7 +159,7 @@ export class LoginComponent {
         
         // Esperar un momento para mostrar el mensaje de éxito
         setTimeout(() => {
-          this.router.navigate(['/']);
+          this.router.navigate(['/comidas']);
         }, 1500);
       } else {
         this.errorMessage.set(result.message || 'Error de autenticación. Verificá tus credenciales.');
