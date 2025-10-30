@@ -125,7 +125,7 @@ export class HomeComponent implements OnInit {
   }
 
   onViewMenu() {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/comidas']);
   }
 
   onCallNow() {
