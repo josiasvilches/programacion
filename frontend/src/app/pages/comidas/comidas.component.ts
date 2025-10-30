@@ -60,22 +60,20 @@ export class ComidasComponent {
     
     // Suscribirse a los productos de la API
     this.productService.apiProducts$.subscribe(apiProducts => {
-      if (apiProducts.length > 0) {
-        // Transformar productos de la API al formato ExtendedProduct
-        const extendedApiProducts: ExtendedProduct[] = apiProducts.map(product => ({
-          ...product,
-          available: true,
-          popular: false,
-          new: true,
-          prepTime: "30-45 min",
-          portions: "2-3 personas"
-        }));
-        
-        // Actualizar los productos con los de la API
-        this.products.set(extendedApiProducts);
-        console.log('Productos actualizados desde API:', extendedApiProducts);
-        this.cdr.markForCheck();
-      }
+      // Transformar productos de la API al formato ExtendedProduct
+      const extendedApiProducts: ExtendedProduct[] = apiProducts.map(product => ({
+        ...product,
+        available: true,
+        popular: false,
+        new: true,
+        prepTime: "30-45 min",
+        portions: "2-3 personas"
+      }));
+      
+      // Actualizar los productos con los de la API (incluso si está vacío)
+      this.products.set(extendedApiProducts);
+      console.log('Productos actualizados desde API:', extendedApiProducts);
+      this.cdr.markForCheck();
     });
 
     // Suscribirse a la paginación
@@ -101,190 +99,7 @@ export class ComidasComponent {
   }
 
   // Signals para el estado del componente
-  products = signal<ExtendedProduct[]>([
-    {
-      id: 1,
-      name: "Pollo al Spiedo Entero",
-      description: "Pollo entero dorado al spiedo con especias secretas",
-      category: "pollos",
-      price: 3500,
-      emoji: "🍗",
-      available: true,
-      popular: true,
-      new: false,
-      prepTime: "45-60 min",
-      portions: "4-6 personas"
-    },
-    {
-      id: 2,
-      name: "Medio Pollo al Spiedo",
-      description: "Media porción de nuestro famoso pollo al spiedo",
-      category: "pollos",
-      price: 1800,
-      emoji: "🍗",
-      available: true,
-      popular: true,
-      new: false,
-      prepTime: "30-45 min",
-      portions: "2-3 personas"
-    },
-    {
-      id: 3,
-      name: "Cuarto de Pollo",
-      description: "Cuarto de pollo jugoso con piel dorada",
-      category: "pollos",
-      price: 950,
-      emoji: "🍗",
-      available: true,
-      popular: false,
-      new: false,
-      prepTime: "20-30 min",
-      portions: "1-2 personas"
-    },
-    {
-      id: 4,
-      name: "Milanesas de Pollo (4 unidades)",
-      description: "Milanesas de pollo caseras, tiernas y doradas",
-      category: "milanesas",
-      price: 2800,
-      emoji: "🍖",
-      available: true,
-      popular: true,
-      new: false,
-      prepTime: "25-35 min",
-      portions: "3-4 personas"
-    },
-    {
-      id: 5,
-      name: "Milanesas de Carne (4 unidades)",
-      description: "Milanesas de carne vacuna, jugosas y sabrosas",
-      category: "milanesas",
-      price: 3200,
-      emoji: "🥩",
-      available: true,
-      popular: true,
-      new: false,
-      prepTime: "30-40 min",
-      portions: "3-4 personas"
-    },
-    {
-      id: 6,
-      name: "Milanesas Napolitanas (4 unidades)",
-      description: "Milanesas con jamón, queso y salsa de tomate",
-      category: "milanesas",
-      price: 3800,
-      emoji: "🍕",
-      available: false,
-      popular: true,
-      new: false,
-      prepTime: "35-45 min",
-      portions: "3-4 personas"
-    },
-    {
-      id: 7,
-      name: "Empanadas de Carne (6 unidades)",
-      description: "Empanadas caseras rellenas de carne cortada a cuchillo",
-      category: "empanadas",
-      price: 2700,
-      emoji: "🥟",
-      available: true,
-      popular: true,
-      new: false,
-      prepTime: "20-30 min",
-      portions: "2-3 personas"
-    },
-    {
-      id: 8,
-      name: "Empanadas de Pollo (6 unidades)",
-      description: "Empanadas de pollo desmenuzado con verduras",
-      category: "empanadas",
-      price: 2500,
-      emoji: "🥟",
-      available: true,
-      popular: false,
-      new: false,
-      prepTime: "20-30 min",
-      portions: "2-3 personas"
-    },
-    {
-      id: 9,
-      name: "Empanadas de Jamón y Queso (6 unidades)",
-      description: "Empanadas clásicas de jamón cocido y queso",
-      category: "empanadas",
-      price: 2400,
-      emoji: "🥟",
-      available: true,
-      popular: false,
-      new: false,
-      prepTime: "20-30 min",
-      portions: "2-3 personas"
-    },
-    {
-      id: 10,
-      name: "Empanadas de Verdura (6 unidades)",
-      description: "Empanadas vegetarianas con acelga, cebolla y queso",
-      category: "empanadas",
-      price: 2200,
-      emoji: "🥟",
-      available: true,
-      popular: false,
-      new: true,
-      prepTime: "20-30 min",
-      portions: "2-3 personas"
-    },
-    {
-      id: 11,
-      name: "Bife de Chorizo",
-      description: "Bife de chorizo jugoso a la parrilla",
-      category: "carnes",
-      price: 4500,
-      emoji: "🥩",
-      available: true,
-      popular: true,
-      new: false,
-      prepTime: "15-25 min",
-      portions: "1 persona"
-    },
-    {
-      id: 12,
-      name: "Asado de Tira",
-      description: "Asado de tira tierno con hueso",
-      category: "carnes",
-      price: 3800,
-      emoji: "🥩",
-      available: true,
-      popular: false,
-      new: false,
-      prepTime: "40-60 min",
-      portions: "2-3 personas"
-    },
-    {
-      id: 13,
-      name: "Matambre a la Pizza",
-      description: "Matambre relleno con jamón, queso y salsa",
-      category: "carnes",
-      price: 5200,
-      emoji: "🍕",
-      available: false,
-      popular: true,
-      new: false,
-      prepTime: "60-90 min",
-      portions: "4-6 personas"
-    },
-    {
-      id: 14,
-      name: "Pollo Grillé",
-      description: "Pollo marinado y grillado con hierbas",
-      category: "pollos",
-      price: 2800,
-      emoji: "🍗",
-      available: true,
-      popular: false,
-      new: true,
-      prepTime: "35-45 min",
-      portions: "2-3 personas"
-    }
-  ]);
+  products = signal<ExtendedProduct[]>([]);
 
   // Signals para el pop-up del carrito
   showCartPopup = signal(false);
