@@ -20,6 +20,10 @@
            class="text-gray-700 hover:text-red-500 smooth-transition font-medium">
           Comidas
         </a>
+        <a routerLink="/comidas" 
+           class="text-gray-700 hover:text-red-500 smooth-transition font-medium">
+          Guarniciones
+        </a>
       </div>
       }
 
@@ -225,6 +229,13 @@
           class="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-red-500 smooth-transition rounded-lg"
         >
           Comidas
+        </a>
+        <a
+          routerLink="/comidas"
+          (click)="closeMobileMenu()"
+          class="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-red-500 smooth-transition rounded-lg"
+        >
+          Guarniciones
         </a>
         <!-- User Section -->
         @if (showUserMenu && isUserLoggedIn) {
