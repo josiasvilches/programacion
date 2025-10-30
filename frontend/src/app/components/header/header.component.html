@@ -125,7 +125,7 @@
         </a>
         }
         <!-- Cart Button - Desktop -->
-        @if (showCart) {
+        @if (showCart && isUserLoggedIn) {
         <button
           (click)="onCartClick()"
           class="relative flex items-center space-x-2 text-gray-700 hover:text-red-500 smooth-transition"
@@ -153,8 +153,8 @@
       </div>
       <!-- Mobile Right Section -->
       <div class="flex md:hidden items-center space-x-3">
-        <!-- Cart Button - Mobile (Always visible) -->
-        @if (showCart) {
+        <!-- Cart Button - Mobile (Only visible when logged in) -->
+        @if (showCart && isUserLoggedIn) {
         <button
           (click)="onCartClick()"
           class="relative flex items-center text-gray-700 hover:text-red-500 smooth-transition"
