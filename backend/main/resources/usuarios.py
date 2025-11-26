@@ -65,7 +65,6 @@ class Usuario(Resource):
             if usuario is None:
                 return {'mensaje': 'Usuario no encontrado'}, 404
             current_identity = get_jwt_identity()
-            # El identity puede ser un dict con 'usuario_id' o directamente el id
             identity_user_id = None
             if isinstance(current_identity, dict):
                 identity_user_id = current_identity.get('usuario_id') or current_identity.get('id')
@@ -76,20 +75,37 @@ class Usuario(Resource):
             if identity_user_id and int(identity_user_id) == int(usuario.usuario_id):
                 return usuario.to_json_complete(), 200  # Devuelve todo si es su propio perfil
             else:
-                return usuario.to_json_complete(), 200  # Devuelve datos limitados si es otro
+                return usuario.to_json(), 200  # Devuelve datos limitados si es otro
         except Exception as e:
             print("ERROR:", str(e))
             return {'error': str(e)}, 500
 
 
+    @jwt_required()
     def put(self, id):
         try:
             usuario = UsuarioModel.query.get(id)
             if usuario is None:
                 return {'mensaje': 'Usuario no encontrado'}, 404
 
-            data = request.get_json() or {}
+            # Obtener identidad del usuario autenticado
+            identity = get_jwt_identity()
+            claims = get_jwt()
+            rol = claims.get('rol') if isinstance(claims, dict) else None
+            
+            identity_user_id = None
+            if isinstance(identity, dict):
+                identity_user_id = identity.get('usuario_id') or identity.get('id')
+                if not rol:
+                    rol = identity.get('rol')
+            else:
+                identity_user_id = identity
 
+            # Verificar permisos: solo puede editar su propio perfil o ser ADMIN
+            if rol != 'ADMIN' and (identity_user_id is None or int(usuario.usuario_id) != int(identity_user_id)):
+                return {'mensaje': 'No tiene permisos para modificar este usuario'}, 403
+
+            data = request.get_json() or {}
 
             # Aceptar nombres de campo tanto en español como la forma usada por el frontend
             if 'nombre' in data:
@@ -97,22 +113,21 @@ class Usuario(Resource):
             if 'fullName' in data:
                 usuario.nombre = data['fullName']
 
-            if 'rol' in data:
-                usuario.rol = data['rol']
-            if 'estado' in data:
-                usuario.estado = data['estado']
+            # Solo ADMIN puede cambiar rol y estado
+            if rol == 'ADMIN':
+                if 'rol' in data:
+                    usuario.rol = data['rol']
+                if 'estado' in data:
+                    usuario.estado = data['estado']
 
             # Campos de contacto / credenciales
             if 'email' in data:
                 usuario.email = data['email']
             if 'numero' in data:
-                # Solo actualizar si no es vacío
                 numero_value = data['numero']
                 if numero_value and str(numero_value).strip():
                     usuario.numero = str(numero_value).strip()
-                # Si es vacío, no actualizar el campo (mantener el valor anterior)
             if 'password' in data and data['password']:
-                # Usar el setter para que se guarde el hash
                 usuario.plain_password = data['password']
 
             db.session.commit()
@@ -123,7 +138,7 @@ class Usuario(Resource):
             print("ERROR:", str(e))
             return {'error': str(e)}, 500
 
-    @role_required(roles=['ADMIN', 'cliente'])
+    @role_required(roles=['ADMIN'])
     def delete(self, id):
         try:
             usuario = UsuarioModel.query.get(id)
