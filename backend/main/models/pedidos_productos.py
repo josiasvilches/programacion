@@ -9,12 +9,11 @@ class PedidoProducto(db.Model):
     precio_unitario = db.Column(db.Numeric(10, 2), nullable=False)
     subtotal = db.Column(db.Numeric(10, 2), nullable=False)
 
-    # No es necesario definir la relación aquí porque ya existe en Producto
     # La relación 'producto' ya está disponible a través del backref definido en Producto
 
     def to_json(self):
         producto_nombre = None
-        # Usar la relación 'producto' que viene del backref en Producto
+        # Usa la relación 'producto' que viene del backref en Producto
         if hasattr(self, 'producto') and self.producto:
             producto_nombre = self.producto.nombre
         

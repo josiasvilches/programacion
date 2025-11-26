@@ -9,7 +9,7 @@ class Pedido(db.Model):
     estado_pedido = db.Column(db.String(50), nullable=False)
     metodo_pago = db.Column(db.String(50), nullable=False)
     total = db.Column(db.Numeric(10, 2), nullable=False)
-    hora_retiro = db.Column(db.String(5), nullable=True)  # Formato: 'HH:MM' (ej: '11:00', '17:00')
+    hora_retiro = db.Column(db.String(5), nullable=True)
 
     productos = db.relationship('PedidoProducto', backref='pedido', lazy=True, cascade="all, delete-orphan")
     cliente = db.relationship('Usuario', back_populates='pedidos')
@@ -23,6 +23,6 @@ class Pedido(db.Model):
             'estado_pedido': self.estado_pedido,
             'metodo_pago': self.metodo_pago,
             'total': float(self.total),
-            'hora_retiro': self.hora_retiro,  # Ya es un string, se devuelve directamente
+            'hora_retiro': self.hora_retiro,
             'producto': [producto.to_json() for producto in self.productos]
         }

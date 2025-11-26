@@ -11,7 +11,6 @@ class Campanas(Resource):
     @jwt_required()
     @role_required(roles=['ADMIN'])
     def get(self):
-        """Obtener todas las campañas con paginación y filtros"""
         try:
             page = request.args.get('page', 1, type=int)
             per_page = request.args.get('per_page', 10, type=int)
@@ -50,7 +49,6 @@ class Campanas(Resource):
     @jwt_required()
     @role_required(roles=['ADMIN'])
     def post(self):
-        """Crear una nueva campaña"""
         try:
             data = request.get_json()
 
@@ -85,7 +83,6 @@ class Campana(Resource):
     @jwt_required()
     @role_required(roles=['ADMIN'])
     def get(self, id):
-        """Obtener una campaña específica"""
         try:
             campana = CampanaModel.query.get_or_404(id)
             return campana.to_json(), 200
@@ -96,7 +93,6 @@ class Campana(Resource):
     @jwt_required()
     @role_required(roles=['ADMIN'])
     def put(self, id):
-        """Actualizar una campaña existente"""
         try:
             campana = CampanaModel.query.get(id)
             if not campana:
@@ -129,7 +125,6 @@ class Campana(Resource):
     @jwt_required()
     @role_required(roles=['ADMIN'])
     def delete(self, id):
-        """Eliminar (cambiar estado a 'finalizada') una campaña"""
         try:
             campana = CampanaModel.query.get(id)
             if not campana:
@@ -148,9 +143,7 @@ class Campana(Resource):
 
 
 class CampanasActivas(Resource):
-    """Endpoint público para obtener campañas activas (sin autenticación)"""
     def get(self):
-        """Obtener todas las campañas activas"""
         try:
             campanas = CampanaModel.query.filter_by(estado='activa').order_by(
                 CampanaModel.fecha_creacion.desc()

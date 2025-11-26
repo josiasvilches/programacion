@@ -91,17 +91,6 @@ class Productos(Resource):
     
     @role_required(roles=['ADMIN'])
     def post(self):
-        """
-        Se espera recibir un JSON con la siguiente estructura:
-          {
-            "nombre": "Nombre del producto",
-            "precio": 100.50,
-            "stock": 30,
-            "id_categoria": 1,
-            "descripcion": "Descripción del producto",
-            "imagen_url": "https://url.com/imagen.jpg"
-          }
-        """
         try:
             current_identity = get_jwt_identity()
             if not isinstance(current_identity, str):

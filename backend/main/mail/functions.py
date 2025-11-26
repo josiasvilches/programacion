@@ -7,10 +7,10 @@ def sendMail(to, subject, template, **kwargs):
     """
     Envia un correo electrónico utilizando Flask-Mail.
     
-    :param to: Dirección de correo electrónico del destinatario (o lista de destinatarios).
-    :param subject: Asunto del correo electrónico.
-    :param template: Nombre de la plantilla HTML para el contenido del correo.
-    :param kwargs: Variables adicionales a pasar a la plantilla.
+    to: Dirección de correo electrónico del destinatario (o lista de destinatarios).
+    subject: Asunto del correo electrónico.
+    template: Nombre de la plantilla HTML para el contenido del correo.
+    kwargs: Variables adicionales a pasar a la plantilla.
     """
     if not isinstance(to, list):
         to = [to]  # Convertir a lista si es una cadena

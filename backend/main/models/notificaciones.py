@@ -1,13 +1,6 @@
 from .. import db
 from datetime import datetime
 
-"""
-NOTIFICACIONES = {
-    1: {'notificacion': 'Su producto está en camino', 'usuario_fk': 2}
-}
-
-"""
-
 class Notificacion(db.Model):
     __tablename__ = 'notificaciones'
     notificacion_id = db.Column(db.Integer, primary_key=True)

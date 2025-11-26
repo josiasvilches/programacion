@@ -6,16 +6,14 @@ from main.models import PedidoModel, PedidoProductoModel, UsuarioModel
 
 class Pedidos(Resource):
     def get(self):
-        # PAGINADO
         # Página inicial por defecto
         page = 1
         # Cantidad de elementos por página
         per_page = 10
 
-        # Defino pedidos
         pedidos = db.session.query(PedidoModel)
 
-        # Tomo la paginación del request si está especificada
+        # Paginación del request si está especificada
         if request.args.get('page'):
             page = int(request.args.get('page'))
         if request.args.get('per_page'):
@@ -33,8 +31,7 @@ class Pedidos(Resource):
         # Filtrar por el cliente
         if request.args.get('usuario'):
             pedidos = pedidos.outerjoin(PedidoModel.cliente).filter(UsuarioModel.nombre == request.args.get('usuario'))
-
-        #pedidos = PedidoModel.query.all()
+        # Ordenar por fecha más reciente primero
         pedidos = pedidos.paginate(page=page, per_page=per_page, error_out=True)
         return jsonify({'pedidos': [pedido.to_json() for pedido in pedidos],
                         'total': pedidos.total,
@@ -106,10 +103,6 @@ class Pedido(Resource):
         return pedido.to_json(), 200
 
     def put(self, id):
-        """
-        Permite modificar el estado de un pedido
-        Estados válidos: pendiente, preparando, listo, entregado, cancelado
-        """
         pedido = PedidoModel.query.get_or_404(id)
         data = request.get_json() or {}
 
@@ -161,9 +154,6 @@ class Pedido(Resource):
 
 
 class PedidosUsuario(Resource):
-    """
-    Recurso para obtener los pedidos de un usuario específico
-    """
     def get(self, id_usuario):
         # PAGINADO
         page = 1
