@@ -52,9 +52,18 @@ export class AdminOrdersComponent implements OnInit {
   dateFilter = 'all';
   paymentFilter = 'all';
 
+  // Paginación
+  currentPage = 1;
+  totalPages = 1;
+  totalOrders = 0;
+  ordersPerPage = 10;
+
   // Signals para estado
   orders = signal<Order[]>([]);
   isLoading = signal<boolean>(false);
+
+  // Exponer Math para el template
+  Math = Math;
 
   // Cancel modal data
   cancelOrderData = {
@@ -75,14 +84,23 @@ export class AdminOrdersComponent implements OnInit {
   async loadOrdersFromBackend() {
     this.isLoading.set(true);
     try {
-      // Obtener todos los pedidos desde el backend (endpoint admin)
-      const result = await this.orderService.getAllOrdersFromBackend(1, 100);
+      // Obtener pedidos con paginación
+      const result = await this.orderService.getAllOrdersFromBackend(
+        this.currentPage, 
+        this.ordersPerPage
+      );
       
       if (result.success && result.data) {
         const backendOrders = result.data['pedidos:'] || result.data.pedidos || [];
         const convertedOrders = this.convertBackendOrdersToUI(backendOrders);
         this.orders.set(convertedOrders);
+        
+        // Actualizar información de paginación
+        this.totalPages = result.data.pages || 1;
+        this.totalOrders = result.data.total || 0;
+        
         console.log('Pedidos cargados desde backend:', convertedOrders);
+        console.log(`Página ${this.currentPage} de ${this.totalPages} (Total: ${this.totalOrders})`);
       } else {
         console.error('Error al cargar pedidos:', result.message);
         alert('Error al cargar pedidos del servidor');
@@ -754,6 +772,77 @@ export class AdminOrdersComponent implements OnInit {
   async refreshOrders() {
     await this.loadOrdersFromBackend();
     alert('Datos actualizados exitosamente.');
+  }
+
+  // Métodos de paginación
+  async goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+      this.currentPage = page;
+      await this.loadOrdersFromBackend();
+    }
+  }
+
+  async nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      await this.loadOrdersFromBackend();
+    }
+  }
+
+  async previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      await this.loadOrdersFromBackend();
+    }
+  }
+
+  async firstPage() {
+    if (this.currentPage !== 1) {
+      this.currentPage = 1;
+      await this.loadOrdersFromBackend();
+    }
+  }
+
+  async lastPage() {
+    if (this.currentPage !== this.totalPages) {
+      this.currentPage = this.totalPages;
+      await this.loadOrdersFromBackend();
+    }
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisible = 5;
+    
+    if (this.totalPages <= maxVisible) {
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (this.currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pages.push(i);
+        }
+        pages.push(-1); // Representa "..."
+        pages.push(this.totalPages);
+      } else if (this.currentPage >= this.totalPages - 2) {
+        pages.push(1);
+        pages.push(-1);
+        for (let i = this.totalPages - 3; i <= this.totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        pages.push(1);
+        pages.push(-1);
+        for (let i = this.currentPage - 1; i <= this.currentPage + 1; i++) {
+          pages.push(i);
+        }
+        pages.push(-1);
+        pages.push(this.totalPages);
+      }
+    }
+    
+    return pages;
   }
 
   printOrder(orderId: number) {
