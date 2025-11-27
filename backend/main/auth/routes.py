@@ -78,6 +78,26 @@ def login():
         if not usuario or not usuario.validate_pass(password):
             return {'mensaje': 'Credenciales inválidas'}, 401
 
+        # Verificar el estado del usuario
+        if usuario.estado and usuario.estado.lower() == 'en espera':
+            return {
+                'mensaje': 'Tu cuenta está pendiente de aprobación. Un administrador debe activarla antes de que puedas iniciar sesión.',
+                'estado': 'en espera'
+            }, 403
+        
+        if usuario.estado and usuario.estado.lower() == 'inactivo':
+            return {
+                'mensaje': 'Tu cuenta ha sido desactivada. Contacta con el administrador.',
+                'estado': 'inactivo'
+            }, 403
+
+        # Solo permitir login si el estado es "activo"
+        if not usuario.estado or usuario.estado.lower() != 'activo':
+            return {
+                'mensaje': 'Tu cuenta no está activa. Contacta con el administrador.',
+                'estado': usuario.estado
+            }, 403
+
         # Crear token de acceso: usar un identity consistente (dict)
         identity_payload = {
             'usuario_id': usuario.usuario_id,
@@ -132,7 +152,7 @@ def logout():
         print("ERROR:", str(e))
         return {'error': str(e)}, 500
 
-# Ruta protegida de ejemplo
+# Ruta protegida
 @auth.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():
