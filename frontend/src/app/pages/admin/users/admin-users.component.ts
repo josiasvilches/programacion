@@ -32,9 +32,18 @@ export class AdminUsersComponent implements OnInit {
   actionType: string | null = null;
   currentFilter = 'all';
 
+  // Paginación
+  currentPage = 1;
+  pageSize = 10;
+  totalUsers = 0;
+  totalPages = 0;
+
   // Signals para estado
   users = signal<User[]>([]);
   isLoading = signal<boolean>(false);
+
+  // Exponer Math para usarlo en el template
+  Math = Math;
 
   // Modal configuration
   modalConfig = {
@@ -54,22 +63,27 @@ export class AdminUsersComponent implements OnInit {
   }
 
   // Cargar usuarios desde el backend
-  async loadUsersFromBackend() {
-    console.log('🔄 Iniciando carga de usuarios desde backend...');
+  async loadUsersFromBackend(page: number = this.currentPage) {
+    console.log(`🔄 Iniciando carga de usuarios desde backend - Página: ${page}`);
     this.isLoading.set(true);
     try {
-      const result = await this.userService.getAllUsersFromBackend(1, 100);
+      const result = await this.userService.getAllUsersFromBackend(page, this.pageSize);
       console.log('📦 Respuesta del servicio:', result);
       
       if (result.success && result.data) {
         const backendUsers = result.data.usuarios || [];
         console.log('👥 Usuarios recibidos del backend:', backendUsers.length, backendUsers);
         
+        // Actualizar información de paginación desde la respuesta del backend
+        this.currentPage = result.data.page || page;
+        this.totalPages = result.data.pages || 1;
+        this.totalUsers = result.data.total || backendUsers.length;
+        
         const convertedUsers = this.convertBackendUsersToUI(backendUsers);
         console.log('✅ Usuarios convertidos al formato UI:', convertedUsers.length, convertedUsers);
         
         this.users.set(convertedUsers);
-        console.log('✅ Signal actualizado. Usuarios actuales:', this.users());
+        console.log(`✅ Paginación actualizada - Página ${this.currentPage} de ${this.totalPages}. Total: ${this.totalUsers} usuarios`);
       } else {
         console.error('❌ Error al cargar usuarios:', result.message);
         alert('Error al cargar usuarios del servidor: ' + (result.message || 'Error desconocido'));
@@ -134,12 +148,13 @@ export class AdminUsersComponent implements OnInit {
   // Filter methods
   filterUsers(filter: string) {
     this.currentFilter = filter;
+    // Por ahora solo cambia el filtro visual, en el futuro se puede integrar con el backend
   }
 
   getFilteredUsers(): User[] {
-    if (this.currentFilter === 'all') return this.users();
-    if (this.currentFilter === 'admin') return this.users().filter(u => u.role === 'ADMIN');
-    return this.users().filter(u => u.status === this.currentFilter);
+    // Retornar todos los usuarios de la página actual
+    // El filtrado del lado del cliente no debe aplicarse cuando hay paginación del servidor
+    return this.users();
   }
 
   // User actions
@@ -252,6 +267,65 @@ export class AdminUsersComponent implements OnInit {
     this.actionUserId = null;
   }
 
+  // Métodos de navegación de paginación
+  async goToPage(page: number) {
+    if (page < 1 || page > this.totalPages || page === this.currentPage || this.isLoading()) {
+      return;
+    }
+    await this.loadUsersFromBackend(page);
+  }
+
+  async nextPage() {
+    if (this.currentPage < this.totalPages && !this.isLoading()) {
+      await this.goToPage(this.currentPage + 1);
+    }
+  }
+
+  async previousPage() {
+    if (this.currentPage > 1 && !this.isLoading()) {
+      await this.goToPage(this.currentPage - 1);
+    }
+  }
+
+  async firstPage() {
+    if (this.currentPage !== 1 && !this.isLoading()) {
+      await this.goToPage(1);
+    }
+  }
+
+  async lastPage() {
+    if (this.currentPage !== this.totalPages && !this.isLoading()) {
+      await this.goToPage(this.totalPages);
+    }
+  }
+
+  // Obtener array de números de página para mostrar
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxPagesToShow = 5;
+    
+    if (this.totalPages <= maxPagesToShow) {
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      let startPage = Math.max(1, this.currentPage - 2);
+      let endPage = Math.min(this.totalPages, this.currentPage + 2);
+      
+      if (this.currentPage <= 3) {
+        endPage = Math.min(maxPagesToShow, this.totalPages);
+      } else if (this.currentPage >= this.totalPages - 2) {
+        startPage = Math.max(1, this.totalPages - maxPagesToShow + 1);
+      }
+      
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+    }
+    
+    return pages;
+  }
+
   async confirmAction() {
     if (!this.actionType || !this.actionUserId) return;
 
@@ -291,13 +365,8 @@ export class AdminUsersComponent implements OnInit {
     );
 
     if (result.success) {
-      // Actualizar el signal
-      const updatedUsers = [...currentUsers];
-      updatedUsers[userIndex] = {
-        ...user,
-        status: newStatus === 'activo' ? 'active' : 'inactive'
-      };
-      this.users.set(updatedUsers);
+      // Recargar la página actual para reflejar los cambios
+      await this.loadUsersFromBackend(this.currentPage);
       console.log('Usuario actualizado exitosamente');
     } else {
       console.error('Error al actualizar usuario:', result.message);
@@ -360,22 +429,11 @@ export class AdminUsersComponent implements OnInit {
         console.log('📨 Resultado de la actualización:', result);
 
         if (result.success) {
-          const updatedUsers = [...currentUsers];
-          updatedUsers[index] = {
-            ...currentUsers[index],
-            name: this.userForm.name,
-            email: this.userForm.email,
-            phone: this.userForm.phone,
-            role: this.userForm.role,
-            status: this.userForm.status,
-            notes: this.userForm.notes
-          };
-          this.users.set(updatedUsers);
-          console.log('✅ Usuario actualizado exitosamente en el frontend');
+          console.log('✅ Usuario actualizado exitosamente en el backend');
           alert('Usuario actualizado exitosamente');
           this.closeUserModal();
-          // Recargar usuarios para asegurar sincronización
-          await this.loadUsersFromBackend();
+          // Recargar la página actual para asegurar sincronización
+          await this.loadUsersFromBackend(this.currentPage);
         } else {
           console.error('❌ Error al actualizar usuario:', result);
           alert('Error al actualizar el usuario:\n\n' + result.message + '\n\nRevisa la consola para más detalles.');
