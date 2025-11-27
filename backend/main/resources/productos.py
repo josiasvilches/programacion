@@ -98,20 +98,21 @@ class Productos(Resource):
 
             data = request.get_json() or {}
             print(data)
-            if not all(key in data for key in ('nombre', 'precio', 'stock')):
-                return {"mensaje": "Faltan datos requeridos ('nombre', 'precio', 'stock', 'id_categoria')"}, 400
+            if not all(key in data for key in ('nombre', 'precio')):
+                return {"mensaje": "Faltan datos requeridos ('nombre', 'precio')"}, 400
 
             nuevo_producto = ProductoModel(
                 nombre=data['nombre'],
                 precio=data['precio'],
-                stock=data['stock'],
+                stock=data.get('stock', 0),  # Default 0 si no se proporciona
                 id_categoria=data.get('id_categoria'),
                 descripcion=data.get('descripcion'),
-                imagen_url=data.get('imagen_url')
+                imagen_url=data.get('imagen_url'),
+                disponible=data.get('disponible', True)  # Default True
             )
             db.session.add(nuevo_producto)
             db.session.commit()
-            return nuevo_producto.to_json(), 201
+            return nuevo_producto.to_json_complete(), 201
 
         except Exception as e:
             db.session.rollback()
@@ -182,6 +183,9 @@ class Producto(Resource):
                 producto.descripcion = data['descripcion']
             if 'imagen_url' in data:
                 producto.imagen_url = data['imagen_url']
+            if 'disponible' in data:
+                producto.disponible = data['disponible']
+            
             db.session.commit()
             return producto.to_json_complete(), 200
         except Exception as e:

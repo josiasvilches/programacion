@@ -823,21 +823,17 @@ export class AdminOrdersComponent implements OnInit {
         for (let i = 1; i <= 4; i++) {
           pages.push(i);
         }
-        pages.push(-1); // Representa "..."
         pages.push(this.totalPages);
       } else if (this.currentPage >= this.totalPages - 2) {
         pages.push(1);
-        pages.push(-1);
         for (let i = this.totalPages - 3; i <= this.totalPages; i++) {
           pages.push(i);
         }
       } else {
         pages.push(1);
-        pages.push(-1);
         for (let i = this.currentPage - 1; i <= this.currentPage + 1; i++) {
           pages.push(i);
         }
-        pages.push(-1);
         pages.push(this.totalPages);
       }
     }

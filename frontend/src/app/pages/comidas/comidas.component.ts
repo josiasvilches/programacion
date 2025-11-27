@@ -357,76 +357,62 @@ export class ComidasComponent {
     return price.toLocaleString();
   }
 
-  getCategoryLabel(categoryKey: string): string {
-    // categoryKey puede ser el ID de la categoría o el nombre
-    const apiCats = this.apiCategories();
+  getCategoryLabel(category: string): string {
+    const found = this.categories().find(c => c.key === category);
+    return found ? found.label : category;
+  }
+
+  // Manejar error de carga de imagen
+  onImageError(event: Event, product: ExtendedProduct) {
+    const imgElement = event.target as HTMLImageElement;
     
-    // Primero intentar buscar por ID (si es un número)
-    const categoryId = parseInt(categoryKey);
-    if (!isNaN(categoryId)) {
-      const category = apiCats.find(c => c.categoria_id === categoryId);
-      if (category) {
-        return category.nombre_categoria;
-      }
+    // Ocultar la imagen que falló
+    imgElement.style.display = 'none';
+    
+    // Buscar el contenedor y agregar el emoji
+    const container = imgElement.parentElement;
+    if (container && !container.querySelector('.emoji-fallback')) {
+      const emojiSpan = document.createElement('span');
+      emojiSpan.className = 'emoji-fallback text-6xl';
+      emojiSpan.textContent = product.emoji || '🍽️';
+      container.appendChild(emojiSpan);
     }
     
-    // Si no, buscar en las categorías computadas por key
-    const category = this.categories().find(c => c.key === categoryKey.toLowerCase());
-    return category?.label || categoryKey;
+    console.warn(`Error al cargar imagen para ${product.name}:`, product.imagen);
   }
 
-  // Métodos para acciones
-  viewProduct(product: ExtendedProduct) {
-    console.log('Navegando a producto:', product);
-    console.log('ID del producto:', product.id);
-    if (product.id) {
-      this.router.navigate(['/comidas', product.id]);
-    } else {
-      console.error('Producto sin ID válido:', product);
+  // Track by function para optimizar renderizado
+  trackByProductId(index: number, product: any): number {
+    return product.id;
+  }
+
+  // Métodos para el carrito y navegación
+  viewProduct(product: ExtendedProduct): void {
+    this.router.navigate(['/product', product.id]);
+  }
+
+  addToCart(product: ExtendedProduct): void {
+    if (!product.available) {
+      return;
     }
+    
+    this.cartService.addToCart(product, 1);
+    this.addedProduct.set(product);
+    this.showCartPopup.set(true);
+    
+    // Auto-cerrar después de 3 segundos
+    setTimeout(() => {
+      this.hideCartPopup();
+    }, 3000);
   }
 
-  addToCart(product: ExtendedProduct) {
-    if (product.available) {
-      // Convertir ExtendedProduct a Product para el servicio
-      const baseProduct: Product = {
-        id: product.id,
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        category: product.category,
-        emoji: product.emoji
-      };
-      
-      this.cartService.addToCart(baseProduct, 1);
-      
-      // Mostrar el pop-up
-      this.addedProduct.set(product);
-      this.showCartPopup.set(true);
-      
-      // Ocultar el pop-up después de 3 segundos
-      setTimeout(() => {
-        this.hideCartPopup();
-      }, 3000);
-      
-      console.log('Producto agregado al carrito:', product.name);
-    }
-  }
-
-  // Método para ocultar el pop-up manualmente
-  hideCartPopup() {
+  hideCartPopup(): void {
     this.showCartPopup.set(false);
     this.addedProduct.set(null);
   }
 
-  // Método para ir al carrito
-  goToCart() {
+  goToCart(): void {
     this.hideCartPopup();
     this.router.navigate(['/cart']);
-  }
-
-  // TrackBy function para el ngFor
-  trackByProductId(index: number, product: ExtendedProduct): any {
-    return product.id || index;
   }
 }

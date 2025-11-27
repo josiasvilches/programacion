@@ -10,6 +10,7 @@ class Producto(db.Model):
     id_categoria = db.Column(db.Integer, db.ForeignKey('categorias.categoria_id'), nullable=True)
     descripcion = db.Column(db.Text, nullable=True)
     imagen_url = db.Column(db.String(255), nullable=True)
+    disponible = db.Column(db.Boolean, default=True, nullable=False)  
 
     valoraciones = db.relationship('Valoracion', backref='producto', lazy=True)
     pedidos = db.relationship('PedidoProducto', backref='producto', lazy=True, cascade="all, delete-orphan")
@@ -23,7 +24,8 @@ class Producto(db.Model):
             'stock': self.stock,
             'id_categoria': self.id_categoria,
             'descripcion': self.descripcion,
-            'imagen_url': self.imagen_url
+            'imagen_url': self.imagen_url,
+            'disponible': self.disponible  
         }
         return prod_json
     
@@ -35,7 +37,8 @@ class Producto(db.Model):
             'precio': float(self.precio),
             'id_categoria': self.id_categoria,
             'descripcion': self.descripcion,
-            'imagen_url': self.imagen_url
+            'imagen_url': self.imagen_url,
+            'disponible': self.disponible  
         }
         return prod_json
 

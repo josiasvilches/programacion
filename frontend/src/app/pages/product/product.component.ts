@@ -8,6 +8,7 @@ import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 
 interface ProductDetails extends Product {
+  id_categoria?: number;
   cookingTime?: string;
   servings?: string;
   prepTime?: string;

@@ -1,15 +1,16 @@
 export interface Product {
   id: number;
   name: string;
-  description: string;
   price: number;
   category: string;
-  emoji: string;
-  unit?: string;
-  featured?: boolean;
-  id_categoria?: number;
-  disponible?: boolean;
+  description: string;
+  emoji?: string;
   imagen?: string;
+  imagen_url?: string;
+  disponible?: boolean;
+  unit?: string;
+  id_categoria?: number;
+  featured?: boolean;
 }
 
 export interface CartItem {

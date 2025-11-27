@@ -143,8 +143,38 @@
           [class]="getProductCardClass(product)"
           class="product-card bg-white rounded-2xl shadow-sm overflow-hidden hover-lift smooth-transition fade-in"
         >
-          <div class="product-image-bg h-48 flex items-center justify-center relative">
-            <span class="text-6xl">{{ product.emoji }}</span>
+          <div class="product-image-bg h-48 flex items-center justify-center relative overflow-hidden">
+            <!-- Siempre intentar mostrar la imagen primero -->
+            @if (product.imagen) {
+              <img 
+                [src]="product.imagen" 
+                [alt]="product.name"
+                class="w-full h-full object-cover"
+                (error)="onImageError($event, product)"
+                loading="lazy"
+              />
+            } @else {
+              <!-- Solo mostrar emoji si NO hay URL de imagen -->
+              <span class="text-6xl">{{ product.emoji || '🍽️' }}</span>
+            }
+            
+            <!-- Badge de disponibilidad -->
+            @if (!product.available) {
+              <div class="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                No disponible
+              </div>
+            }
+            
+            <!-- Badge de nuevo/popular -->
+            @if (product.new) {
+              <div class="absolute top-2 left-2 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                ¡Nuevo!
+              </div>
+            } @else if (product.popular) {
+              <div class="absolute top-2 left-2 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                ⭐ Popular
+              </div>
+            }
           </div>
           <div class="p-6">
             <div class="mb-3">

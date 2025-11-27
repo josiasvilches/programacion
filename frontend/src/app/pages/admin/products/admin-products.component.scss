@@ -127,3 +127,16 @@
     flex-direction: column;
   }
 }
+
+// Estilos para imágenes de productos
+.product-image {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.product-image-error {
+  display: none;
+}
