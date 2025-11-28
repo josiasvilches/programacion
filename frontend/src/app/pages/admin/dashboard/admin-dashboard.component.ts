@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AdminSidebarComponent } from '../../../components/admin/sidebar/admin-sidebar.component';
 import { AdminHeaderComponent } from '../../../components/admin/header/admin-header.component';
 import { OrderService } from '../../../services/order.service';
+import { UserService } from '../../../services/user.service';
 
 interface DashboardStats {
   label: string;
@@ -138,7 +139,8 @@ export class AdminDashboardComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private orderService: OrderService
+    private orderService: OrderService,
+    private userService: UserService
   ) {}
 
   async ngOnInit() {
@@ -233,5 +235,22 @@ export class AdminDashboardComponent implements OnInit {
 
   getChangeClass(changeType: 'positive' | 'negative'): string {
     return changeType === 'positive' ? 'text-green-600' : 'text-red-600';
+  }
+
+  // Método para verificar si el usuario es trabajador
+  isWorker(): boolean {
+    return this.userService.isTrabajador();
+  }
+
+  // Método para obtener acciones rápidas filtradas según el rol
+  getFilteredQuickActions() {
+    if (this.isWorker()) {
+      // TRABAJADOR solo ve Pedidos y Menú
+      return this.quickActions.filter(action => 
+        action.route === '/admin/orders' || action.route === '/admin/products'
+      );
+    }
+    // ADMIN y EMPLOYER ven todas las acciones
+    return this.quickActions;
   }
 }

@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { UserService } from '../../../services/user.service';
 
 interface SidebarItem {
   id: string;
@@ -18,7 +19,9 @@ interface SidebarItem {
   styleUrls: ['./admin-sidebar.component.scss']
 })
 export class AdminSidebarComponent {
-  sidebarItems: SidebarItem[] = [
+  private userService = inject(UserService);
+
+  private allSidebarItems: SidebarItem[] = [
     {
       id: 'dashboard',
       name: 'Dashboard',
@@ -55,6 +58,18 @@ export class AdminSidebarComponent {
       tooltip: 'Email Marketing'
     }
   ];
+
+  // Getter que filtra las opciones según el rol del usuario
+  get sidebarItems(): SidebarItem[] {
+    // Si es TRABAJADOR, solo mostrar Pedidos y Productos
+    if (this.userService.isTrabajador()) {
+      return this.allSidebarItems.filter(item => 
+        item.id === 'orders' || item.id === 'products'
+      );
+    }
+    // Para ADMIN y EMPLOYER mostrar todas las opciones
+    return this.allSidebarItems;
+  }
 
   constructor() {}
 }

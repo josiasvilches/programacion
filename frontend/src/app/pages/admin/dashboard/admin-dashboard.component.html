@@ -19,7 +19,7 @@
           <h3 class="text-lg font-bold text-gray-900 mb-4">Acciones Rápidas</h3>
           <div class="grid grid-cols-2 gap-4">
             <button 
-              *ngFor="let action of quickActions"
+              *ngFor="let action of getFilteredQuickActions()"
               (click)="navigateTo(action.route)"
               class="quick-action p-4 rounded-lg text-center transition-all duration-200" 
               [ngClass]="action.bgColor">
@@ -71,8 +71,8 @@
         </div>
       </div>
       
-      <!-- Recent Activity -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <!-- Recent Activity - Solo visible para ADMIN y EMPLOYER -->
+      <div *ngIf="!isWorker()" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <h3 class="text-lg font-bold text-gray-900 mb-4">Actividad Reciente</h3>
         <div class="space-y-4">
           <div 
