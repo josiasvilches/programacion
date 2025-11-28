@@ -1,9 +1,10 @@
-from .. import jwt
+from .. import jwt, db
 from flask import jsonify
-from flask_jwt_extended import verify_jwt_in_request, get_jwt
+from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity, get_jwt
 from functools import wraps
 from datetime import datetime, timezone
 import time
+from main.models import UsuarioModel
 
 # decorador para restringir acceso a usuarios con un rol específico
 def role_required(roles=['ADMIN']):

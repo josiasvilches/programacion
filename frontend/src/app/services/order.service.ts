@@ -534,29 +534,58 @@ export class OrderService {
   ): Promise<{ success: boolean; data?: any; message: string }> {
     try {
       const url = `${this.apiUrl}/pedido/${pedidoId}`;
-      console.log('Actualizando estado del pedido:', { pedidoId, nuevoEstado });
+      console.log('🔄 Actualizando estado del pedido:', { pedidoId, nuevoEstado, url });
 
-      // Realizar el PUT al backend
+      const body = { estado_pedido: nuevoEstado };
+      console.log('📤 Body del request:', JSON.stringify(body));
+
+      // Obtener token de autenticación desde localStorage
+      const token = localStorage.getItem('access_token');
+      console.log('🔑 Token encontrado:', token ? 'Sí' : 'No');
+
+      if (!token) {
+        return {
+          success: false,
+          message: 'No hay sesión activa. Por favor inicia sesión nuevamente.'
+        };
+      }
+
+      // Realizar el PUT al backend con autorización
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          estado_pedido: nuevoEstado,
-        }),
+        body: JSON.stringify(body),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
+      console.log('📥 Status de respuesta:', response.status, response.statusText);
+
+      // Intentar leer la respuesta como JSON
+      const responseText = await response.text();
+      console.log('📥 Respuesta del servidor (texto):', responseText);
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error('❌ Error al parsear JSON:', e);
         return {
           success: false,
-          message: errorData.mensaje || 'Error al actualizar el estado del pedido',
+          message: `Respuesta inválida del servidor: ${responseText.substring(0, 100)}`,
         };
       }
 
-      const data = await response.json();
-      console.log('Estado del pedido actualizado:', data);
+      if (!response.ok) {
+        console.error('❌ Error HTTP:', response.status, data);
+        return {
+          success: false,
+          message: data.mensaje || data.error || data.msg || 'Error al actualizar el estado del pedido',
+        };
+      }
+
+      console.log('✅ Estado del pedido actualizado:', data);
 
       return {
         success: true,
@@ -564,10 +593,10 @@ export class OrderService {
         message: data.mensaje || 'Estado actualizado exitosamente',
       };
     } catch (error) {
-      console.error('Error al actualizar estado del pedido:', error);
+      console.error('❌ Error al actualizar estado del pedido:', error);
       return {
         success: false,
-        message: 'Error de conexión con el servidor',
+        message: `Error de conexión: ${error instanceof Error ? error.message : 'Error desconocido'}`,
       };
     }
   }
