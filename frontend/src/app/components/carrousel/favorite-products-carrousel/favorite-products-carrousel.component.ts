@@ -73,4 +73,18 @@ export class FavoriteProductsCarrouselComponent implements OnInit {
       this.nextSlide();
     }, 5000);
   }
+
+  onImageError(event: Event, product: Product): void {
+    const imgElement = event.target as HTMLImageElement;
+    imgElement.style.display = 'none';
+    
+    const container = imgElement.parentElement;
+    if (container && !container.querySelector('.emoji-fallback')) {
+      container.innerHTML = `
+        <div class="w-full h-48 bg-red-50 rounded-lg mb-4 flex items-center justify-center">
+          <span class="text-6xl emoji-fallback">${product.emoji || '🍽️'}</span>
+        </div>
+      `;
+    }
+  }
 }

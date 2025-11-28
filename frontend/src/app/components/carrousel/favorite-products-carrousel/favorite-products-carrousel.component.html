@@ -15,8 +15,20 @@
             <div class="w-full flex-shrink-0 px-4">
               <div class="bg-white rounded-xl p-8 shadow-sm hover-lift smooth-transition max-w-md mx-auto">
                 <div class="text-center mb-6">
-                  <div class="w-20 h-20 bg-red-50 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <span class="text-3xl">{{ product.emoji }}</span>
+                  <div class="product-image">
+                    <img
+                      *ngIf="product.imagen_url && product.imagen_url.trim() !== ''"
+                      [src]="product.imagen_url"
+                      [alt]="product.name"
+                      class="w-full h-48 object-cover rounded-lg mb-4"
+                      (error)="onImageError($event, product)"
+                    />
+                    <div
+                      *ngIf="!product.imagen_url || product.imagen_url.trim() === ''"
+                      class="w-full h-48 bg-red-50 rounded-lg mb-4 flex items-center justify-center"
+                    >
+                      <span class="text-6xl">{{ product.emoji || '🍽️' }}</span>
+                    </div>
                   </div>
                   <h3 class="text-xl font-bold text-gray-800 mb-2">{{ product.name }}</h3>
                   <p class="text-gray-600">{{ product.description }}</p>
