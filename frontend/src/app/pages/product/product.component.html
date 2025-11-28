@@ -47,21 +47,19 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
           <!-- Product Image -->
           <div class="fade-in">
-            <div class="product-image rounded-3xl p-12 flex items-center justify-center mb-6">
-              <span class="text-9xl">{{ currentProduct()?.emoji }}</span>
-            </div>
-            
-            <!-- Product Gallery (thumbnails) -->
-            <div class="flex justify-center space-x-4">
-              <button class="w-16 h-16 bg-red-100 rounded-lg flex items-center justify-center text-2xl hover:bg-red-200 smooth-transition">
-                {{ currentProduct()?.emoji }}
-              </button>
-              <button class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-2xl hover:bg-gray-200 smooth-transition">
-                📸
-              </button>
-              <button class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-2xl hover:bg-gray-200 smooth-transition">
-                🔥
-              </button>
+            <div class="product-image-container rounded-3xl overflow-hidden bg-gray-100 flex items-center justify-center">
+              @if (currentProduct()?.imageUrl) {
+                <img 
+                  [src]="currentProduct()!.imageUrl!" 
+                  [alt]="currentProduct()!.name"
+                  class="product-detail-image"
+                  (error)="onImageError($event)"
+                  loading="lazy"
+                />
+              } @else {
+                <!-- Fallback al emoji si no hay imagen -->
+                <span class="text-9xl">{{ currentProduct()?.emoji }}</span>
+              }
             </div>
           </div>
 

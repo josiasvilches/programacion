@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Product } from '../models/product.interface';
 import { environment } from '../../enviroments/enviroments.development';
+import { HttpClient } from '@angular/common/http';
 
 export interface PaginationData {
   total: number;
@@ -133,6 +134,8 @@ export class ProductService {
     },
   ];
 
+  constructor(private http: HttpClient) {}
+
   getFeaturedProducts(): Product[] {
     return this.featuredProducts;
   }
@@ -145,52 +148,50 @@ export class ProductService {
     return [...this.featuredProducts, ...this.recommendedProducts];
   }
 
-  getProductById(id: number): Product | undefined {
-    return this.getAllProducts().find((product) => product.id === id);
+  getProductById(id: number): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/producto/${id}`);
   }
 
   // Método genérico para fetch productos con filtros
   async fetchProducts(filters: ProductFilters = {}): Promise<void> {
     try {
-      // Construir query params
-      const params = new URLSearchParams();
+      // Construir URL con parámetros de filtro
+      let url = `${this.apiUrl}/productos?`;
       
       // Siempre agregar page (por defecto 1)
-      params.append('page', (filters.page || 1).toString());
+      url += `page=${filters.page || 1}`;
       
       if (filters.per_page) {
-        params.append('per_page', filters.per_page.toString());
+        url += `&per_page=${filters.per_page}`;
       }
       
       if (filters.id_categoria) {
-        params.append('id_categoria', filters.id_categoria.toString());
+        url += `&id_categoria=${filters.id_categoria}`;
       }
       
       if (filters.nombre) {
-        params.append('nombre', filters.nombre);
+        url += `&nombre=${filters.nombre}`;
       }
       
       if (filters.precio_min !== undefined) {
-        params.append('precio_min', filters.precio_min.toString());
+        url += `&precio_min=${filters.precio_min}`;
       }
       
       if (filters.precio_max !== undefined) {
-        params.append('precio_max', filters.precio_max.toString());
+        url += `&precio_max=${filters.precio_max}`;
       }
 
-      const url = `${this.apiUrl}/productos?${params.toString()}`;
-      console.log('Fetching products with URL:', url);
-      
+      console.log('=== FETCH PRODUCTOS ===');
+      console.log('URL:', url);
       const response = await fetch(url);
       const data = await response.json();
       
-      console.log('Respuesta completa del backend (productos):', data);
+      console.log('Respuesta RAW del backend:', data);
       
-      // Transformar los datos de la API al formato que espera el frontend
       if (data.productos && Array.isArray(data.productos)) {
         const transformedProducts: Product[] = data.productos.map(
           (apiProduct: any) => {
-            const transformed = {
+            const transformed: Product = {
               id: apiProduct.producto_id,  // MAPEAR producto_id a id
               name: apiProduct.nombre || 'Producto sin nombre',
               description: apiProduct.descripcion || 'Producto delicioso',
@@ -202,30 +203,23 @@ export class ProductService {
               imagen_url: apiProduct.imagen_url || '',
               disponible: apiProduct.disponible !== false
             };
-            console.log('Producto transformado:', transformed);
+            console.log(`✅ producto_id ${apiProduct.producto_id} → id ${transformed.id}`);
             return transformed;
           }
         );
         
-        // Actualizar productos
+        console.log(`✅ Total productos: ${transformedProducts.length}`);
         this.apiProductsSubject.next(transformedProducts);
         
-        // Actualizar paginación si viene en la respuesta
-        if (data.total !== undefined) {
-          const paginationData: PaginationData = {
-            total: data.total || transformedProducts.length,
-            page: data.page || filters.page || 1,
-            per_page: data.per_page || filters.per_page || 10,
-            total_pages: data.total_pages || Math.ceil((data.total || transformedProducts.length) / (data.per_page || filters.per_page || 10))
-          };
-          this.paginationSubject.next(paginationData);
-          console.log('Paginación actualizada:', paginationData);
-        }
-        
-        console.log('Productos cargados:', transformedProducts.length);
+        this.paginationSubject.next({
+          page: data.page,
+          per_page: data.per_page,
+          total: data.total,
+          total_pages: data.total_pages
+        });
       }
     } catch (error) {
-      console.error('Error al obtener productos:', error);
+      console.error('❌ Error:', error);
       this.apiProductsSubject.next([]);
     }
   }
@@ -253,11 +247,21 @@ export class ProductService {
   // Fetch un producto específico por ID desde el backend
   async fetchProductById(id: number): Promise<Product | null> {
     try {
-      console.log('Solicitando producto con ID:', id);
-      const response = await fetch(`${this.apiUrl}/producto/${id}`);
-      const data = await response.json();
+      console.log('=== FETCH PRODUCTO POR ID ===');
+      console.log('ID solicitado:', id);
+      const url = `${this.apiUrl}/producto/${id}`;
+      console.log('URL:', url);
       
-      console.log('Respuesta completa del backend (producto individual):', data);
+      const response = await fetch(url);
+      console.log('Status:', response.status);
+      
+      if (!response.ok) {
+        console.error('❌ Status:', response.status);
+        return null;
+      }
+      
+      const data = await response.json();
+      console.log('Respuesta RAW:', data);
       
       if (data && data.producto_id) {
         const transformedProduct: Product = {
@@ -273,14 +277,15 @@ export class ProductService {
           disponible: data.disponible !== false
         };
         
-        console.log('Producto individual transformado:', transformedProduct);
+        console.log('✅ Producto transformado:', transformedProduct);
+        console.log(`✅ producto_id ${data.producto_id} → id ${transformedProduct.id}`);
         return transformedProduct;
       }
 
-      console.log('No se encontró producto_id en la respuesta');
+      console.error('❌ No contiene producto_id');
       return null;
     } catch (error) {
-      console.error('Error al obtener producto individual:', error);
+      console.error('❌ Error:', error);
       return null;
     }
   }

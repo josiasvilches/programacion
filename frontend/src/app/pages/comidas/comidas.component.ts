@@ -387,17 +387,9 @@ export class ComidasComponent {
   }
 
   // Métodos para el carrito y navegación
-  viewProduct(product: ExtendedProduct): void {
-    console.log('=== DEBUG: viewProduct llamado ===');
-    console.log('Producto:', product);
-    console.log('ID del producto:', product.id);
-    console.log('Navegando a: /product/' + product.id);
-    
-    // Navegar a /product/:id
-    this.router.navigate(['/product', product.id]).then(
-      success => console.log('Navegación exitosa:', success),
-      error => console.error('Error en navegación:', error)
-    );
+  viewProduct(productId: number): void {
+    console.log('Navegando a producto con ID:', productId);
+    this.router.navigate(['/product', productId]);
   }
 
   addToCart(product: ExtendedProduct): void {

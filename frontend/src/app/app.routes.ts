@@ -26,6 +26,7 @@ export const routes: Routes = [
   { path: 'cart', component: CartComponent },
   { path: 'payment', component: PaymentComponent },
   { path: 'orders', component: OrdersComponent },
+  { path: 'product/:id', component: ProductComponent },
   { path: 'admin', component: AdminDashboardComponent, canActivate: [adminGuard] },
   { path: 'admin/products', component: AdminProductsComponent, canActivate: [adminGuard] },
   { path: 'admin/users', component: AdminUsersComponent, canActivate: [adminGuard] },
