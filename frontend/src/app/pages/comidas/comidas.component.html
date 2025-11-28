@@ -144,10 +144,10 @@
           class="product-card bg-white rounded-2xl shadow-sm overflow-hidden hover-lift smooth-transition fade-in"
         >
           <div class="product-image-bg h-48 flex items-center justify-center relative overflow-hidden">
-            <!-- Siempre intentar mostrar la imagen primero -->
-            @if (product.imagen) {
+            <!-- Siempre intentar mostrar la imagen primero desde imagen_url -->
+            @if (product.imagen_url && product.imagen_url.trim() !== '') {
               <img 
-                [src]="product.imagen" 
+                [src]="product.imagen_url" 
                 [alt]="product.name"
                 class="w-full h-full object-cover"
                 (error)="onImageError($event, product)"

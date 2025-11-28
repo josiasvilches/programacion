@@ -184,22 +184,26 @@ export class ProductService {
       const response = await fetch(url);
       const data = await response.json();
       
+      console.log('Respuesta completa del backend (productos):', data);
+      
       // Transformar los datos de la API al formato que espera el frontend
       if (data.productos && Array.isArray(data.productos)) {
         const transformedProducts: Product[] = data.productos.map(
-          (apiProduct: any, index: number) => {
-            return {
-              id: apiProduct.producto_id || apiProduct.id || index + 1,
+          (apiProduct: any) => {
+            const transformed = {
+              id: apiProduct.producto_id,  // MAPEAR producto_id a id
               name: apiProduct.nombre || 'Producto sin nombre',
               description: apiProduct.descripcion || 'Producto delicioso',
               price: apiProduct.precio || 0,
               id_categoria: apiProduct.id_categoria,
-              category: apiProduct.category || 'Sin categoría',
+              category: apiProduct.categoria || 'Sin categoría',
               emoji: '🍽️',
               unit: 'porción',
-              imagen_url: apiProduct.imagen_url || '',  // Mapear imagen_url desde la API
+              imagen_url: apiProduct.imagen_url || '',
               disponible: apiProduct.disponible !== false
             };
+            console.log('Producto transformado:', transformed);
+            return transformed;
           }
         );
         
@@ -249,24 +253,31 @@ export class ProductService {
   // Fetch un producto específico por ID desde el backend
   async fetchProductById(id: number): Promise<Product | null> {
     try {
+      console.log('Solicitando producto con ID:', id);
       const response = await fetch(`${this.apiUrl}/producto/${id}`);
       const data = await response.json();
+      
+      console.log('Respuesta completa del backend (producto individual):', data);
+      
       if (data && data.producto_id) {
         const transformedProduct: Product = {
-          id: data.producto_id,
+          id: data.producto_id,  // MAPEAR producto_id a id
           name: data.nombre || 'Producto sin nombre',
           description: data.descripcion || 'Producto delicioso',
           price: data.precio || 0,
-          category: data.categoria,
+          category: data.categoria || 'Sin categoría',
           id_categoria: data.id_categoria,
           emoji: '🍽️',
           unit: 'porción',
-          imagen_url: data.imagen_url || '',  // Mapear imagen_url desde la API
+          imagen_url: data.imagen_url || '',
           disponible: data.disponible !== false
         };
+        
+        console.log('Producto individual transformado:', transformedProduct);
         return transformedProduct;
       }
 
+      console.log('No se encontró producto_id en la respuesta');
       return null;
     } catch (error) {
       console.error('Error al obtener producto individual:', error);

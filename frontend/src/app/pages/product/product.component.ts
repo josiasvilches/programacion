@@ -74,10 +74,15 @@ export class ProductComponent implements OnInit {
   });
 
   ngOnInit() {
+    console.log('=== ProductComponent inicializado ===');
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
+      console.log('ID recibido de la ruta:', id);
       if (id) {
         this.loadProductFromAPI(parseInt(id, 10));
+      } else {
+        console.error('No se recibió ID en la ruta');
+        this.router.navigate(['/comidas']);
       }
     });
   }
@@ -480,7 +485,11 @@ export class ProductComponent implements OnInit {
   }
 
   viewProduct(productId: number) {
-    this.router.navigate(['/comidas', productId]);
+    // Cambiar de /comidas/:id a /product/:id
+    this.router.navigate(['/product', productId]);
+    
+    // Recargar el componente con el nuevo producto
+    window.scrollTo(0, 0);
   }
 
   viewCart() {
