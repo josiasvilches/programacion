@@ -104,7 +104,7 @@ export class AdminUsersComponent implements OnInit {
       const roleMap: { [key: string]: User['role'] } = {
         'ADMIN': 'ADMIN',
         'cliente': 'USER',
-        'trabajador': 'EMPLOYER',
+        'TRABAJADOR': 'EMPLOYER',
         'USER': 'USER',
         'EMPLOYER': 'EMPLOYER'
       };
@@ -394,7 +394,7 @@ export class AdminUsersComponent implements OnInit {
       if (index !== -1) {
         // Mapear rol y estado al formato del backend
         const rolBackend = this.userForm.role === 'ADMIN' ? 'ADMIN' : 
-                          this.userForm.role === 'EMPLOYER' ? 'trabajador' : 'cliente';
+                          this.userForm.role === 'EMPLOYER' ? 'TRABAJADOR' : 'cliente';
         const estadoBackend = this.userForm.status === 'active' ? 'activo' :
                              this.userForm.status === 'pending' ? 'pendiente' : 'inactivo';
 

@@ -142,7 +142,7 @@ export class LoginComponent {
     }
 
     if (!password || password.length < 3) {
-      this.errorMessage.set('La contraseña debe tener al menos 3 caracteres');
+      this.errorMessage.set('Ingrese una contraeña válida');
       return;
     }
 
