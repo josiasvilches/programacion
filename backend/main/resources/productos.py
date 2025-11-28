@@ -89,7 +89,7 @@ class Productos(Resource):
             print("TRACEBACK:", traceback.format_exc())
             return {'error': str(e), 'mensaje': 'Error al obtener productos'}, 500
     
-    @role_required(roles=['ADMIN'])
+    @role_required(roles=['ADMIN', 'TRABAJADOR'])
     def post(self):
         try:
             current_identity = get_jwt_identity()
@@ -163,7 +163,7 @@ class Producto(Resource):
             print("TRACEBACK:", traceback.format_exc())
             return {'error': str(e)}, 500
 
-    @role_required(roles=['ADMIN'])
+    @role_required(roles=['ADMIN', 'TRABAJADOR'])
     def put(self, id):
         try:
             producto = ProductoModel.query.get(id)
@@ -193,7 +193,7 @@ class Producto(Resource):
             print("ERROR:", str(e))
             return {"mensaje": f"Error al actualizar el producto: {str(e)}"}, 500
 
-    @role_required(roles=['ADMIN'])
+    @role_required(roles=['ADMIN', 'TRABAJADOR'])
     def delete(self, id):
         print('eliminando')
         try:

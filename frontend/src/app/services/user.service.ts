@@ -1,7 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { environment } from '../../enviroments/enviroments.development';
 
-export type UserRole = 'ADMIN' | 'USER' | 'EMPLOYER';
+export type UserRole = 'ADMIN' | 'USER' | 'EMPLOYER' | 'TRABAJADOR';
 
 export interface User {
   id: number;
@@ -260,7 +260,7 @@ export class UserService {
 
   // Validar que el rol del backend sea uno de los válidos
   private validateRole(role: string): UserRole {
-    const validRoles: UserRole[] = ['ADMIN', 'USER', 'EMPLOYER'];
+    const validRoles: UserRole[] = ['ADMIN', 'USER', 'EMPLOYER', 'TRABAJADOR'];
     return validRoles.includes(role as UserRole) ? (role as UserRole) : 'USER';
   }
 
@@ -334,9 +334,13 @@ export class UserService {
     return this.hasRole('EMPLOYER');
   }
 
+  isTrabajador(): boolean {
+    return this.hasRole('TRABAJADOR');
+  }
+
   // Método para verificar si tiene permisos administrativos
   hasAdminPermissions(): boolean {
-    return this.isAdmin() || this.isEmployer();
+    return this.isAdmin() || this.isEmployer() || this.isTrabajador();
   }
 
   // Método para obtener todos los datos almacenados del usuario

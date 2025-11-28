@@ -1,5 +1,7 @@
 from flask_restful import Resource
 from flask import request, jsonify
+from main.auth.decorators import role_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from .. import db
 from datetime import datetime
 from main.models import PedidoModel, PedidoProductoModel, UsuarioModel
@@ -38,6 +40,7 @@ class Pedidos(Resource):
                         'pages': pedidos.pages,
                         'page':page})
 
+    @role_required(roles=['ADMIN', 'TRABAJADOR'])
     def post(self):
         data = request.get_json() or {}
 
@@ -102,6 +105,7 @@ class Pedido(Resource):
         pedido = PedidoModel.query.get_or_404(id)
         return pedido.to_json(), 200
 
+    @role_required(roles=['ADMIN', 'TRABAJADOR'])
     def put(self, id):
         pedido = PedidoModel.query.get_or_404(id)
         data = request.get_json() or {}
@@ -142,6 +146,7 @@ class Pedido(Resource):
             db.session.rollback()
             return {"mensaje": f"Error al actualizar el pedido: {str(e)}"}, 500
 
+    @role_required(roles=['ADMIN', 'TRABAJADOR'])
     def delete(self, id):
         pedido = PedidoModel.query.get_or_404(id)
         try:

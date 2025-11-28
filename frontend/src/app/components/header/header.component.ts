@@ -36,7 +36,7 @@ export class HeaderComponent implements OnInit {
   // Getter para verificar si el usuario puede acceder al panel de administración
   get canAccessAdminPanel(): boolean {
     const currentUser = this.user();
-    return currentUser ? (currentUser.role === 'ADMIN' || currentUser.role === 'EMPLOYER') : false;
+    return currentUser ? (currentUser.role === 'ADMIN' || currentUser.role === 'EMPLOYER' || currentUser.role === 'TRABAJADOR') : false;
   }
 
   constructor(private cartService: CartService, private router: Router) {}
