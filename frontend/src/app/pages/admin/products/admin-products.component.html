@@ -58,14 +58,14 @@
                   <!-- Mostrar imagen si existe, sino emoji -->
                   <div class="mr-3">
                     <img
-                      *ngIf="product.imagen && product.imagen.trim() !== ''"
-                      [src]="product.imagen"
+                      *ngIf="product.imagen_url && product.imagen_url.trim() !== ''"
+                      [src]="product.imagen_url"
                       [alt]="product.name"
                       class="w-12 h-12 object-cover rounded-lg"
                       (error)="onImageError($event, product)"
                     />
                     <span
-                      *ngIf="!product.imagen || product.imagen.trim() === ''"
+                      *ngIf="!product.imagen_url || product.imagen_url.trim() === ''"
                       class="text-2xl"
                     >
                       {{ product.emoji }}

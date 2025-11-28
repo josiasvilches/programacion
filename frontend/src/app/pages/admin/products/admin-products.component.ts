@@ -19,6 +19,7 @@ interface AdminProduct extends Product {
   prepTime?: string;
   portions?: string;
   imagen?: string;
+  imagen_url?: string;  // Agregar esta propiedad
   disponible?: boolean;
 }
 
@@ -154,6 +155,7 @@ export class AdminProductsComponent implements OnInit {
       this.productService.apiProducts$.subscribe(apiProducts => {
         const adminProducts: AdminProduct[] = apiProducts.map(p => ({
           ...p,
+          imagen_url: p.imagen_url,  // Asegurar que se mapea imagen_url
           stock: 10,
           status: p.disponible === false ? 'inactive' : 'active',
           available: p.disponible !== false,

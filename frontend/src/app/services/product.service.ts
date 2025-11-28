@@ -197,6 +197,8 @@ export class ProductService {
               category: apiProduct.category || 'Sin categoría',
               emoji: '🍽️',
               unit: 'porción',
+              imagen_url: apiProduct.imagen_url || '',  // Mapear imagen_url desde la API
+              disponible: apiProduct.disponible !== false
             };
           }
         );
@@ -249,7 +251,6 @@ export class ProductService {
     try {
       const response = await fetch(`${this.apiUrl}/producto/${id}`);
       const data = await response.json();
-      // La API devuelve directamente el objeto del producto (no envuelto en "productos")
       if (data && data.producto_id) {
         const transformedProduct: Product = {
           id: data.producto_id,
@@ -260,6 +261,8 @@ export class ProductService {
           id_categoria: data.id_categoria,
           emoji: '🍽️',
           unit: 'porción',
+          imagen_url: data.imagen_url || '',  // Mapear imagen_url desde la API
+          disponible: data.disponible !== false
         };
         return transformedProduct;
       }
