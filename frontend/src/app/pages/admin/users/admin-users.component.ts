@@ -64,15 +64,15 @@ export class AdminUsersComponent implements OnInit {
 
   // Cargar usuarios desde el backend
   async loadUsersFromBackend(page: number = this.currentPage) {
-    console.log(`🔄 Iniciando carga de usuarios desde backend - Página: ${page}`);
+    console.log(`Iniciando carga de usuarios desde backend - Página: ${page}`);
     this.isLoading.set(true);
     try {
       const result = await this.userService.getAllUsersFromBackend(page, this.pageSize);
-      console.log('📦 Respuesta del servicio:', result);
+      console.log('Respuesta del servicio:', result);
       
       if (result.success && result.data) {
         const backendUsers = result.data.usuarios || [];
-        console.log('👥 Usuarios recibidos del backend:', backendUsers.length, backendUsers);
+        console.log('Usuarios recibidos del backend:', backendUsers.length, backendUsers);
         
         // Actualizar información de paginación desde la respuesta del backend
         this.currentPage = result.data.page || page;
@@ -80,20 +80,20 @@ export class AdminUsersComponent implements OnInit {
         this.totalUsers = result.data.total || backendUsers.length;
         
         const convertedUsers = this.convertBackendUsersToUI(backendUsers);
-        console.log('✅ Usuarios convertidos al formato UI:', convertedUsers.length, convertedUsers);
+        console.log('Usuarios convertidos al formato UI:', convertedUsers.length, convertedUsers);
         
         this.users.set(convertedUsers);
-        console.log(`✅ Paginación actualizada - Página ${this.currentPage} de ${this.totalPages}. Total: ${this.totalUsers} usuarios`);
+        console.log(`Paginación actualizada - Página ${this.currentPage} de ${this.totalPages}. Total: ${this.totalUsers} usuarios`);
       } else {
-        console.error('❌ Error al cargar usuarios:', result.message);
+        console.error('Error al cargar usuarios:', result.message);
         alert('Error al cargar usuarios del servidor: ' + (result.message || 'Error desconocido'));
       }
     } catch (error) {
-      console.error('❌ Error al cargar usuarios desde backend:', error);
+      console.error('Error al cargar usuarios desde backend:', error);
       alert('Error de conexión al cargar usuarios');
     } finally {
       this.isLoading.set(false);
-      console.log('🏁 Carga de usuarios finalizada. isLoading:', this.isLoading());
+      console.log('Carga de usuarios finalizada. isLoading:', this.isLoading());
     }
   }
 
@@ -417,8 +417,8 @@ export class AdminUsersComponent implements OnInit {
           updateData.numero = this.userForm.phone.trim();
         }
 
-        console.log('📤 Datos a enviar al backend:', updateData);
-        console.log('🆔 ID del usuario a actualizar:', this.editingUserId);
+        console.log('Datos a enviar al backend:', updateData);
+        console.log('ID del usuario a actualizar:', this.editingUserId);
 
         const result = await this.userService.updateUserInBackend(
           this.editingUserId,
@@ -426,16 +426,16 @@ export class AdminUsersComponent implements OnInit {
           token
         );
 
-        console.log('📨 Resultado de la actualización:', result);
+        console.log('Resultado de la actualización:', result);
 
         if (result.success) {
-          console.log('✅ Usuario actualizado exitosamente en el backend');
+          console.log('Usuario actualizado exitosamente en el backend');
           alert('Usuario actualizado exitosamente');
           this.closeUserModal();
           // Recargar la página actual para asegurar sincronización
           await this.loadUsersFromBackend(this.currentPage);
         } else {
-          console.error('❌ Error al actualizar usuario:', result);
+          console.error('Error al actualizar usuario:', result);
           alert('Error al actualizar el usuario:\n\n' + result.message + '\n\nRevisa la consola para más detalles.');
         }
       }

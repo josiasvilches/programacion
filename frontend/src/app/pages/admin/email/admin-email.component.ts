@@ -66,21 +66,21 @@ export class AdminEmailComponent implements OnInit {
       id: 'promo',
       name: 'Plantilla Promocional',
       description: 'Perfecta para ofertas y descuentos',
-      preview: '🍗 Promoción Especial',
+      preview: 'Promoción Especial',
       color: 'red'
     },
     {
       id: 'news',
       name: 'Plantilla de Noticias',
       description: 'Ideal para anuncios y novedades',
-      preview: '📰 Novedades',
+      preview: 'Novedades',
       color: 'blue'
     },
     {
       id: 'event',
       name: 'Plantilla de Eventos',
       description: 'Para celebraciones y eventos',
-      preview: '🎉 Evento',
+      preview: 'Evento',
       color: 'green'
     }
   ];
@@ -128,7 +128,7 @@ export class AdminEmailComponent implements OnInit {
 
   // Cargar campañas desde el backend
   async loadCampaignsFromBackend() {
-    console.log('🔄 Cargando campañas desde backend...');
+    console.log('Cargando campañas desde backend...');
     this.isLoading.set(true);
     
     try {
@@ -136,16 +136,16 @@ export class AdminEmailComponent implements OnInit {
       
       if (result.success && result.data) {
         const backendCampaigns = result.data.campanas || [];
-        console.log('📦 Campañas recibidas:', backendCampaigns);
+        console.log('Campañas recibidas:', backendCampaigns);
         
         const convertedCampaigns = this.convertBackendCampaignsToUI(backendCampaigns);
         this.campaigns.set(convertedCampaigns);
-        console.log('✅ Campañas convertidas:', convertedCampaigns);
+        console.log('Campañas convertidas:', convertedCampaigns);
       } else {
-        console.error('❌ Error al cargar campañas:', result.message);
+        console.error('Error al cargar campañas:', result.message);
       }
     } catch (error) {
-      console.error('❌ Error al cargar campañas:', error);
+      console.error('Error al cargar campañas:', error);
     } finally {
       this.isLoading.set(false);
     }
@@ -350,7 +350,7 @@ export class AdminEmailComponent implements OnInit {
 
   async saveDraft() {
     const token = this.userService.getAuthToken();
-    console.log('🔑 Token obtenido (draft):', token ? 'Sí (oculto)' : 'No encontrado');
+    console.log('Token obtenido (draft):', token ? 'Sí (oculto)' : 'No encontrado');
     
     if (!token) {
       alert('Debes iniciar sesión para realizar esta acción');
@@ -395,8 +395,8 @@ export class AdminEmailComponent implements OnInit {
   }
 
   private async createCampaignInBackend(token: string, isScheduled: boolean) {
-    console.log('📤 Creando campaña en backend...');
-    console.log('🔑 Token disponible:', !!token);
+    console.log('Creando campaña en backend...');
+    console.log('Token disponible:', !!token);
     
     const campaignData = {
       titulo: this.campaignForm.name,
@@ -407,14 +407,14 @@ export class AdminEmailComponent implements OnInit {
       fecha_fin: undefined
     };
 
-    console.log('📦 Datos a enviar:', campaignData);
+    console.log('Datos a enviar:', campaignData);
 
     const result = await this.campaignService.createCampaignInBackend(
       campaignData,
       token
     );
 
-    console.log('📥 Resultado:', result);
+    console.log('Resultado:', result);
 
     if (!result.success) {
       alert('Error al crear campaña: ' + result.message);
@@ -536,7 +536,7 @@ export class AdminEmailComponent implements OnInit {
       return `
         <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
           <div class="bg-gradient-to-r from-gray-500 to-gray-600 text-white p-6 text-center">
-            <h1 class="text-2xl font-bold mb-2">✉️ Rotisería Cacho</h1>
+            <h1 class="text-2xl font-bold mb-2"> Rotisería Cacho</h1>
             <h2 class="text-xl">${subject || 'Asunto del email'}</h2>
           </div>
           <div class="p-6">
@@ -575,7 +575,7 @@ export class AdminEmailComponent implements OnInit {
       return `
         <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
           <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 text-center">
-            <h1 class="text-2xl font-bold mb-2">📰 Rotisería Cacho</h1>
+            <h1 class="text-2xl font-bold mb-2"> Rotisería Cacho</h1>
             <h2 class="text-xl">${subject}</h2>
           </div>
           <div class="p-6">
@@ -592,7 +592,7 @@ export class AdminEmailComponent implements OnInit {
       return `
         <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
           <div class="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 text-center">
-            <h1 class="text-2xl font-bold mb-2">🎉 Rotisería Cacho</h1>
+            <h1 class="text-2xl font-bold mb-2"> Rotisería Cacho</h1>
             <h2 class="text-xl">${subject}</h2>
           </div>
           <div class="p-6">

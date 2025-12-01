@@ -6,13 +6,13 @@ export const adminGuard: CanActivateFn = (route, state) => {
   const userService = inject(UserService);
   const router = inject(Router);
   
-  // Verificar si el usuario tiene permisos administrativos (ADMIN, EMPLOYER o TRABAJADOR)
+  // Verificar si el usuario tiene permisos (ADMIN o TRABAJADOR)
   if (userService.hasAdminPermissions()) {
     return true;
   }
   
   // Si no tiene permisos, redirigir a la página principal con mensaje
-  console.warn('Acceso denegado: Solo usuarios ADMIN, EMPLOYER y TRABAJADOR pueden acceder al panel');
+  console.warn('Acceso denegado: Solo usuarios ADMIN y TRABAJADOR pueden acceder al panel');
   router.navigate(['/'], { 
     queryParams: { 
       error: 'access_denied',

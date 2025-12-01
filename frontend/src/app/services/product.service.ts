@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Product } from '../models/product.interface';
-import { environment } from '../../enviroments/enviroments.development';
+import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 
 export interface PaginationData {
@@ -203,12 +203,12 @@ export class ProductService {
               imagen_url: apiProduct.imagen_url || '',
               disponible: apiProduct.disponible !== false
             };
-            console.log(`✅ producto_id ${apiProduct.producto_id} → id ${transformed.id}`);
+            console.log(`producto_id ${apiProduct.producto_id} → id ${transformed.id}`);
             return transformed;
           }
         );
         
-        console.log(`✅ Total productos: ${transformedProducts.length}`);
+        console.log(`Total productos: ${transformedProducts.length}`);
         this.apiProductsSubject.next(transformedProducts);
         
         this.paginationSubject.next({
@@ -219,17 +219,17 @@ export class ProductService {
         });
       }
     } catch (error) {
-      console.error('❌ Error:', error);
+      console.error('Error:', error);
       this.apiProductsSubject.next([]);
     }
   }
 
-  // Fetch productos desde el backend (mantener compatibilidad)
+  // Fetch productos desde el backend 
   async fetchProductsFromAPI(): Promise<void> {
     await this.fetchProducts({ page: 1 });
   }
 
-  // Fetch productos filtrados por categoría (mantener compatibilidad)
+  // Fetch productos filtrados por categoría 
   async fetchProductsByCategory(categoriaId: number, page: number = 1): Promise<void> {
     await this.fetchProducts({ id_categoria: categoriaId, page });
   }
@@ -256,7 +256,7 @@ export class ProductService {
       console.log('Status:', response.status);
       
       if (!response.ok) {
-        console.error('❌ Status:', response.status);
+        console.error('Status:', response.status);
         return null;
       }
       
@@ -277,15 +277,15 @@ export class ProductService {
           disponible: data.disponible !== false
         };
         
-        console.log('✅ Producto transformado:', transformedProduct);
-        console.log(`✅ producto_id ${data.producto_id} → id ${transformedProduct.id}`);
+        console.log('Producto transformado:', transformedProduct);
+        console.log(`producto_id ${data.producto_id} → id ${transformedProduct.id}`);
         return transformedProduct;
       }
 
-      console.error('❌ No contiene producto_id');
+      console.error('No contiene producto_id');
       return null;
     } catch (error) {
-      console.error('❌ Error:', error);
+      console.error('Error:', error);
       return null;
     }
   }

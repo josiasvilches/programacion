@@ -148,26 +148,26 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   async loadRecentOrders() {
-    console.log('🔄 Cargando últimos 3 pedidos...');
+    console.log('Cargando últimos 3 pedidos...');
     this.isLoadingOrders.set(true);
     
     try {
       // Obtener los últimos 3 pedidos del backend
       const result = await this.orderService.getAllOrdersFromBackend(1, 3);
-      console.log('📦 Respuesta del servicio:', result.data);
+      console.log('Respuesta del servicio:', result.data);
       if (result.success && result.data) {
         const backendOrders = result.data.pedidos || [];
-        console.log('📦 Pedidos recibidos del backend:', backendOrders);
+        console.log('Pedidos recibidos del backend:', backendOrders);
         
         // Convertir los pedidos al formato de la UI
         const convertedOrders = this.convertBackendOrdersToUI(backendOrders);
         this.recentOrders.set(convertedOrders);
-        console.log('✅ Pedidos convertidos:', convertedOrders);
+        console.log('Pedidos convertidos:', convertedOrders);
       } else {
-        console.error('❌ Error al cargar pedidos:', result.message);
+        console.error('Error al cargar pedidos:', result.message);
       }
     } catch (error) {
-      console.error('❌ Error al cargar pedidos recientes:', error);
+      console.error('Error al cargar pedidos recientes:', error);
     } finally {
       this.isLoadingOrders.set(false);
     }

@@ -387,50 +387,6 @@ export class UserComponent implements OnInit {
     alert('Funcionalidad para cambiar foto de perfil. En una app real, esto abriría un selector de archivos.');
   }
 
-  // Métodos para probar el cambio dinámico de iniciales (solo para demostración)
-  switchToUser1() {
-    this.userService.switchToUser({
-      id: 1,
-      fullName: 'María García Fernández',
-      email: 'maria.garcia@email.com',
-      role: 'USER',
-      status: 'Activo'
-    });
-  }
-
-  switchToUser2() {
-    this.userService.switchToUser({
-      id: 2,
-      fullName: 'Carlos Eduardo López',
-      email: 'carlos.lopez@email.com',
-      role: 'USER',
-      status: 'Activo'
-    });
-  }
-
-  switchToUser3() {
-    this.userService.switchToUser({
-      id: 3,
-      fullName: 'Ana Sofía',
-      email: 'ana.sofia@email.com',
-      role: 'USER',
-      status: 'Activo'
-    });
-  }
-
-  // Nuevos métodos para cambiar entre tipos de usuarios
-  loginAsAdmin() {
-    this.userService.loginAsAdmin();
-  }
-
-  loginAsEmployee() {
-    this.userService.loginAsEmployee();
-  }
-
-  loginAsClient() {
-    this.userService.loginAsClient();
-  }
-
   logout() {
     this.userService.logout();
   }

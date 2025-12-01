@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../enviroments/enviroments.development';
+import { environment } from '../../environments/environment';
 import { UserService } from './user.service';
 
 @Injectable({
@@ -25,10 +25,10 @@ export class CampaignService {
       if (estado) params.append('estado', estado);
 
       const url = `${this.apiUrl}/campanas?${params.toString()}`;
-      console.log('🔍 Obteniendo campañas desde:', url);
+      console.log('Obteniendo campañas desde:', url);
 
       const token = this.userService.getAuthToken();
-      console.log('🔑 Token para GET campañas:', token ? 'Sí (longitud: ' + token.length + ')' : 'No encontrado');
+      console.log('Token para GET campañas:', token ? 'Sí (longitud: ' + token.length + ')' : 'No encontrado');
       
       const headers: any = {
         'Content-Type': 'application/json',
@@ -36,9 +36,9 @@ export class CampaignService {
 
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
-        console.log('✅ Header Authorization agregado al GET');
+        console.log('Header Authorization agregado al GET');
       } else {
-        console.warn('⚠️ No se encontró token para GET campañas');
+        console.warn('No se encontró token para GET campañas');
       }
 
       const response = await fetch(url, {
@@ -47,10 +47,10 @@ export class CampaignService {
       });
 
       const data = await response.json();
-      console.log('📦 Respuesta del backend (GET campañas):', data);
+      console.log('Respuesta del backend (GET campañas):', data);
 
       if (!response.ok) {
-        console.error('❌ Error HTTP:', response.status, data);
+        console.error('Error HTTP:', response.status, data);
         return {
           success: false,
           message: data.mensaje || data.error || 'Error al obtener las campañas',
@@ -63,7 +63,7 @@ export class CampaignService {
         message: 'Campañas obtenidas exitosamente',
       };
     } catch (error) {
-      console.error('❌ Error al obtener campañas:', error);
+      console.error('Error al obtener campañas:', error);
       return {
         success: false,
         message: 'Error de conexión al obtener campañas',
@@ -85,16 +85,16 @@ export class CampaignService {
   ): Promise<{ success: boolean; data?: any; message: string }> {
     try {
       const url = `${this.apiUrl}/campanas`;
-      console.log('🌐 URL:', url);
-      console.log('📤 Datos de campaña:', campaignData);
-      console.log('🔑 Token recibido:', token ? 'Sí (longitud: ' + token.length + ')' : 'No');
+      console.log('URL:', url);
+      console.log('Datos de campaña:', campaignData);
+      console.log('Token recibido:', token ? 'Sí (longitud: ' + token.length + ')' : 'No');
 
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       };
       
-      console.log('📋 Headers que se enviarán:', {
+      console.log('Headers que se enviarán:', {
         'Content-Type': headers['Content-Type'],
         'Authorization': headers['Authorization'] ? 'Bearer [token presente]' : 'No presente'
       });
@@ -105,9 +105,9 @@ export class CampaignService {
         body: JSON.stringify(campaignData),
       });
 
-      console.log('📊 Status de respuesta:', response.status, response.statusText);
+      console.log('Status de respuesta:', response.status, response.statusText);
       const data = await response.json();
-      console.log('📥 Respuesta del backend:', data);
+      console.log('Respuesta del backend:', data);
 
       if (!response.ok) {
         return {
@@ -122,7 +122,7 @@ export class CampaignService {
         message: 'Campaña creada exitosamente',
       };
     } catch (error) {
-      console.error('❌ Error al crear campaña:', error);
+      console.error('Error al crear campaña:', error);
       return {
         success: false,
         message: 'Error de conexión al crear la campaña',
@@ -145,7 +145,7 @@ export class CampaignService {
   ): Promise<{ success: boolean; data?: any; message: string }> {
     try {
       const url = `${this.apiUrl}/campana/${campaignId}`;
-      console.log('📝 Actualizando campaña:', campaignId, campaignData);
+      console.log('Actualizando campaña:', campaignId, campaignData);
 
       const response = await fetch(url, {
         method: 'PUT',
@@ -157,7 +157,7 @@ export class CampaignService {
       });
 
       const data = await response.json();
-      console.log('📥 Respuesta:', data);
+      console.log('Respuesta:', data);
 
       if (!response.ok) {
         return {
@@ -172,7 +172,7 @@ export class CampaignService {
         message: 'Campaña actualizada exitosamente',
       };
     } catch (error) {
-      console.error('❌ Error al actualizar campaña:', error);
+      console.error('Error al actualizar campaña:', error);
       return {
         success: false,
         message: 'Error de conexión al actualizar la campaña',
@@ -187,7 +187,7 @@ export class CampaignService {
   ): Promise<{ success: boolean; message: string }> {
     try {
       const url = `${this.apiUrl}/campana/${campaignId}`;
-      console.log('🗑️ Eliminando campaña:', campaignId);
+      console.log('Eliminando campaña:', campaignId);
 
       const response = await fetch(url, {
         method: 'DELETE',
@@ -198,7 +198,7 @@ export class CampaignService {
       });
 
       const data = await response.json();
-      console.log('📥 Respuesta:', data);
+      console.log('Respuesta:', data);
 
       if (!response.ok) {
         return {
@@ -212,7 +212,7 @@ export class CampaignService {
         message: data.mensaje || 'Campaña eliminada exitosamente',
       };
     } catch (error) {
-      console.error('❌ Error al eliminar campaña:', error);
+      console.error('Error al eliminar campaña:', error);
       return {
         success: false,
         message: 'Error de conexión al eliminar la campaña',
@@ -224,7 +224,7 @@ export class CampaignService {
   async getActiveCampaigns(): Promise<{ success: boolean; data?: any; message: string }> {
     try {
       const url = `${this.apiUrl}/campanas/activas`;
-      console.log('🔍 Obteniendo campañas activas desde:', url);
+      console.log('Obteniendo campañas activas desde:', url);
 
       const response = await fetch(url, {
         method: 'GET',
@@ -248,7 +248,7 @@ export class CampaignService {
         message: 'Campañas activas obtenidas exitosamente',
       };
     } catch (error) {
-      console.error('❌ Error al obtener campañas activas:', error);
+      console.error('Error al obtener campañas activas:', error);
       return {
         success: false,
         message: 'Error de conexión',

@@ -265,15 +265,8 @@ export class PaymentComponent implements OnInit {
         return;
       }
 
-      // También crear el pedido localmente para la UI
-      const newOrder = this.orderService.createOrderFromCart(
-        this.cartItems(),
-        paymentInfo,
-        pickupInfo
-      );
-      
       let orderSummary = `¡Pedido confirmado!\n\n`;
-      orderSummary += `Número de pedido: #${result.data?.pedido_id || newOrder.id}\n`;
+      orderSummary += `Número de pedido: #${result.data?.pedido_id}\n`;
       orderSummary += `Total: $${this.finalTotal().toLocaleString()}\n\n`;
       orderSummary += `Retiro: ${this.getSelectedDayDisplay()} a las ${this.selectedTime()}\n`;
       orderSummary += `Local: Rotisería Cacho - Av. Corrientes 1234\n\n`;

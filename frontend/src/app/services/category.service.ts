@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Category } from '../models/category.interface';
-import { environment } from '../../enviroments/enviroments.development';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',

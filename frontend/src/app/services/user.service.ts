@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { environment } from '../../enviroments/enviroments.development';
+import { environment } from '../../environments/environment';
 
 export type UserRole = 'ADMIN' | 'USER' | 'EMPLOYER' | 'TRABAJADOR';
 
@@ -29,7 +29,8 @@ export interface LoginResponse {
   providedIn: 'root',
 })
 export class UserService {
-  private readonly apiUrl = environment.apiUrl; // <-- 2. PROPIEDAD AÑADIDA
+  private readonly apiUrl = environment.apiUrl;
+  
   // Signal para el usuario actual
 
   private currentUser = signal<User | null>(null);
@@ -40,42 +41,6 @@ export class UserService {
   // Signal para el estado de carga
   private isLoading = signal<boolean>(false);
 
-  // Usuarios predefinidos para testing/fallback
-  private testUsers: User[] = [
-    {
-      id: 1,
-      fullName: 'Juan Carlos Pérez',
-      email: 'juan.perez@email.com',
-      phone: '+54 11 1234-5678',
-      role: 'USER',
-      status: 'Activo',
-    },
-    {
-      id: 2,
-      fullName: 'María García López',
-      email: 'maria.garcia@admin.com',
-      phone: '+54 11 2345-6789',
-      role: 'ADMIN',
-      status: 'Activo',
-    },
-    {
-      id: 3,
-      fullName: 'Carlos Rodríguez',
-      email: 'carlos.rodriguez@empleado.com',
-      phone: '+54 11 3456-7890',
-      role: 'EMPLOYER',
-      status: 'Activo',
-    },
-    {
-      id: 4,
-      fullName: 'Ana Sofía Martínez',
-      email: 'ana.martinez@cliente.com',
-      phone: '+54 11 4567-8901',
-      role: 'USER',
-      status: 'Activo',
-    },
-  ];
-
   constructor() {
     // Verificar si hay un token almacenado al inicializar
     if (this.isBrowser()) {
@@ -83,7 +48,7 @@ export class UserService {
     }
   }
 
-  // Verificar si estamos en el navegador (no en SSR)
+  // Verificar si estamos en el navegador 
   private isBrowser(): boolean {
     return typeof window !== 'undefined' && typeof localStorage !== 'undefined';
   }
@@ -267,7 +232,7 @@ export class UserService {
   // Verificar si hay un token almacenado al inicializar
   private checkStoredToken() {
     if (!this.isBrowser()) {
-      return; // No hacer nada en SSR
+      return; 
     }
 
     const token = this.getAccessToken();
@@ -396,7 +361,7 @@ export class UserService {
     return fetch(url, authOptions);
   }
 
-  // Método para actualizar el usuario (simula login/cambio de usuario)
+  // Método para actualizar el usuario 
   updateUser(userData: Partial<User>) {
     const current = this.currentUser();
     if (current) {
@@ -407,7 +372,7 @@ export class UserService {
     }
   }
 
-  // Método para simular diferentes usuarios (para testing)
+  // Método para simular diferentes usuarios 
   switchToUser(userData: User) {
     this.currentUser.set(userData);
   }
@@ -415,49 +380,6 @@ export class UserService {
   // Método para obtener el usuario actual
   getCurrentUser() {
     return this.currentUser();
-  }
-
-  // Métodos específicos para cambiar a diferentes tipos de usuarios (para testing)
-  loginAsAdmin() {
-    const admin = this.testUsers.find((u) => u.role === 'ADMIN');
-    if (admin) {
-      this.currentUser.set(admin);
-      this.isAuthenticated.set(true);
-      console.log('Cambiado a usuario administrador:', admin.fullName);
-    }
-  }
-
-  loginAsEmployee() {
-    const employee = this.testUsers.find((u) => u.role === 'EMPLOYER');
-    if (employee) {
-      this.currentUser.set(employee);
-      this.isAuthenticated.set(true);
-      console.log('Cambiado a usuario empleado:', employee.fullName);
-    }
-  }
-
-  loginAsClient() {
-    const client = this.testUsers.find((u) => u.role === 'USER');
-    if (client) {
-      this.currentUser.set(client);
-      this.isAuthenticated.set(true);
-      console.log('Cambiado a usuario cliente:', client.fullName);
-    }
-  }
-
-  // Método para obtener todos los usuarios disponibles
-  getAvailableUsers() {
-    return this.testUsers;
-  }
-
-  // Método para hacer login por ID (testing)
-  loginAsUser(userId: number) {
-    const user = this.testUsers.find((u) => u.id === userId);
-    if (user) {
-      this.currentUser.set(user);
-      this.isAuthenticated.set(true);
-      console.log('Cambiado a usuario:', user.fullName, '- Rol:', user.role);
-    }
   }
 
   // Método para hacer logout
@@ -468,7 +390,7 @@ export class UserService {
     console.log('Usuario deslogueado');
   }
 
-  // Obtener todos los usuarios desde el backend (para admin)
+  // Obtener todos los usuarios desde el backend 
   async getAllUsersFromBackend(
     page: number = 1,
     perPage: number = 10,
@@ -491,7 +413,7 @@ export class UserService {
       if (filters?.estado) params.append('estado', filters.estado);
 
       const url = `${this.apiUrl}/usuarios?${params.toString()}`;
-      console.log('🔍 Obteniendo usuarios desde:', url);
+      console.log('Obteniendo usuarios desde:', url);
 
       // Obtener token de autenticación
       const token = this.getAuthToken();
@@ -501,9 +423,9 @@ export class UserService {
       
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
-        console.log('🔑 Token agregado al request');
+        console.log('Token agregado al request');
       } else {
-        console.warn('⚠️ No se encontró token de autenticación');
+        console.warn('No se encontró token de autenticación');
       }
 
       // Realizar el GET al backend
@@ -513,9 +435,9 @@ export class UserService {
       });
 
       if (!response.ok) {
-        console.error('❌ Error en respuesta HTTP:', response.status, response.statusText);
+        console.error('Error en respuesta HTTP:', response.status, response.statusText);
         const errorData = await response.json();
-        console.error('❌ Detalles del error:', errorData);
+        console.error('Detalles del error:', errorData);
         return {
           success: false,
           message: errorData.mensaje || 'Error al obtener los usuarios',
@@ -523,8 +445,8 @@ export class UserService {
       }
 
       const data = await response.json();
-      console.log('✅ Usuarios obtenidos del backend:', data);
-      console.log('📊 Total de usuarios:', data.total, '| Página:', data.page, '| Páginas totales:', data.pages);
+      console.log('Usuarios obtenidos del backend:', data);
+      console.log('Total de usuarios:', data.total, '| Página:', data.page, '| Páginas totales:', data.pages);
 
       return {
         success: true,
@@ -532,7 +454,7 @@ export class UserService {
         message: 'Usuarios obtenidos exitosamente',
       };
     } catch (error) {
-      console.error('❌ Error al obtener usuarios:', error);
+      console.error('Error al obtener usuarios:', error);
       return {
         success: false,
         message: 'Error de conexión con el servidor',
@@ -561,7 +483,7 @@ export class UserService {
         'Content-Type': 'application/json',
       };
 
-      // Agregar token de autorización si está disponible
+      // Agregar token de autorización
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
@@ -573,11 +495,11 @@ export class UserService {
       });
 
       const data = await response.json();
-      console.log('📥 Respuesta completa del backend:', data);
-      console.log('📊 Status HTTP:', response.status);
+      console.log('Respuesta completa del backend:', data);
+      console.log('Status HTTP:', response.status);
 
       if (!response.ok) {
-        console.error('❌ Error HTTP:', response.status, data);
+        console.error('Error HTTP:', response.status, data);
         return {
           success: false,
           message: data.mensaje || data.message || data.error || 'Error al actualizar el usuario',
@@ -586,14 +508,14 @@ export class UserService {
 
       // Verificar si el backend devolvió un error en un 200 OK
       if (data.error || (data.mensaje && data.mensaje.toLowerCase().includes('error'))) {
-        console.error('❌ Backend devolvió error:', data);
+        console.error('Backend devolvió error:', data);
         return {
           success: false,
           message: data.error || data.mensaje || 'Error al actualizar el usuario',
         };
       }
 
-      console.log('✅ Usuario actualizado exitosamente:', data);
+      console.log('Usuario actualizado exitosamente:', data);
 
       return {
         success: true,
@@ -622,7 +544,7 @@ export class UserService {
         'Content-Type': 'application/json',
       };
 
-      // Agregar token de autorización si está disponible
+      // Agregar token de autorización
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }

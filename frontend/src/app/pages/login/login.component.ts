@@ -77,7 +77,7 @@ export class LoginComponent {
       ]],
       password: ['', [
         Validators.required, 
-        Validators.minLength(3)  // Cambié a 3 para hacer más fácil el testing
+        Validators.minLength(6)
       ]],
       remember: [false]
     });

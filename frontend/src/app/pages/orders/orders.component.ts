@@ -41,8 +41,6 @@ export class OrdersComponent implements OnInit {
   // Computed values
   showCustomDateRange = computed(() => this.dateFilter() === 'custom');
   
-  statistics = computed(() => this.orderService.getOrderStatistics());
-  
   resultsCount = computed(() => this.filteredOrders().length);
 
   constructor(
@@ -99,8 +97,10 @@ export class OrdersComponent implements OnInit {
   }
 
   private loadLocalOrders() {
-    // Cargar pedidos locales (los que están en el servicio) como fallback
-    this.orders.set(this.orderService.getOrders());
+    // No podemos cargar pedidos locales porque getOrders() ya no existe
+    // Mantener el array vacío y mostrar mensaje de error
+    console.warn('No se pudieron cargar los pedidos desde el backend');
+    this.orders.set([]);
     this.applyFilters();
   }
 

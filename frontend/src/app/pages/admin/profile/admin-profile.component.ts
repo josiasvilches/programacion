@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { AdminHeaderComponent } from '../../../components/admin/header/admin-header.component';
 import { AdminSidebarComponent } from '../../../components/admin/sidebar/admin-sidebar.component';
 import { UserService } from '../../../services/user.service';
-import { environment } from '../../../../enviroments/enviroments.development';
+import { environment } from '../../../../environments/environment';
 
 export interface ProfileData {
   name: string;
@@ -71,14 +71,6 @@ export class AdminProfileComponent implements OnInit {
   passwordData = {
     currentPassword: '',
     newPassword: ''
-  };
-
-  quickStats: QuickStats = {
-    activeProducts: 24,
-    registeredClients: 1247,
-    ordersThisMonth: 342,
-    salesThisMonth: '$1.245.600',
-    campaignsSent: 47
   };
 
   // Settings toggles
@@ -262,15 +254,6 @@ export class AdminProfileComponent implements OnInit {
         notification.parentNode.removeChild(notification);
       }
     }, 3000);
-  }
-
-  // Security actions
-  setup2FA(): void {
-    alert('Configuración de 2FA en desarrollo');
-  }
-
-  viewActiveSessions(): void {
-    alert('Vista de sesiones activas en desarrollo');
   }
 
   // Logout
