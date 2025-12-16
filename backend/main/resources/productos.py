@@ -8,7 +8,7 @@ from main.models import ProductoModel as ProductoModel, UsuarioModel as UsuarioM
 class Productos(Resource):
     def get(self):
         try:
-            #productos = db.session.query(ProductoModel).all()
+            
             page = 1
             per_page = 10
 

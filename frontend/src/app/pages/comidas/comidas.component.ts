@@ -289,24 +289,6 @@ export class ComidasComponent {
     await this.productService.fetchProducts({ page: 1 });
   }
 
-  // Métodos auxiliares
-  private passesPriceFilter(price: number): boolean {
-    switch (this.priceFilter()) {
-      case 'all':
-        return true;
-      case '0-5000':
-        return price <= 5000;
-      case '5000-10000':
-        return price > 5000 && price <= 10000;
-      case '10000-20000':
-        return price > 10000 && price <= 20000;
-      case '20000+':
-        return price > 20000;
-      default:
-        return true;
-    }
-  }
-
   private sortProducts(products: ExtendedProduct[]): ExtendedProduct[] {
     const sorted = [...products];
     switch (this.sortOption()) {

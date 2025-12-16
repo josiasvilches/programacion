@@ -18,7 +18,6 @@ def role_required(roles=['ADMIN']):
             if not usuario:
                 return {"mensaje": "Usuario no encontrado"}, 404
             
-            # Agregar TRABAJADOR a los roles permitidos
             allowed_roles = roles if isinstance(roles, list) else [roles]
             
             if usuario.rol not in allowed_roles:

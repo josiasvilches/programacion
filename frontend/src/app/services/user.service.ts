@@ -372,6 +372,14 @@ export class UserService {
     }
   }
 
+  // Método para hacer logout
+  logout() {
+    this.currentUser.set(null);
+    this.isAuthenticated.set(false);
+    this.clearTokens();
+    console.log('Usuario deslogueado');
+  }
+
   // Método para simular diferentes usuarios 
   switchToUser(userData: User) {
     this.currentUser.set(userData);
@@ -380,14 +388,6 @@ export class UserService {
   // Método para obtener el usuario actual
   getCurrentUser() {
     return this.currentUser();
-  }
-
-  // Método para hacer logout
-  logout() {
-    this.currentUser.set(null);
-    this.isAuthenticated.set(false);
-    this.clearTokens();
-    console.log('Usuario deslogueado');
   }
 
   // Obtener todos los usuarios desde el backend 
