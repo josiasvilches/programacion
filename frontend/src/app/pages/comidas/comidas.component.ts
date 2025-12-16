@@ -8,6 +8,7 @@ import { PaginationComponent, PaginationInfo } from '../../components/pagination
 import { CartService } from '../../services/cart.service';
 import { ProductService } from '../../services/product.service';
 import { CategoryService } from '../../services/category.service';
+import { UserService } from '../../services/user.service';
 import { Product } from '../../models/product.interface';
 import { Category } from '../../models/category.interface';
 
@@ -37,6 +38,7 @@ export class ComidasComponent {
   private cartService = inject(CartService);
   private productService = inject(ProductService);
   private categoryService = inject(CategoryService);
+  private userService = inject(UserService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
 
@@ -370,11 +372,25 @@ export class ComidasComponent {
 
   // Métodos para el carrito y navegación
   viewProduct(productId: number): void {
+    // Verificar si el usuario está logueado
+    if (!this.userService.isLoggedIn()) {
+      console.log('Usuario no autenticado, redirigiendo a login');
+      this.router.navigate(['/login']);
+      return;
+    }
+    
     console.log('Navegando a producto con ID:', productId);
     this.router.navigate(['/product', productId]);
   }
 
   addToCart(product: ExtendedProduct): void {
+    // Verificar si el usuario está logueado
+    if (!this.userService.isLoggedIn()) {
+      console.log('Usuario no autenticado, redirigiendo a login');
+      this.router.navigate(['/login']);
+      return;
+    }
+    
     if (!product.available) {
       return;
     }
