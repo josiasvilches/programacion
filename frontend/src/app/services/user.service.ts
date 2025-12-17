@@ -203,7 +203,7 @@ export class UserService {
     // Decodificar el JWT payload para obtener la información del usuario
     try {
       const payload = JSON.parse(atob(loginResponse.access_token.split('.')[1]));
-
+      console.log('Payload decodificado del token:', payload);
       return {
         id: parseInt(payload.sub) || 0,
         fullName: payload.nombre || 'Usuario',
