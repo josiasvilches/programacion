@@ -26,7 +26,7 @@ def create_app():
         response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
         return response
 
-    # Definir ruta base UN NIVEL ARRIBA (subir de main/ a backend/)
+    # Definir ruta de la base de datos
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
     # Definir carpeta y archivo de base de datos
@@ -49,14 +49,13 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
-    migrate = Migrate(app, db)  # Mover la inicialización de Migrate aquí
 
     # Crear las tablas
     with app.app_context():
         try:
             from main.models import ValoracionModel, ProductoModel, UsuarioModel, PedidoModel, PedidoProductoModel, CampanaModel
 
-            db.session.execute(text('SELECT 1'))  # Usar text() para la consulta SQL
+            db.session.execute(text('SELECT 1'))  # Consulta simple para verificar la conexión
             print("Conexión a la base de datos exitosa.")
 
             db.create_all()
