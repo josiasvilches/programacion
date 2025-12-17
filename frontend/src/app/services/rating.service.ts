@@ -187,4 +187,39 @@ export class RatingService {
       };
     }
   }
+
+  /**
+   * Obtener las últimas N valoraciones globales
+   */
+  async getRecentRatings(limit: number = 3): Promise<{ success: boolean; message: string; data?: any }> {
+    try {
+      const response = await fetch(
+        `${this.apiUrl}/valoraciones/recientes?limit=${limit}`,
+        {
+          method: 'GET'
+        }
+      );
+
+      if (!response.ok) {
+        return {
+          success: false,
+          message: 'Error al obtener valoraciones recientes'
+        };
+      }
+
+      const data = await response.json();
+      return {
+        success: true,
+        message: 'Valoraciones obtenidas exitosamente',
+        data: data
+      };
+
+    } catch (error) {
+      console.error('Error al obtener valoraciones recientes:', error);
+      return {
+        success: false,
+        message: 'Error de conexión'
+      };
+    }
+  }
 }

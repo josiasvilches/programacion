@@ -7,6 +7,7 @@ import { Schedule, ContactInfo, Testimonial } from '../../models/product.interfa
 import { FavoriteProductsCarrouselComponent } from '../../components/carrousel/favorite-products-carrousel/favorite-products-carrousel.component';
 import { RecommendedProductsCarrouselComponent } from '../../components/carrousel/recommended-products-carrousel/recommended-products-carrousel.component';
 import { ProductService } from '../../services/product.service';
+import { RatingService } from '../../services/rating.service';
 
 @Component({
   selector: 'app-home',
@@ -40,39 +41,16 @@ export class HomeComponent implements OnInit {
     whatsapp: '+54 9 11 1234-5678',
     email: 'info@rotiseriacacho.com',
   };
-  testimonials: Testimonial[] = [
-    {
-      id: 1,
-      name: 'María',
-      comment: 'El mejor pollo del barrio. Hace años que vengo y siempre la misma calidad.',
-      rating: 5,
-      avatar: 'M',
-      role: 'Cliente habitual',
-    },
-    {
-      id: 2,
-      name: 'Carlos',
-      comment: 'Las empanadas son increíbles y siempre están a tiempo.',
-      rating: 5,
-      avatar: 'C',
-      role: 'Cliente habitual',
-    },
-    {
-      id: 3,
-      name: 'Ana',
-      comment: 'Tradición familiar que se nota en cada plato. Muy recomendable.',
-      rating: 5,
-      avatar: 'A',
-      role: 'Cliente habitual',
-    },
-  ];
+  testimonials: Testimonial[] = [];
+  isLoadingTestimonials: boolean = false;
 
   isOpen = true; // This could be calculated based on current time
   
   constructor(
     private router: Router, 
     private route: ActivatedRoute,
-    private productService: ProductService
+    private productService: ProductService,
+    private ratingService: RatingService
   ) {}
   
   ngOnInit() {
@@ -94,6 +72,7 @@ export class HomeComponent implements OnInit {
 
     // Cargar productos favoritos y recomendados desde la API
     this.loadProducts();
+    this.loadTestimonials();
   }
 
   /**
@@ -118,6 +97,47 @@ export class HomeComponent implements OnInit {
     } finally {
       this.isLoadingProducts = false;
     }
+  }
+
+  /**
+   * Carga las últimas valoraciones para mostrar como testimonios
+   */
+  async loadTestimonials() {
+    try {
+      this.isLoadingTestimonials = true;
+      
+      const result = await this.ratingService.getRecentRatings(3);
+      
+      if (result.success && result.data) {
+        const valoraciones = result.data.valoraciones || [];
+        
+        // Mapear valoraciones a formato de testimonios
+        this.testimonials = valoraciones.map((val: any, index: number) => ({
+          id: val.valoracion_id || index + 1,
+          name: val.nombre_usuario || 'Usuario Anónimo',
+          comment: val.comentario || `Calificó "${val.producto_nombre}" con ${val.valoracion} estrellas`,
+          rating: Math.floor(val.valoracion),
+          avatar: this.getInitials(val.nombre_usuario || 'U'),
+          role: 'Cliente'
+        }));
+      }
+    } catch (error) {
+      console.error('Error al cargar testimonios:', error);
+      // Si hay error, dejar el array vacío
+      this.testimonials = [];
+    } finally {
+      this.isLoadingTestimonials = false;
+    }
+  }
+
+  /**
+   * Obtiene las iniciales de un nombre
+   */
+  getInitials(name: string): string {
+    if (!name) return 'U';
+    const words = name.trim().split(' ');
+    if (words.length === 1) return words[0].charAt(0).toUpperCase();
+    return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase();
   }
 
   dismissError() {

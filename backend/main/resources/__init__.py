@@ -11,6 +11,7 @@ from .usuarios import Usuario as UsuarioResource
 from .usuarios import Usuarios as UsuariosResource
 from .valoraciones import Valoracion as ValoracionResource
 from .valoraciones import VerificarCompraProducto as VerificarCompraProductoResource
+from .valoraciones import ValoracionesRecientes as ValoracionesRecientesResource
 from .categorias import Categorias as CategoriasResource
 from .categorias import Categoria as CategoriaResource
 from .campanas import Campanas as CampanasResource

@@ -129,56 +129,62 @@
         <div class="text-center mb-16">
           <h2 class="text-4xl font-bold text-gray-800 mb-4">Lo que dicen nuestros clientes</h2>
         </div>
-        <div class="grid md:grid-cols-3 gap-8">
-          <div class="bg-white rounded-xl p-8 shadow-sm">
-            <div class="flex text-yellow-500 text-lg mb-4">★★★★★</div>
-            <p class="text-gray-600 mb-6">
-              "El mejor pollo del barrio. Hace años que vengo y siempre la misma calidad."
-            </p>
-            <div class="flex items-center">
-              <div
-                class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-3"
-              >
-                M
+        
+        @if (isLoadingTestimonials) {
+          <!-- Loading skeleton -->
+          <div class="grid md:grid-cols-3 gap-8">
+            @for (item of [1,2,3]; track $index) {
+              <div class="bg-white rounded-xl p-8 shadow-sm animate-pulse">
+                <div class="h-6 bg-gray-200 rounded w-20 mb-4"></div>
+                <div class="space-y-2 mb-6">
+                  <div class="h-4 bg-gray-200 rounded"></div>
+                  <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+                </div>
+                <div class="flex items-center">
+                  <div class="w-10 h-10 bg-gray-200 rounded-full mr-3"></div>
+                  <div class="h-4 bg-gray-200 rounded w-24"></div>
+                </div>
               </div>
-              <div>
-                <div class="font-semibold text-gray-800">María</div>
-              </div>
-            </div>
+            }
           </div>
-          <div class="bg-white rounded-xl p-8 shadow-sm">
-            <div class="flex text-yellow-500 text-lg mb-4">★★★★★</div>
-            <p class="text-gray-600 mb-6">
-              "Las empanadas son increíbles y el delivery siempre llega rápido."
-            </p>
-            <div class="flex items-center">
-              <div
-                class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold mr-3"
-              >
-                C
+        } @else if (testimonials.length > 0) {
+          <!-- Testimonials con datos reales -->
+          <div class="grid md:grid-cols-3 gap-8">
+            @for (testimonial of testimonials; track testimonial.id) {
+              <div class="bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
+                <div class="flex text-yellow-500 text-lg mb-4">
+                  @for (star of [1,2,3,4,5]; track $index) {
+                    @if ($index < testimonial.rating) {
+                      <span>★</span>
+                    } @else {
+                      <span class="text-gray-300">★</span>
+                    }
+                  }
+                </div>
+                <p class="text-gray-600 mb-6 min-h-[4rem]">
+                  "{{ testimonial.comment }}"
+                </p>
+                <div class="flex items-center">
+                  <div [class]="'w-10 h-10 rounded-full flex items-center justify-center text-white font-bold mr-3 ' + getAvatarColor(testimonial.name)">
+                    {{ testimonial.avatar }}
+                  </div>
+                  <div>
+                    <div class="font-semibold text-gray-800">{{ testimonial.name }}</div>
+                    <div class="text-sm text-gray-500">{{ testimonial.role }}</div>
+                  </div>
+                </div>
               </div>
-              <div>
-                <div class="font-semibold text-gray-800">Carlos</div>
-              </div>
-            </div>
+            }
           </div>
-          <div class="bg-white rounded-xl p-8 shadow-sm">
-            <div class="flex text-yellow-500 text-lg mb-4">★★★★★</div>
-            <p class="text-gray-600 mb-6">
-              "Tradición familiar que se nota en cada plato. Muy recomendable."
-            </p>
-            <div class="flex items-center">
-              <div
-                class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold mr-3"
-              >
-                A
-              </div>
-              <div>
-                <div class="font-semibold text-gray-800">Ana</div>
-              </div>
+        } @else {
+          <!-- Estado vacío -->
+          <div class="text-center py-12">
+            <div class="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+              <span class="text-3xl">💬</span>
             </div>
+            <p class="text-gray-600">Aún no hay testimonios disponibles</p>
           </div>
-        </div>
+        }
       </div>
     </section>
   </main>
