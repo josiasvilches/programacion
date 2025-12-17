@@ -1,6 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { CartItem } from '../models/product.interface';
 import { environment } from '../../environments/environment';
+import { UserService } from './user.service';
 
 export interface OrderItem {
   id?: number; // ID del producto para valoraciones
@@ -25,8 +26,22 @@ export interface Order {
 })
 export class OrderService {
   private readonly apiUrl = environment.apiUrl;
+  private userService = inject(UserService);
 
   constructor() {}
+
+  // Verificar si estamos en el navegador
+  private isBrowser(): boolean {
+    return typeof window !== 'undefined' && typeof localStorage !== 'undefined';
+  }
+
+  // Obtener token de autenticación
+  private getAuthToken(): string | null {
+    if (!this.isBrowser()) {
+      return null;
+    }
+    return this.userService.getAuthToken();
+  }
 
   // Método para crear pedido en el backend
   async createOrderInBackend(
@@ -72,12 +87,21 @@ export class OrderService {
 
       console.log('Enviando pedido al backend:', body);
 
+      // Obtener token de autenticación
+      const token = this.getAuthToken();
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+        console.log('Token agregado al request de crear pedido');
+      }
+
       // Realizar el POST al backend
-      const response = await fetch('http://127.0.0.1:5001/pedidos', {
+      const response = await fetch(`${this.apiUrl}/pedidos`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: headers,
         body: JSON.stringify(body),
       });
 
@@ -132,12 +156,21 @@ export class OrderService {
       const url = `${this.apiUrl}/pedidos/usuario/${idUsuario}?${params.toString()}`;
       console.log('Obteniendo pedidos del usuario desde:', url);
 
+      // Obtener token de autenticación
+      const token = this.getAuthToken();
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+        console.log('Token agregado al request de obtener pedidos de usuario');
+      }
+
       // Realizar el GET al backend
       const response = await fetch(url, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: headers,
       });
 
       if (!response.ok) {
@@ -192,12 +225,23 @@ export class OrderService {
       const url = `${this.apiUrl}/pedidos?${params.toString()}`;
       console.log('Obteniendo todos los pedidos desde:', url);
 
+      // Obtener token de autenticación
+      const token = this.getAuthToken();
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+        console.log('Token agregado al request de obtener todos los pedidos');
+      } else {
+        console.warn('No se encontró token de autenticación para obtener pedidos');
+      }
+
       // Realizar el GET al backend
       const response = await fetch(url, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: headers,
       });
 
       if (!response.ok) {
@@ -237,8 +281,8 @@ export class OrderService {
       const body = { estado_pedido: nuevoEstado };
       console.log('Body del request:', JSON.stringify(body));
 
-      // Obtener token de autenticación desde localStorage
-      const token = localStorage.getItem('access_token');
+      // Obtener token de autenticación
+      const token = this.getAuthToken();
       console.log('Token encontrado:', token ? 'Sí' : 'No');
 
       if (!token) {
@@ -248,13 +292,15 @@ export class OrderService {
         };
       }
 
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
+
       // Realizar el PUT al backend con autorización
       const response = await fetch(url, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: headers,
         body: JSON.stringify(body),
       });
 
