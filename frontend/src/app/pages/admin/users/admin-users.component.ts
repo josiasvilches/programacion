@@ -67,21 +67,38 @@ export class AdminUsersComponent implements OnInit {
     console.log(`Iniciando carga de usuarios desde backend - Página: ${page}`);
     this.isLoading.set(true);
     try {
-      const result = await this.userService.getAllUsersFromBackend(page, this.pageSize);
+      // Construir filtros basados en el filtro actual
+      const filters: { estado?: string; rol?: string } = {};
+
+      // Mapear filtros del UI al formato del backend
+      if (this.currentFilter === 'active') {
+        filters.estado = 'activo';
+      } else if (this.currentFilter === 'pending') {
+        filters.estado = 'pendiente';
+      } else if (this.currentFilter === 'inactive') {
+        filters.estado = 'inactivo';
+      } else if (this.currentFilter === 'admin') {
+        filters.rol = 'ADMIN';
+      }
+      // Si el filtro es 'all', no se envía ningún filtro
+
+      console.log('Filtros aplicados:', filters);
+
+      const result = await this.userService.getAllUsersFromBackend(page, this.pageSize, filters);
       console.log('Respuesta del servicio:', result);
-      
+
       if (result.success && result.data) {
         const backendUsers = result.data.usuarios || [];
         console.log('Usuarios recibidos del backend:', backendUsers.length, backendUsers);
-        
+
         // Actualizar información de paginación desde la respuesta del backend
         this.currentPage = result.data.page || page;
         this.totalPages = result.data.pages || 1;
         this.totalUsers = result.data.total || backendUsers.length;
-        
+
         const convertedUsers = this.convertBackendUsersToUI(backendUsers);
         console.log('Usuarios convertidos al formato UI:', convertedUsers.length, convertedUsers);
-        
+
         this.users.set(convertedUsers);
         console.log(`Paginación actualizada - Página ${this.currentPage} de ${this.totalPages}. Total: ${this.totalUsers} usuarios`);
       } else {
@@ -146,14 +163,17 @@ export class AdminUsersComponent implements OnInit {
   };
 
   // Filter methods
-  filterUsers(filter: string) {
+  async filterUsers(filter: string) {
     this.currentFilter = filter;
-    // Por ahora solo cambia el filtro visual, en el futuro se puede integrar con el backend
+    // Resetear a la primera página al cambiar el filtro
+    this.currentPage = 1;
+    // Recargar usuarios con el filtro aplicado
+    await this.loadUsersFromBackend(1);
   }
 
   getFilteredUsers(): User[] {
-    // Retornar todos los usuarios de la página actual
-    // El filtrado del lado del cliente no debe aplicarse cuando hay paginación del servidor
+    // Los usuarios ya vienen filtrados desde el backend
+    // Este método ahora solo retorna los usuarios actuales
     return this.users();
   }
 
