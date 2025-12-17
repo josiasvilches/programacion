@@ -40,7 +40,7 @@ class Pedidos(Resource):
                         'pages': pedidos.pages,
                         'page':page})
 
-    @role_required(roles=['ADMIN', 'TRABAJADOR'])
+    @jwt_required()
     def post(self):
         data = request.get_json() or {}
 
@@ -105,7 +105,7 @@ class Pedido(Resource):
         pedido = PedidoModel.query.get_or_404(id)
         return pedido.to_json(), 200
 
-    @role_required(roles=['ADMIN', 'TRABAJADOR'])
+    @jwt_required()
     def put(self, id):
         pedido = PedidoModel.query.get_or_404(id)
         data = request.get_json() or {}
