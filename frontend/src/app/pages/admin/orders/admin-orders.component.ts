@@ -430,9 +430,26 @@ export class AdminOrdersComponent implements OnInit {
   }
 
   getFilterClass(filter: string): string {
-    return this.currentFilter === filter 
+    return this.currentFilter === filter
       ? 'filter-btn active px-4 py-2 rounded-lg font-medium transition-all duration-200'
       : 'filter-btn px-4 py-2 rounded-lg font-medium transition-all duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200';
+  }
+
+  getEmptyMessage(): string {
+    if (this.searchTerm) {
+      return `No se encontraron pedidos que coincidan con "${this.searchTerm}"`;
+    }
+
+    const messages: { [key: string]: string } = {
+      'all': 'No hay pedidos registrados en el sistema.',
+      'pending': 'No hay pedidos pendientes en este momento.',
+      'preparing': 'No hay pedidos en preparación en este momento.',
+      'ready': 'No hay pedidos listos para retirar en este momento.',
+      'delivered': 'No hay pedidos entregados en este momento.',
+      'cancelled': 'No hay pedidos cancelados en este momento.'
+    };
+
+    return messages[this.currentFilter] || 'No hay pedidos disponibles.';
   }
 
   async refreshOrders() {
