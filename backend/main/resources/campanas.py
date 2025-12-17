@@ -14,7 +14,7 @@ class Campanas(Resource):
         try:
             page = request.args.get('page', 1, type=int)
             per_page = request.args.get('per_page', 10, type=int)
-            estado = request.args.get('estado', type=str)  # activa, pausada, finalizada
+            estado = request.args.get('estado', type=str)  
 
             # Query base
             query = CampanaModel.query
