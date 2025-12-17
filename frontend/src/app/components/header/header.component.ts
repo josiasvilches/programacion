@@ -24,9 +24,6 @@ export class HeaderComponent implements OnInit {
 
   // Usar el servicio para obtener el usuario actual
   user = computed(() => this.userService.user());
-  
-  // Computed para obtener las notificaciones 
-  notifications = computed(() => 3);
 
   // Getter para verificar si hay usuario logueado
   get isUserLoggedIn(): boolean {

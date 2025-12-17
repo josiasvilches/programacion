@@ -74,6 +74,7 @@ def create_app():
     api.add_resource(resources.UsuarioResource, '/usuario/<id>')
     api.add_resource(resources.NotificacionesResource, '/notificaciones')
     api.add_resource(resources.ValoracionResource, '/valoraciones/<id>', '/valoraciones')
+    api.add_resource(resources.VerificarCompraProductoResource, '/valoraciones/verificar-compra/<int:id_producto>/<int:id_usuario>')
     api.add_resource(resources.PedidosResource, '/pedidos')
     api.add_resource(resources.PedidoResource, '/pedido/<id>')
     api.add_resource(resources.PedidosUsuarioResource, '/pedidos/usuario/<int:id_usuario>')
