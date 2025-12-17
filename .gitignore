@@ -227,3 +227,6 @@ frontend/.history/
 # Generated files
 **/generated/
 **/auto-generated/
+
+
+backend/DB/grupof.db
