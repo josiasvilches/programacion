@@ -6,6 +6,7 @@ from .pedidos import Pedidos as PedidosResource
 from .pedidos import PedidosUsuario as PedidosUsuarioResource
 from .productos import Producto as ProductoResource
 from .productos import Productos as ProductosResource
+from .productos import ProductoValoraciones as ProductoValoracionesResource
 from .usuarios import Usuario as UsuarioResource
 from .usuarios import Usuarios as UsuariosResource
 from .valoraciones import Valoracion as ValoracionResource

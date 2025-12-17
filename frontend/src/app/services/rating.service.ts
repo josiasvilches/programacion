@@ -152,4 +152,39 @@ export class RatingService {
       };
     }
   }
+
+  /**
+   * Obtener todas las valoraciones de un producto
+   */
+  async getProductRatings(productId: number): Promise<{ success: boolean; message: string; data?: any }> {
+    try {
+      const response = await fetch(
+        `${this.apiUrl}/productos/${productId}/valoraciones`,
+        {
+          method: 'GET'
+        }
+      );
+
+      if (!response.ok) {
+        return {
+          success: false,
+          message: 'Error al obtener valoraciones'
+        };
+      }
+
+      const data = await response.json();
+      return {
+        success: true,
+        message: 'Valoraciones obtenidas exitosamente',
+        data: data
+      };
+
+    } catch (error) {
+      console.error('Error al obtener valoraciones del producto:', error);
+      return {
+        success: false,
+        message: 'Error de conexión'
+      };
+    }
+  }
 }

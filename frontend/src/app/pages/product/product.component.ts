@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { CartService } from '../../services/cart.service';
+import { RatingService } from '../../services/rating.service';
 import { Product } from '../../models/product.interface';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
@@ -34,6 +35,7 @@ export class ProductComponent implements OnInit {
   private router = inject(Router);
   private productService = inject(ProductService);
   private cartService = inject(CartService);
+  private ratingService = inject(RatingService);
 
   // Signals
   currentProduct = signal<ProductDetails | null>(null);
@@ -41,6 +43,10 @@ export class ProductComponent implements OnInit {
   quantity = signal<number>(1);
   isLoading = signal<boolean>(true);
   showSuccessModal = signal<boolean>(false);
+  productRatings = signal<any[]>([]);
+  ratingsLoading = signal<boolean>(false);
+  averageRating = signal<number>(0);
+  totalRatings = signal<number>(0);
 
   // Computed values
   totalPrice = computed(() => {
@@ -121,6 +127,7 @@ export class ProductComponent implements OnInit {
         
         this.currentProduct.set(mappedProduct);
         this.loadRelatedProducts(mappedProduct.category);
+        this.loadProductRatings(id);
         this.isLoading.set(false);
       },
       error: (error: any) => {
@@ -270,5 +277,49 @@ export class ProductComponent implements OnInit {
       console.warn('Error al cargar imagen del producto:', product.imageUrl);
       imgElement.style.display = 'none';
     }
+  }
+
+  private async loadProductRatings(productId: number): Promise<void> {
+    this.ratingsLoading.set(true);
+    console.log('Cargando valoraciones para producto:', productId);
+    
+    try {
+      const result = await this.ratingService.getProductRatings(productId);
+      console.log('Resultado completo de valoraciones:', result);
+      
+      if (result.success && result.data) {
+        console.log('Datos de valoraciones:', result.data);
+        const ratings = result.data.valoraciones || [];
+        console.log('Valoraciones extraídas:', ratings);
+        
+        this.productRatings.set(ratings);
+        this.totalRatings.set(ratings.length);
+        
+        // Calcular promedio de valoraciones
+        if (ratings.length > 0) {
+          const sum = ratings.reduce((acc: number, r: any) => acc + parseFloat(r.valoracion), 0);
+          this.averageRating.set(sum / ratings.length);
+        } else {
+          this.averageRating.set(0);
+        }
+      } else {
+        console.log('No se encontraron valoraciones o error:', result.message);
+      }
+    } catch (error) {
+      console.error('Error al cargar valoraciones:', error);
+    } finally {
+      this.ratingsLoading.set(false);
+    }
+  }
+
+  getStarsArray(rating: number): boolean[] {
+    return Array.from({ length: 5 }, (_, i) => i < Math.floor(rating));
+  }
+
+  getInitials(userName: string): string {
+    if (!userName) return 'U';
+    const words = userName.trim().split(' ');
+    if (words.length === 1) return words[0].charAt(0).toUpperCase();
+    return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase();
   }
 }

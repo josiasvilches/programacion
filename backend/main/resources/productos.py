@@ -207,3 +207,55 @@ class Producto(Resource):
             db.session.rollback()
             print("ERROR:", str(e))
             return {"mensaje": f"Error al eliminar el producto: {str(e)}"}, 500
+
+
+class ProductoValoraciones(Resource):
+    """
+    Obtener todas las valoraciones de un producto específico
+    """
+    def get(self, id):
+        try:
+            from main.models import ValoracionModel, UsuarioModel
+            
+            # Verificar que el producto existe
+            producto = ProductoModel.query.get(id)
+            if producto is None:
+                return {"mensaje": "Producto no encontrado"}, 404
+            
+            # Obtener valoraciones del producto con información del usuario
+            valoraciones = db.session.query(
+                ValoracionModel,
+                UsuarioModel.nombre
+            ).join(
+                UsuarioModel,
+                ValoracionModel.id_usuario == UsuarioModel.usuario_id
+            ).filter(
+                ValoracionModel.id_producto == id
+            ).order_by(
+                ValoracionModel.valoracion_id.desc()
+            ).all()
+            
+            # Formatear respuesta
+            valoraciones_json = []
+            for valoracion, nombre in valoraciones:
+                val_dict = valoracion.to_json()
+                val_dict['nombre_usuario'] = nombre
+                valoraciones_json.append(val_dict)
+            
+            # Calcular promedio
+            promedio = 0
+            if valoraciones_json:
+                suma = sum(v['valoracion'] for v in valoraciones_json)
+                promedio = round(suma / len(valoraciones_json), 2)
+            
+            return {
+                'valoraciones': valoraciones_json,
+                'total': len(valoraciones_json),
+                'promedio': promedio
+            }, 200
+            
+        except Exception as e:
+            import traceback
+            print("ERROR:", str(e))
+            print("TRACEBACK:", traceback.format_exc())
+            return {'error': str(e)}, 500

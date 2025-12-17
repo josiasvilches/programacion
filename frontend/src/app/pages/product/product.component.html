@@ -196,6 +196,89 @@
           </div>
         </div>
 
+        <!-- Product Reviews Section -->
+        <div class="fade-in mb-16">
+          <div class="flex items-center justify-between mb-8">
+            <h2 class="text-2xl font-bold text-gray-800">Valoraciones de Clientes</h2>
+            @if (totalRatings() > 0) {
+              <div class="flex items-center space-x-3">
+                <div class="flex items-center">
+                  @for (filled of getStarsArray(averageRating()); track $index) {
+                    <span [class.text-yellow-400]="filled" [class.text-gray-300]="!filled" class="text-2xl">★</span>
+                  }
+                </div>
+                <div class="text-right">
+                  <div class="text-2xl font-bold text-gray-800">{{ averageRating().toFixed(1) }}</div>
+                  <div class="text-sm text-gray-600">{{ totalRatings() }} valoraciones</div>
+                </div>
+              </div>
+            }
+          </div>
+
+          @if (ratingsLoading()) {
+            <!-- Loading State -->
+            <div class="space-y-4">
+              @for (item of [1,2,3]; track $index) {
+                <div class="bg-white rounded-xl p-6 shadow-sm animate-pulse">
+                  <div class="flex items-start space-x-4">
+                    <div class="w-12 h-12 bg-gray-200 rounded-full"></div>
+                    <div class="flex-1 space-y-3">
+                      <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+                      <div class="h-3 bg-gray-200 rounded w-full"></div>
+                      <div class="h-3 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else if (productRatings().length > 0) {
+            <!-- Reviews List -->
+            <div class="space-y-4">
+              @for (rating of productRatings(); track rating.valoracion_id) {
+                <div class="bg-white rounded-xl p-6 shadow-sm hover-lift smooth-transition">
+                  <div class="flex items-start space-x-4">
+                    <!-- User Avatar -->
+                    <div class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                      {{ getInitials(rating.nombre_usuario || 'Usuario') }}
+                    </div>
+                    
+                    <!-- Review Content -->
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-semibold text-gray-800">{{ rating.nombre_usuario || 'Usuario Anónimo' }}</h4>
+                        <div class="flex items-center">
+                          @for (filled of getStarsArray(rating.valoracion); track $index) {
+                            <span [class.text-yellow-400]="filled" [class.text-gray-300]="!filled" class="text-lg">★</span>
+                          }
+                        </div>
+                      </div>
+                      
+                      @if (rating.comentario) {
+                        <p class="text-gray-600 leading-relaxed">{{ rating.comentario }}</p>
+                      } @else {
+                        <p class="text-gray-400 italic">Sin comentarios</p>
+                      }
+                      
+                      @if (rating.fecha_valoracion) {
+                        <p class="text-xs text-gray-400 mt-2">{{ rating.fecha_valoracion | date: 'dd/MM/yyyy' }}</p>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <!-- No Reviews State -->
+            <div class="bg-white rounded-xl p-12 text-center shadow-sm">
+              <div class="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <span class="text-3xl">⭐</span>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-800 mb-2">Aún no hay valoraciones</h3>
+              <p class="text-gray-600">Sé el primero en valorar este producto</p>
+            </div>
+          }
+        </div>
+
         <!-- Related Products -->
         @if (relatedProducts().length > 0) {
           <div class="fade-in">

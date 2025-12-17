@@ -70,6 +70,7 @@ def create_app():
 
     api.add_resource(resources.ProductosResource, '/productos')
     api.add_resource(resources.ProductoResource, '/producto/<id>')
+    api.add_resource(resources.ProductoValoracionesResource, '/productos/<int:id>/valoraciones')
     api.add_resource(resources.UsuariosResource, '/usuarios')
     api.add_resource(resources.UsuarioResource, '/usuario/<id>')
     api.add_resource(resources.NotificacionesResource, '/notificaciones')
