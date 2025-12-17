@@ -577,4 +577,76 @@ export class UserService {
       };
     }
   }
+
+  // Actualizar usuario y refrescar token (similar a login)
+  async updateUserAndRefreshToken(
+    userId: number,
+    userData: {
+      nombre?: string;
+      email?: string;
+      numero?: string;
+      rol?: string;
+      estado?: string;
+      password?: string;
+    },
+    token?: string
+  ): Promise<{ success: boolean; data?: any; message: string }> {
+    try {
+      const url = `${this.apiUrl}/usuario/${userId}`;
+      console.log('Actualizando usuario y refrescando token:', { userId, userData });
+
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: headers,
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return {
+          success: false,
+          message: errorData.mensaje || 'Error al actualizar el usuario',
+        };
+      }
+
+      const data = await response.json();
+      console.log('Respuesta del backend:', data);
+
+      // Si el backend devuelve tokens, actualizarlos (igual que en login)
+      if (data.access_token && data.refresh_token) {
+        // Guardar los nuevos tokens en localStorage
+        this.storeTokens(data.access_token, data.refresh_token);
+
+        // Guardar datos adicionales del usuario
+        this.storeUserData(data);
+
+        // Actualizar el usuario en el signal
+        const updatedUser = this.extractUserFromToken(data);
+        this.currentUser.set(updatedUser);
+        this.isAuthenticated.set(true);
+
+        console.log('Usuario actualizado y tokens refrescados:', updatedUser);
+      }
+
+      return {
+        success: true,
+        data: data,
+        message: data.mensaje || 'Usuario actualizado exitosamente',
+      };
+    } catch (error) {
+      console.error('Error al actualizar usuario:', error);
+      return {
+        success: false,
+        message: 'Error de conexión con el servidor',
+      };
+    }
+  }
 }

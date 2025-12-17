@@ -330,24 +330,19 @@ export class UserComponent implements OnInit {
       return;
     }
 
-    // Construir payload - SIEMPRE enviar todos los campos del formulario
+    // Construir payload - El backend espera ciertos nombres de campo
     const formValues = this.profileForm.value;
     const payload: any = {};
-    
-    // Siempre incluir los campos básicos si están en el formulario
-    if (formValues.fullName) payload.fullName = formValues.fullName;
+
+    // Mapear campos del formulario al formato del backend
+    if (formValues.fullName) payload.nombre = formValues.fullName; // Backend espera "nombre"
     if (formValues.email) payload.email = formValues.email;
-    if (formValues.phone) payload.numero = formValues.phone; // El backend espera "numero"
+    if (formValues.phone) payload.numero = formValues.phone; // Backend espera "numero"
     if (newPassword) payload.password = newPassword;
 
     console.log('Datos del formulario:', formValues);
     console.log('Usuario actual:', currentUser);
     console.log('Payload a enviar:', payload);
-    console.log('Comparación phone:', {
-      form: formValues.phone,
-      current: currentUser.phone,
-      diferentes: formValues.phone !== currentUser.phone
-    });
 
     // Si no hay campos en el payload, salir
     if (Object.keys(payload).length === 0) {
@@ -361,50 +356,31 @@ export class UserComponent implements OnInit {
       const token = this.userService.getAuthToken();
       // Usar usuario_id si está disponible, sino id
       const userId = ((currentUser as any).usuario_id) ?? currentUser.id;
-      const url = `http://localhost:5001/usuario/${userId}`;
 
-      console.log('Enviando petición PUT a:', url);
+      console.log('Actualizando usuario:', userId);
       console.log('Token presente:', !!token);
       console.log('Payload:', payload);
 
-      const res = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-        },
-        body: JSON.stringify(payload)
-      });
+      // Usar el nuevo método que guarda automáticamente los tokens
+      const result = await this.userService.updateUserAndRefreshToken(
+        userId,
+        payload,
+        token || undefined
+      );
 
-      console.log('Respuesta status:', res.status);
-
-      if (!res.ok) {
-        let errorMsg = 'Error al actualizar el usuario.';
-        try {
-          const err = await res.json();
-          console.error('Error del servidor:', err);
-          errorMsg = err.message || err.mensaje || errorMsg;
-        } catch (_) {}
-        alert(errorMsg);
+      if (!result.success) {
+        alert(result.message);
         return;
       }
 
-      const data = await res.json();
-
-      // Actualizar el usuario en el frontend
-  const updatedFields: any = {};
-  if (payload.fullName) updatedFields.fullName = payload.fullName;
-  if (payload.email) updatedFields.email = payload.email;
-  // mapear "numero" del backend a la propiedad "phone" del frontend
-  if (payload.numero) updatedFields.phone = payload.numero;
-
-      this.userService.updateUser(updatedFields);
+      // El método updateUserAndRefreshToken ya actualizó los tokens y el usuario automáticamente
+      console.log('Perfil actualizado exitosamente');
 
       this.isEditing.set(false);
       this.profileForm.disable();
       this.passwordForm.reset();
 
-      alert(data.message || data.mensaje || 'Perfil actualizado correctamente!');
+      alert(result.message || 'Perfil actualizado correctamente!');
     } catch (error) {
       console.error('Error guardando perfil:', error);
       alert('Error de conexión. Verificá tu red y volvé a intentar.');

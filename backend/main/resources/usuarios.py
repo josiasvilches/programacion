@@ -2,7 +2,7 @@ from flask_restful import Resource
 from flask import request, jsonify
 from main.models import UsuarioModel
 from .. import db
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt, create_access_token, create_refresh_token
 from main.auth.decorators import role_required
 
 # Recurso para lista de usuarios
@@ -131,7 +131,25 @@ class Usuario(Resource):
                 usuario.plain_password = data['password']
 
             db.session.commit()
-            return usuario.to_json_complete(), 200
+            print("Usuario actualizado:", usuario)
+
+            # Crear nuevos tokens con los datos actualizados del usuario (mismo formato que login)
+            identity_payload = {
+                'usuario_id': usuario.usuario_id,
+                'rol': usuario.rol,
+                'nombre': usuario.nombre,
+                'email': usuario.email
+            }
+            access_token = create_access_token(identity=identity_payload)
+            refresh_token = create_refresh_token(identity=identity_payload)
+
+            return {
+                'usuario': usuario.to_json_complete(),
+                'access_token': access_token,
+                'refresh_token': refresh_token,
+                'rol': usuario.rol,
+                'mensaje': 'Usuario actualizado exitosamente'
+            }, 200
 
         except Exception as e:
             db.session.rollback()
