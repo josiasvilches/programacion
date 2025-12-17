@@ -13,17 +13,6 @@ interface UserProfile {
   initials: string;
   role: string;
   status: string;
-  memberSince: string;
-  lastAccess: string;
-  ordersCount: number;
-  isHighlighted: boolean;
-}
-
-interface UserStats {
-  memberSince: string;
-  lastAccess: string;
-  ordersCount: number;
-  isHighlighted: boolean;
 }
 
 @Component({
@@ -55,11 +44,7 @@ export class UserComponent implements OnInit {
       phone: user.phone,
       initials: user.initials,
       role: user.role,
-      status: user.status,
-      memberSince: '15 de Noviembre, 2023',
-      lastAccess: 'Hace 2 horas',
-      ordersCount: 12,
-      isHighlighted: true
+      status: user.status
     };
   });
 
@@ -72,13 +57,13 @@ export class UserComponent implements OnInit {
     this.profileForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required, Validators.pattern(/^[\+]?[0-9\s\-\(\)]{10,15}$/)]]
+      phone: ['', [Validators.required, Validators.pattern(/^[\+]?[0-9\s\-\(\)]{9,15}$/)]]
     });
 
     this.passwordForm = this.fb.group({
-      currentPassword: ['', [Validators.required]],
-      newPassword: ['', [Validators.required]],
-      confirmPassword: ['', [Validators.required]]
+      currentPassword: [''],
+      newPassword: [''],
+      confirmPassword: ['']
     }, { validators: this.passwordMatchValidator });
 
     // Deshabilitar formulario inicialmente
@@ -101,11 +86,13 @@ export class UserComponent implements OnInit {
     const currentUser = this.userService.getCurrentUser();
     if (!currentUser) return;
 
-  const token = this.userService.getAuthToken();
-  // currentUser viene tipado como User en el frontend y puede no tener "usuario_id";
-  // acceder con any para mantener compatibilidad con el backend que usa usuario_id
-  const userId = ((currentUser as any).usuario_id) ?? currentUser.id;
-  const url = `http://localhost:5001/usuario/${userId}`;
+    const token = this.userService.getAuthToken();
+    // currentUser viene tipado como User en el frontend y puede no tener "usuario_id";
+    // acceder con any para mantener compatibilidad con el backend que usa usuario_id
+    const userId = ((currentUser as any).usuario_id) ?? currentUser.id;
+    const url = `http://localhost:5001/usuario/${userId}`;
+
+    console.log('Cargando perfil completo:', { userId, token: !!token });
 
     try {
       const res = await fetch(url, {
@@ -123,6 +110,8 @@ export class UserComponent implements OnInit {
       }
 
       const data = await res.json();
+      console.log('Datos recibidos del backend:', data);
+      
       // El backend devuelve campos en español: 'nombre', 'email', 'numero', 'rol', 'estado'
       const updated: any = {};
       if (data.nombre) updated.fullName = data.nombre;
@@ -130,6 +119,8 @@ export class UserComponent implements OnInit {
       if (data.numero !== undefined && data.numero !== null) updated.phone = String(data.numero);
       if (data.rol) updated.role = data.rol === 'cliente' ? 'USER' : (data.rol || undefined);
       if (data.estado) updated.status = data.estado;
+
+      console.log('Datos actualizados para el frontend:', updated);
 
       // Actualizar UserService para que el resto de la app vea los datos completos
       this.userService.updateUser(updated);
@@ -140,6 +131,8 @@ export class UserComponent implements OnInit {
         email: updated.email || this.profileForm.get('email')?.value,
         phone: updated.phone || this.profileForm.get('phone')?.value
       });
+      
+      console.log('Formulario actualizado con valores:', this.profileForm.value);
     } catch (error) {
       console.error('Error cargando perfil completo:', error);
     }
@@ -188,25 +181,30 @@ export class UserComponent implements OnInit {
 
   currentPasswordError = computed(() => {
     const control = this.passwordForm.get('currentPassword');
-    if (control?.touched && control?.errors?.['required']) {
-      return 'La contraseña actual es requerida';
+    const newPassword = this.passwordForm.get('newPassword')?.value;
+    // Solo mostrar error si está intentando cambiar la contraseña
+    if (newPassword && control?.touched && !control?.value) {
+      return 'La contraseña actual es requerida para cambiarla';
     }
     return null;
   });
 
   newPasswordError = computed(() => {
     const control = this.passwordForm.get('newPassword');
-    if (control?.touched && control?.errors) {
-      if (control.errors['required']) return 'La nueva contraseña es requerida';
+    const currentPassword = this.passwordForm.get('currentPassword')?.value;
+    // Solo mostrar error si ingresó la contraseña actual
+    if (currentPassword && control?.touched && !control?.value) {
+      return 'La nueva contraseña es requerida';
     }
     return null;
   });
 
   confirmPasswordError = computed(() => {
     const control = this.passwordForm.get('confirmPassword');
-    if (control?.touched && control?.errors) {
-      if (control.errors['required']) return 'Confirmá tu nueva contraseña';
-      if (control.errors['passwordMismatch']) return 'Las contraseñas no coinciden';
+    const newPassword = this.passwordForm.get('newPassword')?.value;
+    if (newPassword && control?.touched) {
+      if (!control?.value) return 'Confirmá tu nueva contraseña';
+      if (control.errors?.['passwordMismatch']) return 'Las contraseñas no coinciden';
     }
     return null;
   });
@@ -281,16 +279,49 @@ export class UserComponent implements OnInit {
 
   // Método para guardar perfil -> realiza una petición al backend
   async saveProfile() {
+    console.log('Estado del formulario:', {
+      valid: this.profileForm.valid,
+      invalid: this.profileForm.invalid,
+      values: this.profileForm.value,
+      errors: this.profileForm.errors
+    });
+    
     if (this.profileForm.invalid) {
+      console.error('Formulario inválido. Errores por campo:');
+      Object.keys(this.profileForm.controls).forEach(key => {
+        const control = this.profileForm.get(key);
+        if (control?.errors) {
+          console.error(`Campo ${key}:`, control.errors);
+        }
+      });
       this.profileForm.markAllAsTouched();
+      alert('Por favor completá todos los campos requeridos correctamente');
       return;
     }
 
-    // Validar contraseña solo si se está cambiando
+    // Validar contraseña SOLO si el usuario quiere cambiarla
     const newPassword = this.passwordForm.get('newPassword')?.value;
-    if (newPassword && this.passwordForm.invalid) {
-      this.passwordForm.markAllAsTouched();
-      return;
+    const currentPassword = this.passwordForm.get('currentPassword')?.value;
+    const confirmPassword = this.passwordForm.get('confirmPassword')?.value;
+    
+    if (newPassword || currentPassword || confirmPassword) {
+      // Si ingresó algo en contraseñas, validar que estén completos todos los campos
+      if (!currentPassword) {
+        alert('Debés ingresar tu contraseña actual para cambiarla');
+        return;
+      }
+      if (!newPassword) {
+        alert('Debés ingresar una nueva contraseña');
+        return;
+      }
+      if (!confirmPassword) {
+        alert('Debés confirmar tu nueva contraseña');
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        alert('Las contraseñas no coinciden');
+        return;
+      }
     }
 
     const currentUser = this.userService.getCurrentUser();
@@ -299,20 +330,28 @@ export class UserComponent implements OnInit {
       return;
     }
 
-    // Construir payload con sólo los campos que cambiaron
+    // Construir payload - SIEMPRE enviar todos los campos del formulario
     const formValues = this.profileForm.value;
     const payload: any = {};
-  if (formValues.fullName !== currentUser.fullName) payload.fullName = formValues.fullName;
-  if (formValues.email !== currentUser.email) payload.email = formValues.email;
-  // El backend espera el campo "numero" para el teléfono
-  if (formValues.phone !== currentUser.phone) payload.numero = formValues.phone;
+    
+    // Siempre incluir los campos básicos si están en el formulario
+    if (formValues.fullName) payload.fullName = formValues.fullName;
+    if (formValues.email) payload.email = formValues.email;
+    if (formValues.phone) payload.numero = formValues.phone; // El backend espera "numero"
     if (newPassword) payload.password = newPassword;
 
-    // Si no hay cambios, salir
+    console.log('Datos del formulario:', formValues);
+    console.log('Usuario actual:', currentUser);
+    console.log('Payload a enviar:', payload);
+    console.log('Comparación phone:', {
+      form: formValues.phone,
+      current: currentUser.phone,
+      diferentes: formValues.phone !== currentUser.phone
+    });
+
+    // Si no hay campos en el payload, salir
     if (Object.keys(payload).length === 0) {
-      // No hay cambios, cerrar edición
-      this.isEditing.set(false);
-      this.profileForm.disable();
+      alert('No hay datos para guardar');
       return;
     }
 
@@ -320,7 +359,13 @@ export class UserComponent implements OnInit {
 
     try {
       const token = this.userService.getAuthToken();
-      const url = `http://localhost:5001/usuario/${currentUser.id}`;
+      // Usar usuario_id si está disponible, sino id
+      const userId = ((currentUser as any).usuario_id) ?? currentUser.id;
+      const url = `http://localhost:5001/usuario/${userId}`;
+
+      console.log('Enviando petición PUT a:', url);
+      console.log('Token presente:', !!token);
+      console.log('Payload:', payload);
 
       const res = await fetch(url, {
         method: 'PUT',
@@ -331,10 +376,13 @@ export class UserComponent implements OnInit {
         body: JSON.stringify(payload)
       });
 
+      console.log('Respuesta status:', res.status);
+
       if (!res.ok) {
         let errorMsg = 'Error al actualizar el usuario.';
         try {
           const err = await res.json();
+          console.error('Error del servidor:', err);
           errorMsg = err.message || err.mensaje || errorMsg;
         } catch (_) {}
         alert(errorMsg);
