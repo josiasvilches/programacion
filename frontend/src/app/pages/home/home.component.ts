@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
@@ -50,7 +50,8 @@ export class HomeComponent implements OnInit {
     private router: Router, 
     private route: ActivatedRoute,
     private productService: ProductService,
-    private ratingService: RatingService
+    private ratingService: RatingService,
+    private cdr: ChangeDetectorRef
   ) {}
   
   ngOnInit() {
@@ -105,6 +106,7 @@ export class HomeComponent implements OnInit {
   async loadTestimonials() {
     try {
       this.isLoadingTestimonials = true;
+      this.cdr.detectChanges(); // Forzar detección de cambios para mostrar el skeleton
       
       const result = await this.ratingService.getRecentRatings(3);
       
@@ -127,6 +129,7 @@ export class HomeComponent implements OnInit {
       this.testimonials = [];
     } finally {
       this.isLoadingTestimonials = false;
+      this.cdr.detectChanges(); // Forzar detección de cambios después de cargar
     }
   }
 
