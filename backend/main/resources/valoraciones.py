@@ -38,7 +38,7 @@ class Valoracion(Resource):
             ).filter(
                 PedidoModel.id_cliente == valoracion['id_usuario'],
                 PedidoProductoModel.id_producto == valoracion['id_producto'],
-                PedidoModel.estado_pedido.in_(['entregado', 'completado'])
+                PedidoModel.estado_pedido.in_(['entregado'])
             ).first()
 
             if not pedido_con_producto:
@@ -57,9 +57,6 @@ class Valoracion(Resource):
 
 
 class ValoracionesRecientes(Resource):
-    """
-    Obtener las últimas N valoraciones con información del usuario y producto
-    """
     def get(self):
         try:
             from main.models import UsuarioModel, ProductoModel
@@ -111,7 +108,7 @@ class VerificarCompraProducto(Resource):
             ).filter(
                 PedidoModel.id_cliente == id_usuario,
                 PedidoProductoModel.id_producto == id_producto,
-                PedidoModel.estado_pedido.in_(['entregado', 'completado'])
+                PedidoModel.estado_pedido.in_(['entregado'])
             ).first()
 
             if not pedido_con_producto:
