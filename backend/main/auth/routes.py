@@ -98,7 +98,7 @@ def login():
                 'estado': usuario.estado
             }, 403
 
-        # Crear token de acceso: usar un identity consistente (dict)
+        # Crear token de acceso
         identity_payload = {
             'usuario_id': usuario.usuario_id,
             'rol': usuario.rol,

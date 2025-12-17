@@ -61,7 +61,7 @@ def add_claims_to_access_token(usuario):
 
 @jwt.expired_token_loader
 def expired_token_callback(jwt_header, jwt_payload):
-    # Timestamp de expiración del token (campo 'exp' en JWT)
+    # Timestamp de expiración del token
     exp_ts = jwt_payload.get('exp')
     print(f"Token expirado. Exp claim: {exp_ts}")
     # Timestamp actual del servidor
