@@ -3,6 +3,7 @@ import { CartItem } from '../models/product.interface';
 import { environment } from '../../environments/environment';
 
 export interface OrderItem {
+  id?: number; // ID del producto para valoraciones
   name: string;
   quantity: number;
   price: number;

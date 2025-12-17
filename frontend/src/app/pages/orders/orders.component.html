@@ -337,6 +337,32 @@
           </div>
           }
 
+          <!-- Rating Section - Only for delivered orders -->
+          @if (order.status === 'delivered') {
+          <div class="border-t border-gray-200 pt-6">
+            <h5 class="font-semibold text-gray-800 mb-4">Valorar Productos</h5>
+            <p class="text-sm text-gray-600 mb-4">¿Te gustó tu pedido? Ayuda a otros clientes valorando los productos.</p>
+            <div class="space-y-3">
+              @for (item of order.items; track $index) {
+              @if (item.id) {
+              <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 smooth-transition">
+                <div>
+                  <p class="font-medium text-gray-800">{{ item.name }}</p>
+                  <p class="text-sm text-gray-500">x{{ item.quantity }}</p>
+                </div>
+                <button
+                  (click)="openRatingModal(item.id, item.name)"
+                  class="px-4 py-2 bg-yellow-400 text-gray-800 rounded-lg hover:bg-yellow-500 smooth-transition text-sm font-medium"
+                >
+                  Valorar
+                </button>
+              </div>
+              }
+              }
+            </div>
+          </div>
+          }
+
           <div class="border-t border-gray-200 pt-6 flex space-x-3">
             @if (order.status === 'pending') {
             <button
@@ -367,5 +393,115 @@
     </div>
   </div>
   }
+
+  <!-- Rating Modal -->
+  @if (isRatingModalOpen()) {
+  <div class="fixed inset-0 bg-black bg-opacity-50 z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+      <div class="bg-white rounded-2xl p-8 max-w-md w-full">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-2xl font-bold text-gray-800">Valorar Producto</h3>
+          <button
+            (click)="closeRatingModal()"
+            class="text-gray-400 hover:text-gray-600 smooth-transition"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
+
+        @if (selectedProductForRating(); as product) {
+        <div class="space-y-6">
+          <div class="text-center">
+            <p class="text-lg font-semibold text-gray-800 mb-2">{{ product.name }}</p>
+            <p class="text-sm text-gray-600">¿Cómo calificarías este producto?</p>
+          </div>
+
+          <!-- Star Rating -->
+          <div class="flex justify-center space-x-2">
+            @for (star of getStarArray(); track star) {
+            <button
+              (click)="setRating(star)"
+              class="text-4xl smooth-transition hover:scale-110"
+              [class.text-yellow-400]="star <= ratingValue()"
+              [class.text-gray-300]="star > ratingValue()"
+            >
+              ★
+            </button>
+            }
+          </div>
+
+          @if (ratingValue() > 0) {
+          <div class="text-center">
+            <p class="text-lg font-semibold text-gray-700">
+              @if (ratingValue() === 1) { Muy malo }
+              @else if (ratingValue() === 2) { Malo }
+              @else if (ratingValue() === 3) { Regular }
+              @else if (ratingValue() === 4) { Bueno }
+              @else if (ratingValue() === 5) { Excelente }
+            </p>
+          </div>
+          }
+
+          <!-- Comment Section -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Comentario (opcional)
+            </label>
+            <textarea
+              [value]="ratingComment()"
+              (input)="onCommentChange($event)"
+              placeholder="Cuéntanos tu experiencia con este producto..."
+              maxlength="200"
+              rows="3"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 resize-none smooth-transition"
+            ></textarea>
+            <p class="text-xs text-gray-500 mt-1 text-right">
+              {{ ratingComment().length }}/200 caracteres
+            </p>
+          </div>
+
+          <!-- Message -->
+          @if (ratingMessage()) {
+          <div class="p-4 rounded-lg"
+               [class.bg-green-50]="ratingMessage().includes('Gracias')"
+               [class.bg-red-50]="!ratingMessage().includes('Gracias')">
+            <p class="text-center"
+               [class.text-green-700]="ratingMessage().includes('Gracias')"
+               [class.text-red-700]="!ratingMessage().includes('Gracias')">
+              {{ ratingMessage() }}
+            </p>
+          </div>
+          }
+
+          <!-- Actions -->
+          <div class="flex space-x-3">
+            <button
+              (click)="closeRatingModal()"
+              class="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg hover:bg-gray-300 smooth-transition font-medium"
+            >
+              Cancelar
+            </button>
+            <button
+              (click)="submitRating()"
+              [disabled]="ratingValue() === 0"
+              class="flex-1 bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 smooth-transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Enviar Valoración
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  }
+
   <app-footer></app-footer>
 </div>

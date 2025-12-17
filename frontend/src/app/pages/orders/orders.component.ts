@@ -6,6 +6,7 @@ import { OrderService, Order } from '../../services/order.service';
 import { UserService } from '../../services/user.service';
 import { CartService } from '../../services/cart.service';
 import { ProductService } from '../../services/product.service';
+import { RatingService } from '../../services/rating.service';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 
@@ -43,11 +44,19 @@ export class OrdersComponent implements OnInit {
   
   resultsCount = computed(() => this.filteredOrders().length);
 
+  // Rating signals
+  selectedProductForRating = signal<{ id: number; name: string } | null>(null);
+  ratingValue = signal<number>(0);
+  ratingComment = signal<string>('');
+  isRatingModalOpen = signal<boolean>(false);
+  ratingMessage = signal<string>('');
+
   constructor(
     private orderService: OrderService,
     private userService: UserService,
     private cartService: CartService,
     private productService: ProductService,
+    private ratingService: RatingService,
     private router: Router
   ) {}
 
@@ -129,6 +138,7 @@ export class OrdersComponent implements OnInit {
         status: statusMap[order.estado_pedido] || 'pending',
         total: parseFloat(order.total),
         items: order.producto.map((p: any) => ({
+          id: p.id_producto, // Agregar ID del producto para valoraciones
           name: p.nombre_producto || `Producto ${p.id_producto}`,
           quantity: p.cantidad,
           price: parseFloat(p.precio_unitario)
@@ -394,4 +404,71 @@ export class OrdersComponent implements OnInit {
   continueShopping() {
     this.router.navigate(['/']);
   }
+
+  // Rating methods
+  openRatingModal(productId: number, productName: string) {
+    this.selectedProductForRating.set({ id: productId, name: productName });
+    this.ratingValue.set(0);
+    this.ratingComment.set('');
+    this.ratingMessage.set('');
+    this.isRatingModalOpen.set(true);
+  }
+
+  closeRatingModal() {
+    this.isRatingModalOpen.set(false);
+    this.selectedProductForRating.set(null);
+    this.ratingValue.set(0);
+    this.ratingComment.set('');
+    this.ratingMessage.set('');
+  }
+
+  setRating(rating: number) {
+    this.ratingValue.set(rating);
+  }
+
+  async submitRating() {
+    const currentUser = this.userService.getCurrentUser();
+    const product = this.selectedProductForRating();
+    const rating = this.ratingValue();
+
+    if (!currentUser || !product || rating === 0) {
+      this.ratingMessage.set('Por favor selecciona una calificación');
+      return;
+    }
+
+    // Verificar si puede valorar el producto
+    const verification = await this.ratingService.canRateProduct(product.id, currentUser.id);
+
+    if (!verification.puede_valorar) {
+      this.ratingMessage.set(verification.mensaje);
+      return;
+    }
+
+    // Crear la valoración
+    const result = await this.ratingService.createRating({
+      valoracion: rating,
+      id_usuario: currentUser.id,
+      id_producto: product.id,
+      comentario: this.ratingComment().trim() || undefined
+    });
+
+    if (result.success) {
+      this.ratingMessage.set('¡Gracias por tu valoración!');
+      setTimeout(() => {
+        this.closeRatingModal();
+      }, 2000);
+    } else {
+      this.ratingMessage.set(result.message);
+    }
+  }
+
+  getStarArray(): number[] {
+    return [1, 2, 3, 4, 5];
+  }
+
+  onCommentChange(event: Event) {
+    const target = event.target as HTMLTextAreaElement;
+    this.ratingComment.set(target.value);
+  }
 }
+
