@@ -3,7 +3,8 @@ from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, verify_jwt_in_request
 from main.auth.decorators import role_required
 from .. import db
-from main.models import ProductoModel as ProductoModel, UsuarioModel as UsuarioModel, CategoriaModel
+from main.models import ProductoModel as ProductoModel, UsuarioModel as UsuarioModel, CategoriaModel, ValoracionModel
+from sqlalchemy import func
 
 class Productos(Resource):
     def get(self):
@@ -46,6 +47,12 @@ class Productos(Resource):
                 id_cat = request.args.get('id_categoria')
                 print(f"Filtrando por id_categoria: {id_cat}")
                 productos = productos.filter(ProductoModel.id_categoria == int(id_cat))
+
+            # Ordenar por valoración promedio descendente (mayor a menor)
+            # Calculamos el promedio de valoraciones para cada producto
+            productos = productos.outerjoin(ValoracionModel, ProductoModel.producto_id == ValoracionModel.id_producto)
+            productos = productos.group_by(ProductoModel.producto_id)
+            productos = productos.order_by(func.coalesce(func.avg(ValoracionModel.valoracion), 0).desc())
 
             print(f"Paginando: page={page}, per_page={per_page}")
             productos = productos.paginate(page=page, per_page=per_page, error_out=False)
