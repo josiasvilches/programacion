@@ -42,7 +42,7 @@ def user_identity_lookup(usuario):
 
 # define qué atributos se guardarán en el token JWT
 @jwt.additional_claims_loader
-def add_claims_to_access_token(usuario):
+def add_claims_to_access_token(usuario): 
     # Aceptar tanto dict como objeto modelo
     try:
         if isinstance(usuario, dict):
