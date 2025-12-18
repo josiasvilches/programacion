@@ -91,7 +91,6 @@ export class AdminHeaderComponent implements OnInit, OnDestroy {
     });
     this.currentTime.set(timeString);
   }
-  }
 
   toggleUserDropdown() {
     this.isUserDropdownOpen = !this.isUserDropdownOpen;
