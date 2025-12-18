@@ -74,7 +74,7 @@ export class AdminUsersComponent implements OnInit {
       if (this.currentFilter === 'active') {
         filters.estado = 'activo';
       } else if (this.currentFilter === 'pending') {
-        filters.estado = 'pendiente';
+        filters.estado = 'en espera';
       } else if (this.currentFilter === 'inactive') {
         filters.estado = 'inactivo';
       } else if (this.currentFilter === 'admin') {
@@ -131,6 +131,7 @@ export class AdminUsersComponent implements OnInit {
         'activo': 'active',
         'inactivo': 'inactive',
         'pendiente': 'pending',
+        'en espera': 'pending',
         'suspendido': 'inactive',
         'active': 'active',
         'inactive': 'inactive',
@@ -413,10 +414,10 @@ export class AdminUsersComponent implements OnInit {
       
       if (index !== -1) {
         // Mapear rol y estado al formato del backend
-        const rolBackend = this.userForm.role === 'ADMIN' ? 'ADMIN' : 
+        const rolBackend = this.userForm.role === 'ADMIN' ? 'ADMIN' :
                           this.userForm.role === 'EMPLOYER' ? 'TRABAJADOR' : 'cliente';
         const estadoBackend = this.userForm.status === 'active' ? 'activo' :
-                             this.userForm.status === 'pending' ? 'pendiente' : 'inactivo';
+                             this.userForm.status === 'pending' ? 'en espera' : 'inactivo';
 
         // Preparar datos para enviar (solo incluir campos con valor)
         const updateData: any = {
