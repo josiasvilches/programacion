@@ -1,4 +1,4 @@
 ¡BIENVEND@ {{ usuario.nombre }}!
-Estamos muy contentos de que seas parte de la familia Grupo F' Rotiseria
+Estamos muy contentos de que seas parte de la familia de la Rotisería Cacho
 
-Tu rol es: {{ usuario.rol }}. ¡Ya sabes qué hacer!
+Sos: {{ usuario.rol }}. ¡Ya sabes qué hacer!
