@@ -95,6 +95,8 @@ export class HeaderComponent implements OnInit {
   onLogout() {
     this.userService.logout();
     this.closeMobileMenu();
+    this.isDropdownOpen = false;
     console.log('Usuario deslogueado');
+    this.router.navigate(['/']);
   }
 }

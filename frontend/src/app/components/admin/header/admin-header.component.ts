@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, HostListener, computed, inject } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, HostListener, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { UserService } from '../../../services/user.service';
@@ -10,13 +10,14 @@ import { UserService } from '../../../services/user.service';
   templateUrl: './admin-header.component.html',
   styleUrls: ['./admin-header.component.scss']
 })
-export class AdminHeaderComponent implements OnInit {
+export class AdminHeaderComponent implements OnInit, OnDestroy {
   @Input() title: string = 'Panel Administrativo';
   @Input() subtitle: string = 'Gestiona tu rotisería';
   
   private userService = inject(UserService);
+  private timeInterval?: number;
   
-  currentTime: string = '';
+  currentTime = signal<string>('');
   isUserDropdownOpen = false;
   
   // Computed para obtener información del usuario actual
@@ -49,7 +50,17 @@ export class AdminHeaderComponent implements OnInit {
 
   ngOnInit() {
     this.updateTime();
-    setInterval(() => this.updateTime(), 1000);
+    // Usar window.setInterval y guardar referencia para limpiar después
+    this.timeInterval = window.setInterval(() => {
+      this.updateTime();
+    }, 1000);
+  }
+
+  ngOnDestroy() {
+    // Limpiar el intervalo al destruir el componente
+    if (this.timeInterval) {
+      clearInterval(this.timeInterval);
+    }
   }
 
   // Método para obtener el nombre de display del rol
@@ -73,11 +84,12 @@ export class AdminHeaderComponent implements OnInit {
 
   private updateTime() {
     const now = new Date();
-    this.currentTime = now.toLocaleTimeString('es-AR', { 
+    const timeString = now.toLocaleTimeString('es-AR', { 
       hour: '2-digit', 
       minute: '2-digit',
       second: '2-digit'
     });
+    this.currentTime.set(timeString);
   }
 
   toggleUserDropdown() {
