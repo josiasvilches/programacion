@@ -1,8 +1,10 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Product } from '../../../models/product.interface';
 import { ProductService } from '../../../services/product.service';
 import { CartService } from '../../../services/cart.service';
+import { UserService } from '../../../services/user.service';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -21,6 +23,8 @@ export class FavoriteProductsCarrouselComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private cartService: CartService,
+    private userService: UserService,
+    private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -63,6 +67,13 @@ export class FavoriteProductsCarrouselComponent implements OnInit {
   }
 
   addToCart(product: Product) {
+    // Verificar si el usuario está logueado
+    if (!this.userService.isLoggedIn()) {
+      console.log('Usuario no autenticado, redirigiendo a login');
+      this.router.navigate(['/login']);
+      return;
+    }
+    
     this.cartService.addToCart(product);
     // Mostrar feedback visual o notificación
     alert(`${product.name} agregado al carrito!`);

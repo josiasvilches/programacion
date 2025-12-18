@@ -1,7 +1,9 @@
 import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 import { ProductService } from '../../../services/product.service';
 import { CartService } from '../../../services/cart.service';
+import { UserService } from '../../../services/user.service';
 import { Product } from '../../../models/product.interface';
 import { filter } from 'rxjs/operators';
 
@@ -22,6 +24,8 @@ export class RecommendedProductsCarrouselComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private cartService: CartService,
+    private userService: UserService,
+    private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object,
     private cdr: ChangeDetectorRef
   ) {}
@@ -69,6 +73,13 @@ export class RecommendedProductsCarrouselComponent implements OnInit {
   }
 
   addToCart(product: Product) {
+    // Verificar si el usuario está logueado
+    if (!this.userService.isLoggedIn()) {
+      console.log('Usuario no autenticado, redirigiendo a login');
+      this.router.navigate(['/login']);
+      return;
+    }
+    
     this.cartService.addToCart(product);
     alert(`${product.name} agregado al carrito!`);
   }
